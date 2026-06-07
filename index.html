@@ -1,0 +1,897 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Universal Queue Simulator</title>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        apple: {
+                            bg: '#f5f5f7',
+                            card: 'rgba(255, 255, 255, 0.7)',
+                            text: '#1d1d1f',
+                            subtext: '#86868b',
+                            blue: '#0071e3',
+                            red: '#ff3b30',
+                            green: '#34c759',
+                            orange: '#ff9500'
+                        }
+                    },
+                    boxShadow: {
+                        'apple': '0 4px 24px rgba(0, 0, 0, 0.04)',
+                        'apple-hover': '0 8px 32px rgba(0, 0, 0, 0.08)'
+                    },
+                    fontFamily: {
+                        sans: ['-apple-system', 'BlinkMacSystemFont', '"SF Pro Text"', '"Segoe UI"', 'Roboto', 'Helvetica', 'Arial', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body { background-color: #f5f5f7; color: #1d1d1f; -webkit-font-smoothing: antialiased; margin: 0; overflow: hidden; }
+        .glass { 
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(20px); 
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.4); 
+        }
+        .apple-slider { 
+            -webkit-appearance: none; width: 100%; height: 4px; border-radius: 4px; background: #e5e5ea; outline: none; 
+        }
+        .apple-slider::-webkit-slider-thumb { 
+            -webkit-appearance: none; appearance: none; width: 16px; height: 16px; border-radius: 50%; 
+            background: #fff; box-shadow: 0 2px 6px rgba(0,0,0,0.15); cursor: pointer; border: 1px solid #e5e5ea;
+        }
+        .editable-title {
+            background: transparent; border: none; outline: none; font-weight: 600; width: 100%;
+            transition: background 0.2s; border-radius: 6px; text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+        }
+        .editable-title:hover, .editable-title:focus {
+            background: rgba(0,0,0,0.05); padding: 0 4px;
+        }
+        
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d1d6; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #aeaeb2; }
+
+        /* ===== Timeline Styles ===== */
+        .timeline-square {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+            color: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+        .timeline-square.sq-green { background: linear-gradient(135deg, #34c759, #30b350); }
+        .timeline-square.sq-orange { background: linear-gradient(135deg, #ff9500, #e68600); }
+        .timeline-square.sq-red { 
+            background: linear-gradient(135deg, #ff3b30, #e6342b); 
+            animation: bottleneckPulse 1s ease-in-out infinite;
+        }
+        .timeline-label {
+            margin-top: 5px;
+            font-size: 8.5px;
+            font-weight: 600;
+            color: #86868b;
+            text-align: center;
+            max-width: 72px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .timeline-queue-info {
+            font-size: 8.5px;
+            font-weight: 500;
+            color: #86868b;
+            margin-top: 1px;
+            text-align: center;
+        }
+        .timeline-queue-info.tq-warn { color: #ff9500; font-weight: 700; }
+        .timeline-queue-info.tq-danger { color: #ff3b30; font-weight: 700; }
+
+        /* Walker animation */
+        .timeline-walker {
+            position: absolute;
+            transform: translateX(-50%);
+            font-size: 15px;
+            line-height: 1;
+            z-index: 3;
+            pointer-events: none;
+            animation: walkerMove 0.8s ease-out both;
+        }
+        @keyframes walkerMove {
+            0% { left: var(--wk-from); opacity: 1; }
+            70% { opacity: 1; }
+            100% { left: var(--wk-to); opacity: 0; }
+        }
+
+        /* Bottleneck pulse */
+        @keyframes bottleneckPulse {
+            0%, 100% { box-shadow: 0 2px 8px rgba(255, 59, 48, 0.3); transform: scale(1); }
+            50% { box-shadow: 0 2px 16px rgba(255, 59, 48, 0.6); transform: scale(1.06); }
+        }
+
+        /* Sim clock & counters */
+        .sim-clock {
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-size: 1.35rem;
+            font-weight: 600;
+            letter-spacing: 0.06em;
+            color: #0071e3;
+            font-variant-numeric: tabular-nums;
+        }
+        .sim-counter-val {
+            font-family: 'SF Mono', 'Fira Code', 'Courier New', monospace;
+            font-variant-numeric: tabular-nums;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+        }
+
+        /* Speed toggle buttons */
+        .speed-btn {
+            padding: 4px 12px;
+            border-radius: 8px;
+            font-size: 11px;
+            font-weight: 600;
+            border: 1.5px solid #e5e5ea;
+            background: white;
+            color: #86868b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .speed-btn:hover { border-color: #0071e3; color: #0071e3; }
+        .speed-btn.spd-active {
+            background: #0071e3;
+            border-color: #0071e3;
+            color: white;
+        }
+
+        /* Sim control buttons */
+        .sim-ctrl-btn {
+            padding: 5px 14px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .sim-ctrl-btn.sc-play { background: #34c759; color: white; }
+        .sim-ctrl-btn.sc-play:hover { background: #2ea54d; }
+        .sim-ctrl-btn.sc-pause { background: #ff9500; color: white; }
+        .sim-ctrl-btn.sc-pause:hover { background: #e68600; }
+        .sim-ctrl-btn.sc-reset { background: #e5e5ea; color: #1d1d1f; }
+        .sim-ctrl-btn.sc-reset:hover { background: #d1d1d6; }
+
+        /* Wait time badge */
+        .wait-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 1px 5px;
+            border-radius: 5px;
+            font-size: 9px;
+            font-weight: 600;
+        }
+        .wait-badge.wb-fast { background: rgba(52, 199, 89, 0.12); color: #34c759; }
+        .wait-badge.wb-med { background: rgba(255, 149, 0, 0.12); color: #ff9500; }
+        .wait-badge.wb-slow { background: rgba(255, 59, 48, 0.12); color: #ff3b30; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useMemo, useRef, useCallback } = React;
+
+        const APPLE_COLORS = ['#007aff', '#ff9500', '#ff2d55', '#af52de', '#5ac8fa', '#34c759', '#ffcc00', '#ff3b30', '#5856d6', '#8e8e93'];
+
+        /* ========== Helpers ========== */
+        const formatSimTime = (totalSec) => {
+            const h = Math.floor(totalSec / 3600);
+            const m = Math.floor((totalSec % 3600) / 60);
+            const s = Math.floor(totalSec % 60);
+            return `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        };
+
+        const formatMinutes = (min) => {
+            if (min < 1) return `${Math.round(min * 60)}s`;
+            if (min < 60) return `${min.toFixed(1)} phút`;
+            return `${(min / 60).toFixed(1)} giờ`;
+        };
+
+        /* ========== useChart Hook (unchanged) ========== */
+        const useChart = (history, nodes) => {
+            const chartRef = useRef(null);
+            const chartInstance = useRef(null);
+
+            useEffect(() => {
+                if (chartRef.current && !chartInstance.current) {
+                    const ctx = chartRef.current.getContext('2d');
+                    chartInstance.current = new Chart(ctx, {
+                        type: 'line',
+                        data: { labels: history.labels, datasets: [] },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            animation: false,
+                            scales: {
+                                y: { beginAtZero: true, max: 150, grid: { color: '#e5e5ea' }, ticks: { font: {size: 10} } },
+                                x: { grid: { display: false }, ticks: { font: {size: 9}, color: '#86868b' } }
+                            },
+                            plugins: { 
+                                legend: { 
+                                    position: 'bottom',
+                                    labels: { color: '#86868b', usePointStyle: true, boxWidth: 6, font: {size: 10}, padding: 8 } 
+                                }
+                            },
+                            layout: { padding: { left: 10, right: 10, top: 0, bottom: 0 } },
+                            elements: {
+                                line: { tension: 0.4, borderWidth: 1.5 },
+                                point: { radius: 0 }
+                            }
+                        }
+                    });
+                }
+            }, []);
+
+            useEffect(() => {
+                if (chartInstance.current) {
+                    const datasets = nodes.map((node, i) => ({
+                        label: node.name,
+                        data: history.data[node.id] || Array(30).fill(0),
+                        borderColor: APPLE_COLORS[i % APPLE_COLORS.length],
+                        backgroundColor: APPLE_COLORS[i % APPLE_COLORS.length]
+                    }));
+                    datasets.push({
+                        label: 'Quá Tải (100%)',
+                        data: Array(30).fill(100),
+                        borderColor: '#ff3b30',
+                        borderDash: [4, 4],
+                        borderWidth: 1,
+                        pointRadius: 0
+                    });
+                    chartInstance.current.data.labels = history.labels;
+                    chartInstance.current.data.datasets = datasets;
+                    chartInstance.current.update();
+                }
+            }, [history, nodes]);
+
+            return chartRef;
+        };
+
+        /* ========== useSimulation Hook (NEW) ========== */
+        const useSimulation = (nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger) => {
+            const simRef = useRef(null);
+            const [display, setDisplay] = useState({
+                simTime: 0, queues: {}, totalArrived: 0, totalCompleted: 0,
+                inSystem: 0, walkers: [], waitTimes: {}
+            });
+
+            const initSim = useCallback(() => {
+                const nodes = nodesRef.current;
+                const queues = {};
+                const processing = {};
+                nodes.forEach(n => { queues[n.id] = 0; processing[n.id] = []; });
+                simRef.current = {
+                    time: 0, queues, processing,
+                    arrived: 0, completed: 0,
+                    walkers: [], nextWId: 0, arrAccum: 0
+                };
+                setDisplay({
+                    simTime: 0, queues: {}, totalArrived: 0, totalCompleted: 0,
+                    inSystem: 0, walkers: [], waitTimes: {}
+                });
+            }, []);
+
+            useEffect(() => { initSim(); }, [resetTrigger, initSim]);
+
+            useEffect(() => {
+                if (!isRunning) return;
+                const TICK = 100; // ms
+
+                const interval = setInterval(() => {
+                    const nodes = nodesRef.current;
+                    const arrRate = arrivalRateRef.current;
+                    const s = simRef.current;
+                    if (!s || nodes.length === 0) return;
+
+                    const dt = simSpeed * (TICK / 1000); // sim-seconds per tick
+                    s.time += dt;
+
+                    // Ensure all nodes in sim state
+                    nodes.forEach(n => {
+                        if (s.queues[n.id] === undefined) s.queues[n.id] = 0;
+                        if (!s.processing[n.id]) s.processing[n.id] = [];
+                    });
+
+                    // 1. Generate arrivals for first node
+                    const expected = (arrRate / 60) * dt;
+                    s.arrAccum += expected;
+                    const newArr = Math.floor(s.arrAccum);
+                    s.arrAccum -= newArr;
+                    if (newArr > 0) {
+                        s.queues[nodes[0].id] += newArr;
+                        s.arrived += newArr;
+                    }
+
+                    // 2. Process each node
+                    const freshWalkers = [];
+                    nodes.forEach((node, idx) => {
+                        const nid = node.id;
+
+                        // Advance & collect done
+                        let done = 0;
+                        s.processing[nid] = s.processing[nid].filter(p => {
+                            p.rem -= dt;
+                            if (p.rem <= 0) { done++; return false; }
+                            return true;
+                        });
+
+                        // Move done customers downstream
+                        for (let c = 0; c < done; c++) {
+                            if (idx < nodes.length - 1) {
+                                const nxt = nodes[idx + 1].id;
+                                if (s.queues[nxt] === undefined) s.queues[nxt] = 0;
+                                s.queues[nxt]++;
+                            } else {
+                                s.completed++;
+                            }
+                        }
+
+                        // Spawn walker (max 1 per node per tick)
+                        if (done > 0 && idx < nodes.length - 1 && s.walkers.length < 20) {
+                            freshWalkers.push({
+                                id: s.nextWId++,
+                                from: idx, to: idx + 1,
+                                ts: Date.now()
+                            });
+                        }
+
+                        // Fill processing slots from queue
+                        const ptSec = Math.max(node.processTime * 60, 0.1);
+                        while (s.queues[nid] > 0 && s.processing[nid].length < node.servers) {
+                            s.queues[nid]--;
+                            s.processing[nid].push({ rem: ptSec });
+                        }
+                    });
+
+                    // Cleanup walkers
+                    const now = Date.now();
+                    s.walkers = [...s.walkers.filter(w => now - w.ts < 1000), ...freshWalkers].slice(-20);
+
+                    // Build display
+                    const dq = {};
+                    let inSys = 0;
+                    const wt = {};
+                    nodes.forEach(node => {
+                        const waiting = s.queues[node.id] || 0;
+                        const proc = (s.processing[node.id] || []).length;
+                        dq[node.id] = { waiting, processing: proc };
+                        inSys += waiting + proc;
+                        wt[node.id] = node.servers > 0 ? (waiting * node.processTime) / node.servers : 0;
+                    });
+
+                    setDisplay({
+                        simTime: s.time, queues: dq,
+                        totalArrived: s.arrived, totalCompleted: s.completed,
+                        inSystem: inSys, walkers: [...s.walkers], waitTimes: wt
+                    });
+                }, TICK);
+
+                return () => clearInterval(interval);
+            }, [isRunning, simSpeed]);
+
+            return { ...display, reset: initSim };
+        };
+
+        /* ========== TimelineViz Component (NEW) ========== */
+        const TimelineViz = ({ nodes, sim, isSimStarted }) => {
+            if (nodes.length === 0) return null;
+            const N = nodes.length;
+
+            return (
+                <div className="glass rounded-[20px] p-3 shadow-apple mb-3 shrink-0">
+                    <div className="flex items-center justify-between mb-1.5">
+                        <h3 className="text-xs font-semibold text-apple-text flex items-center gap-1.5">
+                            <span>🛫</span> Pipeline Thời gian thực
+                        </h3>
+                        {!isSimStarted && (
+                            <span className="text-[10px] text-apple-subtext animate-pulse">▶ Nhấn Play để bắt đầu</span>
+                        )}
+                    </div>
+                    <div style={{ overflowX: N > 6 ? 'auto' : 'visible', overflowY: 'visible', paddingBottom: '4px' }}>
+                        <div style={{
+                            position: 'relative',
+                            display: 'grid',
+                            gridTemplateColumns: 'repeat(' + N + ', 1fr)',
+                            minWidth: Math.max(N * 82, 300) + 'px',
+                            paddingTop: '22px'
+                        }}>
+                            {/* Connecting line */}
+                            <div style={{
+                                position: 'absolute',
+                                top: 'calc(22px + 20px)',
+                                left: (0.5 / N * 100) + '%',
+                                right: (0.5 / N * 100) + '%',
+                                height: '3px',
+                                background: 'linear-gradient(90deg, #d1d1d6, #c7c7cc, #d1d1d6)',
+                                borderRadius: '2px',
+                                zIndex: 0
+                            }} />
+
+                            {/* Walkers */}
+                            {sim.walkers.map(w => {
+                                const fp = ((w.from + 0.5) / N) * 100;
+                                const tp = ((w.to + 0.5) / N) * 100;
+                                return (
+                                    <div key={w.id} className="timeline-walker"
+                                        style={{ '--wk-from': fp + '%', '--wk-to': tp + '%', top: '3px' }}>
+                                        🚶
+                                    </div>
+                                );
+                            })}
+
+                            {/* Nodes */}
+                            {nodes.map((node, i) => {
+                                const q = sim.queues[node.id] || { waiting: 0, processing: 0 };
+                                let cls = 'sq-green';
+                                if (isSimStarted) {
+                                    if (q.waiting > node.servers * 3) cls = 'sq-red';
+                                    else if (q.waiting > node.servers) cls = 'sq-orange';
+                                }
+                                let qcls = '';
+                                if (q.waiting > node.servers * 3) qcls = 'tq-danger';
+                                else if (q.waiting > node.servers) qcls = 'tq-warn';
+
+                                return (
+                                    <div key={node.id} style={{
+                                        display: 'flex', flexDirection: 'column',
+                                        alignItems: 'center', position: 'relative', zIndex: 2
+                                    }}>
+                                        <div className={'timeline-square ' + cls}>
+                                            {isSimStarted ? q.processing : 0}
+                                        </div>
+                                        <div className="timeline-label" title={node.name}>
+                                            {node.name.replace(/^\d+\.\s*/, '').substring(0, 12)}
+                                        </div>
+                                        <div className={'timeline-queue-info ' + qcls}>
+                                            {isSimStarted && q.waiting > 0
+                                                ? q.waiting.toLocaleString() + ' đợi'
+                                                : '—'}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
+                </div>
+            );
+        };
+
+        /* ========== Main App ========== */
+        const App = () => {
+            // --- State ---
+            const [baseArrivalRate, setBaseArrivalRate] = useState(20);
+            const [scenario, setScenario] = useState('normal');
+            const [nodes, setNodes] = useState([
+                { id: Date.now() + 1, name: 'Order (Đặt món)', servers: 3, processTime: 1 },
+                { id: Date.now() + 2, name: 'Bếp (Nấu ăn)', servers: 5, processTime: 2 },
+                { id: Date.now() + 3, name: 'Trả món', servers: 2, processTime: 0.5 },
+            ]);
+
+            // Simulation controls
+            const [simSpeed, setSimSpeed] = useState(1);
+            const [isRunning, setIsRunning] = useState(false);
+            const [resetTrigger, setResetTrigger] = useState(0);
+
+            // Refs for simulation (always latest)
+            const nodesRef = useRef(nodes);
+            nodesRef.current = nodes;
+
+            const arrivalRate = useMemo(() => {
+                if (scenario === 'low') return baseArrivalRate * 0.5;
+                if (scenario === 'high') return baseArrivalRate * 2;
+                return baseArrivalRate;
+            }, [baseArrivalRate, scenario]);
+
+            const arrivalRateRef = useRef(arrivalRate);
+            arrivalRateRef.current = arrivalRate;
+
+            // --- Simulation Engine ---
+            const sim = useSimulation(nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger);
+
+            // --- Chart History ---
+            const [history, setHistory] = useState({ labels: Array(30).fill(''), data: {} });
+
+            // --- Math Engine (unchanged) ---
+            const metrics = useMemo(() => {
+                let currentIncoming = arrivalRate;
+                return nodes.map(node => {
+                    const capacity = node.servers * (1 / node.processTime);
+                    const rho = capacity > 0 ? currentIncoming / capacity : 0;
+                    const isBottleneck = rho >= 1;
+                    const queueGrowth = isBottleneck ? (currentIncoming - capacity).toFixed(1) : 0;
+                    const outputRate = Math.min(currentIncoming, capacity);
+
+                    let estimatedQueue = 0;
+                    let waitTimeStr = '0s';
+                    if (rho < 1 && rho > 0) {
+                        estimatedQueue = Math.pow(rho, Math.sqrt(2 * (node.servers + 1))) / (1 - rho);
+                        const wtm = currentIncoming > 0 ? (estimatedQueue / currentIncoming) : 0;
+                        waitTimeStr = wtm < 1 ? Math.round(wtm * 60) + 's' : wtm.toFixed(1) + 'm';
+                    } else if (isBottleneck) {
+                        waitTimeStr = 'Tăng vô hạn';
+                    }
+
+                    const result = {
+                        ...node, incoming: currentIncoming, capacity, rho, isBottleneck,
+                        queueGrowth, estimatedQueue: isBottleneck ? 'Tăng vô hạn' : Math.round(estimatedQueue),
+                        waitTimeStr, outputRate
+                    };
+                    currentIncoming = outputRate;
+                    return result;
+                });
+            }, [arrivalRate, nodes]);
+
+            // Chart tick
+            useEffect(() => {
+                const timer = setInterval(() => {
+                    setHistory(prev => {
+                        const nl = [...prev.labels.slice(1), new Date().toLocaleTimeString('en-US', {hour12:false, minute:'2-digit', second:'2-digit'})];
+                        const nd = { ...prev.data };
+                        metrics.forEach(m => {
+                            if (!nd[m.id]) nd[m.id] = Array(30).fill(0);
+                            nd[m.id] = [...nd[m.id].slice(1), m.rho * 100];
+                        });
+                        return { labels: nl, data: nd };
+                    });
+                }, 1000);
+                return () => clearInterval(timer);
+            }, [metrics]);
+
+            const chartRef = useChart(history, nodes);
+
+            // --- Node CRUD ---
+            const addNode = () => {
+                if (nodes.length >= 10) return;
+                setNodes([...nodes, { id: Date.now(), name: 'Bước ' + (nodes.length + 1), servers: 1, processTime: 1 }]);
+            };
+            const removeNode = (id) => {
+                if (nodes.length <= 1) return;
+                setNodes(nodes.filter(n => n.id !== id));
+            };
+            const updateNode = (id, field, value) => {
+                setNodes(nodes.map(n => n.id === id ? { ...n, [field]: value } : n));
+            };
+
+            // --- Templates ---
+            const loadMcDonaldsTemplate = () => {
+                const b = Date.now();
+                setNodes([
+                    { id: b+1, name: '1. Gửi xe', servers: 15, processTime: 0.5 },
+                    { id: b+2, name: '2. Xếp hàng Kiosk', servers: 2, processTime: 0.8 },
+                    { id: b+3, name: '3. Order nước/kem', servers: 3, processTime: 1.2 },
+                    { id: b+4, name: '4. Thanh toán quầy', servers: 2, processTime: 0.8 },
+                    { id: b+5, name: '5. Chờ nhận bill', servers: 3, processTime: 0.3 },
+                    { id: b+6, name: '6. Bếp nướng thịt', servers: 5, processTime: 2.0 },
+                    { id: b+7, name: '7. Bếp ráp Burger', servers: 4, processTime: 1.2 },
+                    { id: b+8, name: '8. Đóng gói túi', servers: 3, processTime: 0.6 },
+                    { id: b+9, name: '9. Quầy Trả món', servers: 2, processTime: 0.5 },
+                ]);
+                setBaseArrivalRate(20);
+                setScenario('normal');
+                setIsRunning(false);
+                setResetTrigger(v => v + 1);
+            };
+
+            const loadAirportTemplate = () => {
+                const b = Date.now();
+                setNodes([
+                    { id: b+1, name: '1. Check-in & Gửi hành lý', servers: 20, processTime: 1.5 },
+                    { id: b+2, name: '2. Soi chiếu An ninh', servers: 6, processTime: 0.5 },
+                    { id: b+3, name: '3. Hộ chiếu Xuất cảnh', servers: 8, processTime: 0.75 },
+                    { id: b+4, name: '4. Di chuyển → Gate', servers: 20, processTime: 0.2 },
+                    { id: b+5, name: '5. Chờ tại Gate', servers: 5, processTime: 0.3 },
+                    { id: b+6, name: '6. Boarding (Scan thẻ)', servers: 2, processTime: 0.3 },
+                    { id: b+7, name: '7. Tìm chỗ ngồi', servers: 20, processTime: 1.0 },
+                    { id: b+8, name: '8. Đóng cửa cất cánh', servers: 1, processTime: 0.1 },
+                ]);
+                setBaseArrivalRate(10);
+                setScenario('normal');
+                setIsRunning(false);
+                setResetTrigger(v => v + 1);
+            };
+
+            // --- Sim Controls ---
+            const handleReset = () => { setIsRunning(false); setResetTrigger(v => v + 1); };
+            const isSimStarted = sim.simTime > 0 || isRunning;
+
+            // ==================== RENDER ====================
+            return (
+                <div className="h-screen w-full flex p-4 gap-4 bg-apple-bg overflow-hidden">
+
+                    {/* ===== LEFT SIDEBAR ===== */}
+                    <div className="w-[24%] min-w-[260px] max-w-[320px] flex flex-col gap-2 h-full shrink-0 overflow-y-auto pr-1 pb-2">
+
+                        {/* Header */}
+                        <div className="glass rounded-[20px] p-3 shadow-apple text-center shrink-0">
+                            <h1 className="text-lg font-semibold tracking-tight text-apple-text">Queue Simulator</h1>
+                            <p className="text-[9px] text-apple-subtext mt-0.5 font-medium uppercase tracking-wider">Math Engine + Real-time Simulation</p>
+                        </div>
+
+                        {/* Arrival Control */}
+                        <div className="glass rounded-[20px] p-3 shadow-apple flex flex-col items-center shrink-0">
+                            <h2 className="text-[11px] font-semibold text-apple-text mb-0.5">Nguồn Khách Ban Đầu</h2>
+                            <p className="text-[9px] text-apple-subtext mb-2">Base Arrival Rate (người/phút)</p>
+                            <div className="text-2xl font-semibold tracking-tight text-apple-blue mb-2">
+                                {Math.round(baseArrivalRate)}
+                            </div>
+                            <div className="flex items-center gap-3 w-full px-2 mb-1">
+                                <span className="text-apple-subtext text-[9px]">Ít</span>
+                                <input type="range" min="1" max="100" value={baseArrivalRate}
+                                    onChange={(e) => setBaseArrivalRate(Number(e.target.value))} className="apple-slider flex-1" />
+                                <span className="text-apple-subtext text-[9px]">Nhiều</span>
+                            </div>
+                        </div>
+
+                        {/* Scenarios */}
+                        <div className="glass rounded-[20px] p-3 shadow-apple flex flex-col shrink-0">
+                            <h3 className="text-[11px] font-semibold text-apple-text mb-2">Kịch Bản Lưu Lượng</h3>
+                            <div className="space-y-1.5">
+                                {[
+                                    { k: 'low', l: 'Vắng khách (÷2)' },
+                                    { k: 'normal', l: 'Trung bình (×1)' },
+                                    { k: 'high', l: 'Đông khách (×2)' }
+                                ].map(s => (
+                                    <label key={s.k} className="flex items-center gap-2 text-[11px] text-apple-text cursor-pointer">
+                                        <input type="radio" name="scenario" checked={scenario === s.k}
+                                            onChange={() => setScenario(s.k)} className="w-3.5 h-3.5 text-apple-blue" />
+                                        <span>{s.l}</span>
+                                    </label>
+                                ))}
+                            </div>
+                            <div className="mt-2 pt-2 border-t border-black/5 text-center text-[11px] font-medium text-apple-orange">
+                                Thực tế: {arrivalRate.toFixed(1)} khách/phút
+                            </div>
+                        </div>
+
+                        {/* Templates */}
+                        <div className="glass rounded-[20px] p-3 shadow-apple flex flex-col gap-2 shrink-0">
+                            <h3 className="text-[11px] font-semibold text-apple-text mb-0.5">Dữ Liệu Mẫu</h3>
+                            <button onClick={loadMcDonaldsTemplate}
+                                className="w-full py-2 bg-apple-blue text-white rounded-xl text-[11px] font-semibold shadow-sm hover:bg-blue-600 transition-colors">
+                                🍔 McDonald's Pipeline (9 Bước)
+                            </button>
+                            <button onClick={loadAirportTemplate}
+                                className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-[11px] font-semibold shadow-sm hover:from-indigo-600 hover:to-purple-700 transition-all">
+                                ✈️ Sân bay Tân Sơn Nhất (8 Bước)
+                            </button>
+                        </div>
+
+                        {/* ===== SIMULATION CONTROLS (NEW) ===== */}
+                        <div className="glass rounded-[20px] p-3 shadow-apple flex flex-col shrink-0">
+                            <h3 className="text-[11px] font-semibold text-apple-text mb-2 flex items-center gap-1">
+                                <span>⏱</span> Mô phỏng Thời gian thực
+                            </h3>
+
+                            {/* Clock */}
+                            <div className="text-center mb-2.5">
+                                <div className="sim-clock">{formatSimTime(sim.simTime)}</div>
+                                <div className="text-[9px] text-apple-subtext mt-0.5">
+                                    {sim.simTime > 0 ? '~ ' + formatMinutes(sim.simTime / 60) : 'Chưa bắt đầu'}
+                                </div>
+                            </div>
+
+                            {/* Play / Pause / Reset */}
+                            <div className="flex gap-1.5 mb-2.5 justify-center">
+                                {!isRunning ? (
+                                    <button onClick={() => setIsRunning(true)} className="sim-ctrl-btn sc-play">▶ Play</button>
+                                ) : (
+                                    <button onClick={() => setIsRunning(false)} className="sim-ctrl-btn sc-pause">⏸ Pause</button>
+                                )}
+                                <button onClick={handleReset} className="sim-ctrl-btn sc-reset">↺ Reset</button>
+                            </div>
+
+                            {/* Speed */}
+                            <div className="mb-2.5">
+                                <div className="text-[9px] text-apple-subtext text-center mb-1.5 font-medium">Tốc độ mô phỏng</div>
+                                <div className="flex gap-1.5 justify-center">
+                                    {[1, 10, 100].map(sp => (
+                                        <button key={sp} onClick={() => setSimSpeed(sp)}
+                                            className={'speed-btn' + (simSpeed === sp ? ' spd-active' : '')}>
+                                            {sp}×
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* Realtime Stats */}
+                            <div className="border-t border-black/5 pt-2 space-y-1">
+                                <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-apple-subtext">📥 Đã đến</span>
+                                    <span className="sim-counter-val text-apple-text">{sim.totalArrived.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-apple-subtext">✅ Hoàn thành</span>
+                                    <span className="sim-counter-val text-apple-green">{sim.totalCompleted.toLocaleString()}</span>
+                                </div>
+                                <div className="flex justify-between items-center text-[10px]">
+                                    <span className="text-apple-subtext">👥 Trong hệ thống</span>
+                                    <span className="sim-counter-val text-apple-blue">{sim.inSystem.toLocaleString()}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    {/* ===== RIGHT CONTENT ===== */}
+                    <div className="flex-1 h-full overflow-y-auto pr-2 pb-4 min-w-0">
+
+                        {/* Timeline Visualization */}
+                        <TimelineViz nodes={nodes} sim={sim} isSimStarted={isSimStarted} />
+
+                        {/* Nodes Grid */}
+                        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start">
+
+                            {metrics.map((metric, i) => {
+                                const sq = sim.queues[metric.id] || { waiting: 0, processing: 0 };
+                                const sw = sim.waitTimes[metric.id] || 0;
+                                let wbc = 'wb-fast';
+                                if (sw > 15) wbc = 'wb-slow';
+                                else if (sw > 5) wbc = 'wb-med';
+
+                                return (
+                                    <div key={metric.id} className="glass rounded-[20px] p-3 shadow-apple hover:shadow-apple-hover transition-shadow relative flex flex-col group min-h-[170px] min-w-0">
+
+                                        {/* Delete Button */}
+                                        <button onClick={() => removeNode(metric.id)} className="absolute top-2 right-2 w-5 h-5 rounded-full bg-black/5 hover:bg-black/10 text-apple-subtext flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                                            <svg width="8" height="8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+                                        </button>
+
+                                        {/* Editable Title */}
+                                        <input type="text" value={metric.name}
+                                            onChange={(e) => updateNode(metric.id, 'name', e.target.value)}
+                                            className="editable-title text-sm mb-2 text-apple-text pr-5 font-bold" />
+
+                                        {/* Status Indicator */}
+                                        <div className="flex justify-between items-end mb-1">
+                                            <span className="text-[9px] font-medium text-apple-subtext uppercase">Mức tải</span>
+                                            <span className={'text-xs font-semibold ' + (metric.isBottleneck ? 'text-apple-red' : 'text-apple-green')}>
+                                                {(metric.rho * 100).toFixed(0)}%
+                                            </span>
+                                        </div>
+                                        <div className="w-full bg-black/5 h-1 rounded-full mb-2 overflow-hidden">
+                                            <div className={'h-full rounded-full transition-all duration-500 ' + (metric.isBottleneck ? 'bg-apple-red' : 'bg-apple-green')}
+                                                style={{ width: Math.min(metric.rho * 100, 100) + '%' }}></div>
+                                        </div>
+
+                                        {/* Node Config Sliders */}
+                                        <div className="space-y-1.5 mb-2">
+                                            <div>
+                                                <div className="flex justify-between text-[9px] mb-0.5">
+                                                    <span className="text-apple-subtext">Nhân sự/Quầy</span>
+                                                    <span className="font-semibold text-[10px]">{metric.servers}</span>
+                                                </div>
+                                                <input type="range" min="1" max="20" value={metric.servers}
+                                                    onChange={(e) => updateNode(metric.id, 'servers', Number(e.target.value))} className="apple-slider" />
+                                            </div>
+                                            <div>
+                                                <div className="flex justify-between text-[9px] mb-0.5">
+                                                    <span className="text-apple-subtext">Tốc độ (p/khách)</span>
+                                                    <span className="font-semibold text-[10px]">{metric.processTime}</span>
+                                                </div>
+                                                <input type="range" min="0.1" max="5" step="0.1" value={metric.processTime}
+                                                    onChange={(e) => updateNode(metric.id, 'processTime', Number(e.target.value))} className="apple-slider" />
+                                            </div>
+                                        </div>
+
+                                        {/* Waiting Time & Stats */}
+                                        <div className="mt-auto pt-2 border-t border-black/5 flex flex-col gap-1">
+                                            {/* Theoretical wait */}
+                                            <div className="flex justify-between items-center text-[9px]">
+                                                <span className="text-apple-subtext">Lý thuyết:</span>
+                                                <span className={'font-semibold ' + (metric.isBottleneck ? 'text-apple-red' : 'text-apple-text')}>{metric.waitTimeStr}</span>
+                                            </div>
+                                            {/* Sim wait time */}
+                                            {isSimStarted && (
+                                                <div className="flex justify-between items-center text-[9px]">
+                                                    <span className="text-apple-subtext">⏱ Waiting Time:</span>
+                                                    <span className={'wait-badge ' + wbc}>
+                                                        {sw < 1 ? Math.round(sw * 60) + 's' : sw.toFixed(1) + ' phút'}
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {/* Sim queue length */}
+                                            {isSimStarted && sq.waiting > 0 && (
+                                                <div className="flex justify-between items-center text-[9px]">
+                                                    <span className="text-apple-subtext">Hàng đợi:</span>
+                                                    <span className={'font-semibold ' + (sq.waiting > metric.servers * 3 ? 'text-apple-red' : 'text-apple-orange')}>
+                                                        {sq.waiting.toLocaleString()} người
+                                                    </span>
+                                                </div>
+                                            )}
+                                            {/* Input / Output */}
+                                            <div className="grid grid-cols-2 gap-1 text-center pt-1 border-t border-black/[0.02]">
+                                                <div>
+                                                    <div className="text-[8px] text-apple-subtext uppercase">Đến</div>
+                                                    <div className="font-medium text-[10px]">{metric.incoming.toFixed(1)}/m</div>
+                                                </div>
+                                                <div>
+                                                    <div className="text-[8px] text-apple-subtext uppercase">Xử lý</div>
+                                                    <div className="font-medium text-[10px]">{metric.capacity.toFixed(1)}/m</div>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Warning Overlay */}
+                                        {metric.isBottleneck && (
+                                            <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 bg-apple-red text-white text-[8px] font-bold px-2 py-0.5 rounded-full shadow-lg whitespace-nowrap z-10 border border-white/20">
+                                                QUÁ TẢI (+{metric.queueGrowth})
+                                            </div>
+                                        )}
+                                    </div>
+                                );
+                            })}
+
+                            {/* Add Button */}
+                            {nodes.length < 10 && (
+                                <button onClick={addNode}
+                                    className="glass rounded-[20px] p-3 shadow-apple hover:shadow-apple-hover transition-all flex flex-col items-center justify-center min-h-[170px] text-apple-subtext hover:text-apple-blue group cursor-pointer border-dashed border border-black/10 hover:border-apple-blue/30 bg-transparent hover:bg-apple-blue/5">
+                                    <div className="w-8 h-8 rounded-full bg-black/5 group-hover:bg-apple-blue/10 flex items-center justify-center mb-2 transition-colors">
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+                                    </div>
+                                    <span className="font-medium text-xs">Thêm Bước</span>
+                                </button>
+                            )}
+                        </div>
+
+                        {/* Chart */}
+                        <div className="glass rounded-[24px] p-4 shadow-apple h-[250px] mt-4 flex flex-col relative shrink-0">
+                            <h3 className="text-xs font-semibold text-apple-text mb-2 shrink-0">Biểu đồ Mức độ tải (%) theo thời gian</h3>
+                            <div className="flex-1 relative w-full h-full min-h-0">
+                                <canvas ref={chartRef}></canvas>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
