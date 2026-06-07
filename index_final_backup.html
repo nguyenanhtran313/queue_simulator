@@ -291,27 +291,26 @@
         };
 
         /* ========== useSimulation Hook (NEW) ========== */
-        const useSimulation = (nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger, modeRef) => {
+        const useSimulation = (nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger) => {
             const simRef = useRef(null);
             const [display, setDisplay] = useState({
                 simTime: 0, queues: {}, totalArrived: 0, totalCompleted: 0,
-                inSystem: 0, walkers: [], waitTimes: {}, avgWaitTimeSim: 0, abandoned: {}
+                inSystem: 0, walkers: [], waitTimes: {}, avgWaitTimeSim: 0
             });
 
             const initSim = useCallback(() => {
                 const nodes = nodesRef.current;
                 const queues = {};
                 const processing = {};
-                const abandoned = {};
-                nodes.forEach(n => { queues[n.id] = []; processing[n.id] = []; abandoned[n.id] = 0; });
+                nodes.forEach(n => { queues[n.id] = 0; processing[n.id] = []; });
                 simRef.current = {
-                    time: 0, queues, processing, abandoned,
+                    time: 0, queues, processing,
                     arrived: 0, completed: 0,
                     walkers: [], nextWId: 0, arrAccum: 0, totalSystemTime: 0
                 };
                 setDisplay({
                     simTime: 0, queues: {}, totalArrived: 0, totalCompleted: 0,
-                    inSystem: 0, walkers: [], waitTimes: {}, avgWaitTimeSim: 0, abandoned: {}
+                    inSystem: 0, walkers: [], waitTimes: {}, avgWaitTimeSim: 0
                 });
             }, []);
 
@@ -332,9 +331,8 @@
 
                     // Ensure all nodes in sim state
                     nodes.forEach(n => {
-                        if (s.queues[n.id] === undefined) s.queues[n.id] = [];
+                        if (s.queues[n.id] === undefined) s.queues[n.id] = 0;
                         if (!s.processing[n.id]) s.processing[n.id] = [];
-                        if (s.abandoned[n.id] === undefined) s.abandoned[n.id] = 0;
                     });
 
                     // 1. Generate arrivals for first node
@@ -343,7 +341,7 @@
                     const newArr = Math.floor(s.arrAccum);
                     s.arrAccum -= newArr;
                     if (newArr > 0) {
-                        for(let i=0; i<newArr; i++) s.queues[nodes[0].id].push({ enterTime: s.time });
+                        s.queues[nodes[0].id] += newArr;
                         s.arrived += newArr;
                     }
 
@@ -351,18 +349,6 @@
                     const freshWalkers = [];
                     nodes.forEach((node, idx) => {
                         const nid = node.id;
-
-                        const isAdv = modeRef.current === 'advanced';
-                        const thresholdSec = isAdv ? ((node.abandonThreshold || 5) * 60) : Infinity;
-
-                        if (thresholdSec !== Infinity && s.queues[nid].length > 0) {
-                            const initialCount = s.queues[nid].length;
-                            s.queues[nid] = s.queues[nid].filter(c => (s.time - c.enterTime) <= thresholdSec);
-                            const abandonedCount = initialCount - s.queues[nid].length;
-                            if (abandonedCount > 0) {
-                                s.abandoned[nid] += abandonedCount;
-                            }
-                        }
 
                         // Advance & collect done
                         let done = 0;
@@ -376,8 +362,8 @@
                         for (let c = 0; c < done; c++) {
                             if (idx < nodes.length - 1) {
                                 const nxt = nodes[idx + 1].id;
-                                if (s.queues[nxt] === undefined) s.queues[nxt] = [];
-                                s.queues[nxt].push({ enterTime: s.time });
+                                if (s.queues[nxt] === undefined) s.queues[nxt] = 0;
+                                s.queues[nxt]++;
                             } else {
                                 s.completed++;
                             }
@@ -394,8 +380,8 @@
 
                         // Fill processing slots from queue
                         const ptSec = Math.max(node.processTime * 60, 0.1);
-                        while (s.queues[nid].length > 0 && s.processing[nid].length < node.servers) {
-                            s.queues[nid].shift();
+                        while (s.queues[nid] > 0 && s.processing[nid].length < node.servers) {
+                            s.queues[nid]--;
                             s.processing[nid].push({ rem: ptSec });
                         }
                     });
@@ -409,7 +395,7 @@
                     let inSys = 0;
                     const wt = {};
                     nodes.forEach(node => {
-                        const waiting = s.queues[node.id].length;
+                        const waiting = s.queues[node.id] || 0;
                         const proc = (s.processing[node.id] || []).length;
                         dq[node.id] = { waiting, processing: proc };
                         inSys += waiting + proc;
@@ -422,7 +408,7 @@
                     setDisplay({
                         simTime: s.time, queues: dq,
                         totalArrived: s.arrived, totalCompleted: s.completed,
-                        inSystem: inSys, walkers: [...s.walkers], waitTimes: wt, avgWaitTimeSim, abandoned: { ...s.abandoned }
+                        inSystem: inSys, walkers: [...s.walkers], waitTimes: wt, avgWaitTimeSim
                     });
                 }, TICK);
 
@@ -433,7 +419,7 @@
         };
 
         /* ========== TimelineViz Component (NEW) ========== */
-        const TimelineViz = ({ nodes, sim, isSimStarted, mode }) => {
+        const TimelineViz = ({ nodes, sim, isSimStarted }) => {
             if (nodes.length === 0) return null;
             const N = nodes.length;
 
@@ -510,11 +496,6 @@
                                                 ? q.waiting.toLocaleString() + ' đợi'
                                                 : '—'}
                                         </div>
-                                        {mode === 'advanced' && isSimStarted && sim.abandoned[node.id] > 0 && (
-                                            <div className="text-[8.5px] font-bold text-apple-red mt-1 animate-pulse px-1 bg-red-50 rounded-sm">
-                                                💔 {sim.abandoned[node.id]} rời bỏ
-                                            </div>
-                                        )}
                                     </div>
                                 );
                             })}
@@ -527,17 +508,13 @@
         /* ========== Main App ========== */
         const App = () => {
             // --- State ---
-            const [mode, setMode] = useState('basic');
             const [baseArrivalRate, setBaseArrivalRate] = useState(60);
             const [scenario, setScenario] = useState('normal');
             const [nodes, setNodes] = useState([
-                { id: Date.now() + 1, name: 'Order (Đặt món)', servers: 3, processTime: 1, abandonThreshold: 10 },
-                { id: Date.now() + 2, name: 'Bếp (Nấu ăn)', servers: 5, processTime: 2, abandonThreshold: 15 },
-                { id: Date.now() + 3, name: 'Trả món', servers: 2, processTime: 0.5, abandonThreshold: 5 },
+                { id: Date.now() + 1, name: 'Order (Đặt món)', servers: 3, processTime: 1 },
+                { id: Date.now() + 2, name: 'Bếp (Nấu ăn)', servers: 5, processTime: 2 },
+                { id: Date.now() + 3, name: 'Trả món', servers: 2, processTime: 0.5 },
             ]);
-            
-            const modeRef = useRef(mode);
-            useEffect(() => { modeRef.current = mode; }, [mode]);
 
             // Simulation controls
             const [simSpeed, setSimSpeed] = useState(1);
@@ -561,7 +538,7 @@
             arrivalRateRef.current = arrivalRate;
 
             // --- Simulation Engine ---
-            const sim = useSimulation(nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger, modeRef);
+            const sim = useSimulation(nodesRef, arrivalRateRef, simSpeed, isRunning, resetTrigger);
 
             // --- Chart History ---
             const [history, setHistory] = useState({ labels: Array(30).fill(''), data: {} });
@@ -617,7 +594,7 @@
             // --- Node CRUD ---
             const addNode = () => {
                 if (nodes.length >= 10) return;
-                setNodes([...nodes, { id: Date.now(), name: 'Bước ' + (nodes.length + 1), servers: 1, processTime: 1, abandonThreshold: 5 }]);
+                setNodes([...nodes, { id: Date.now(), name: 'Bước ' + (nodes.length + 1), servers: 1, processTime: 1 }]);
             };
             const removeNode = (id) => {
                 if (nodes.length <= 1) return;
@@ -631,15 +608,15 @@
             const loadMcDonaldsTemplate = () => {
                 const b = Date.now();
                 setNodes([
-                    { id: b+1, name: '1. Gửi xe', servers: 15, processTime: 0.5, abandonThreshold: 5 },
-                    { id: b+2, name: '2. Xếp hàng Kiosk', servers: 2, processTime: 0.8, abandonThreshold: 5 },
-                    { id: b+3, name: '3. Order nước/kem', servers: 3, processTime: 1.2, abandonThreshold: 5 },
-                    { id: b+4, name: '4. Thanh toán quầy', servers: 2, processTime: 0.8, abandonThreshold: 5 },
-                    { id: b+5, name: '5. Chờ nhận bill', servers: 3, processTime: 0.3, abandonThreshold: 5 },
-                    { id: b+6, name: '6. Bếp nướng thịt', servers: 5, processTime: 2.0, abandonThreshold: 15 },
-                    { id: b+7, name: '7. Bếp ráp Burger', servers: 4, processTime: 1.2, abandonThreshold: 15 },
-                    { id: b+8, name: '8. Đóng gói túi', servers: 3, processTime: 0.6, abandonThreshold: 10 },
-                    { id: b+9, name: '9. Quầy Trả món', servers: 2, processTime: 0.5, abandonThreshold: 5 },
+                    { id: b+1, name: '1. Gửi xe', servers: 15, processTime: 0.5 },
+                    { id: b+2, name: '2. Xếp hàng Kiosk', servers: 2, processTime: 0.8 },
+                    { id: b+3, name: '3. Order nước/kem', servers: 3, processTime: 1.2 },
+                    { id: b+4, name: '4. Thanh toán quầy', servers: 2, processTime: 0.8 },
+                    { id: b+5, name: '5. Chờ nhận bill', servers: 3, processTime: 0.3 },
+                    { id: b+6, name: '6. Bếp nướng thịt', servers: 5, processTime: 2.0 },
+                    { id: b+7, name: '7. Bếp ráp Burger', servers: 4, processTime: 1.2 },
+                    { id: b+8, name: '8. Đóng gói túi', servers: 3, processTime: 0.6 },
+                    { id: b+9, name: '9. Quầy Trả món', servers: 2, processTime: 0.5 },
                 ]);
                 setBaseArrivalRate(60);
                 setScenario('normal');
@@ -650,14 +627,14 @@
             const loadAirportTemplate = () => {
                 const b = Date.now();
                 setNodes([
-                    { id: b+1, name: '1. Check-in & Gửi hành lý', servers: 20, processTime: 1.5, abandonThreshold: 45 },
-                    { id: b+2, name: '2. Soi chiếu An ninh', servers: 6, processTime: 0.5, abandonThreshold: 30 },
-                    { id: b+3, name: '3. Hộ chiếu Xuất cảnh', servers: 8, processTime: 0.75, abandonThreshold: 30 },
-                    { id: b+4, name: '4. Di chuyển → Gate', servers: 20, processTime: 0.2, abandonThreshold: 60 },
-                    { id: b+5, name: '5. Chờ tại Gate', servers: 5, processTime: 0.3, abandonThreshold: 60 },
-                    { id: b+6, name: '6. Boarding (Scan thẻ)', servers: 2, processTime: 0.3, abandonThreshold: 45 },
-                    { id: b+7, name: '7. Tìm chỗ ngồi', servers: 20, processTime: 1.0, abandonThreshold: 20 },
-                    { id: b+8, name: '8. Đóng cửa cất cánh', servers: 1, processTime: 0.1, abandonThreshold: 15 },
+                    { id: b+1, name: '1. Check-in & Gửi hành lý', servers: 20, processTime: 1.5 },
+                    { id: b+2, name: '2. Soi chiếu An ninh', servers: 6, processTime: 0.5 },
+                    { id: b+3, name: '3. Hộ chiếu Xuất cảnh', servers: 8, processTime: 0.75 },
+                    { id: b+4, name: '4. Di chuyển → Gate', servers: 20, processTime: 0.2 },
+                    { id: b+5, name: '5. Chờ tại Gate', servers: 5, processTime: 0.3 },
+                    { id: b+6, name: '6. Boarding (Scan thẻ)', servers: 2, processTime: 0.3 },
+                    { id: b+7, name: '7. Tìm chỗ ngồi', servers: 20, processTime: 1.0 },
+                    { id: b+8, name: '8. Đóng cửa cất cánh', servers: 1, processTime: 0.1 },
                 ]);
                 setBaseArrivalRate(600);
                 setScenario('normal');
@@ -668,12 +645,12 @@
             const loadKoiTemplate = () => {
                 const b = Date.now();
                 setNodes([
-                    { id: b+1, name: '1. Gửi xe', servers: 2, processTime: 0.5, abandonThreshold: 5 },
-                    { id: b+2, name: '2. Đọc menu & Chọn món', servers: 2, processTime: 1.5, abandonThreshold: 10 },
-                    { id: b+3, name: '3. Thanh toán', servers: 2, processTime: 1.0, abandonThreshold: 5 },
-                    { id: b+4, name: '4. Pha trà', servers: 3, processTime: 1.5, abandonThreshold: 15 },
-                    { id: b+5, name: '5. Thêm Topping', servers: 2, processTime: 1.0, abandonThreshold: 15 },
-                    { id: b+6, name: '6. Gọi số & Trả nước', servers: 1, processTime: 0.5, abandonThreshold: 5 },
+                    { id: b+1, name: '1. Gửi xe', servers: 2, processTime: 0.5 },
+                    { id: b+2, name: '2. Đọc menu & Chọn món', servers: 2, processTime: 1.5 },
+                    { id: b+3, name: '3. Thanh toán', servers: 2, processTime: 1.0 },
+                    { id: b+4, name: '4. Pha trà', servers: 3, processTime: 1.5 },
+                    { id: b+5, name: '5. Thêm Topping', servers: 2, processTime: 1.0 },
+                    { id: b+6, name: '6. Gọi số & Trả nước', servers: 1, processTime: 0.5 },
                 ]);
                 setBaseArrivalRate(60);
                 setScenario('normal');
@@ -711,24 +688,7 @@
                         {/* Header */}
                         <div className="glass rounded-[20px] p-3 shadow-apple text-center shrink-0">
                             <h1 className="text-lg font-semibold tracking-tight text-apple-text">Queue Simulator</h1>
-                            <p className="text-[9px] text-apple-subtext mt-0.5 mb-2.5 font-medium uppercase tracking-wider">Math Engine + Real-time Simulation</p>
-                            
-                            {/* Mode Switcher */}
-                            <div className="relative flex items-center bg-black/5 rounded-xl p-1 overflow-hidden h-8">
-                                <div className={`absolute top-1 bottom-1 w-[calc(50%-4px)] bg-white rounded-[8px] shadow-sm transition-transform duration-300 ease-out ${mode === 'advanced' ? 'translate-x-[calc(100%+4px)]' : 'translate-x-0'}`}></div>
-                                <button 
-                                    className={`relative flex-1 text-[11px] font-semibold z-10 transition-colors ${mode === 'basic' ? 'text-apple-blue' : 'text-apple-subtext'}`}
-                                    onClick={() => setMode('basic')}
-                                >
-                                    Basic
-                                </button>
-                                <button 
-                                    className={`relative flex-1 text-[11px] font-semibold z-10 transition-colors ${mode === 'advanced' ? 'text-apple-red' : 'text-apple-subtext'}`}
-                                    onClick={() => setMode('advanced')}
-                                >
-                                    Advanced
-                                </button>
-                            </div>
+                            <p className="text-[9px] text-apple-subtext mt-0.5 font-medium uppercase tracking-wider">Math Engine + Real-time Simulation</p>
                         </div>
 
                         {/* Arrival Control */}
@@ -819,14 +779,6 @@
                                     <span className="text-apple-subtext">👥 Trong hệ thống</span>
                                     <span className="sim-counter-val text-apple-blue">{sim.inSystem.toLocaleString()}</span>
                                 </div>
-                                {mode === 'advanced' && (
-                                    <div className="flex justify-between items-center text-[10px]">
-                                        <span className="text-apple-subtext">💔 Bỏ đi</span>
-                                        <span className="sim-counter-val text-apple-red">
-                                            {Object.values(sim.abandoned || {}).reduce((a, b) => a + b, 0).toLocaleString()}
-                                        </span>
-                                    </div>
-                                )}
                             </div>
                             
                             {/* Average Wait Time Metric */}
@@ -874,7 +826,7 @@
                     <div className="flex-1 min-w-0 md:pl-2">
 
                         {/* Timeline Visualization */}
-                        <TimelineViz nodes={nodes} sim={sim} isSimStarted={isSimStarted} mode={mode} />
+                        <TimelineViz nodes={nodes} sim={sim} isSimStarted={isSimStarted} />
 
                         {/* Nodes Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 content-start">
@@ -929,16 +881,6 @@
                                                 <input type="range" min="0.1" max="5" step="0.1" value={metric.processTime}
                                                     onChange={(e) => updateNode(metric.id, 'processTime', Number(e.target.value))} className="apple-slider" />
                                             </div>
-                                            {mode === 'advanced' && (
-                                                <div>
-                                                    <div className="flex justify-between text-[9px] mb-0.5">
-                                                        <span className="text-apple-red">Sức chịu đựng (phút)</span>
-                                                        <span className="font-semibold text-[10px] text-apple-red">{metric.abandonThreshold || 5}</span>
-                                                    </div>
-                                                    <input type="range" min="1" max="60" value={metric.abandonThreshold || 5}
-                                                        onChange={(e) => updateNode(metric.id, 'abandonThreshold', Number(e.target.value))} className="apple-slider" />
-                                                </div>
-                                            )}
                                         </div>
 
                                         {/* Waiting Time & Stats */}
