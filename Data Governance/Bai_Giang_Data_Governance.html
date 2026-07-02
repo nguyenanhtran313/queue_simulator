@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bài giảng: Nhập môn Quản trị Dữ liệu (Data Governance)</title>
+<style>
+  :root{
+    --surface-1:#fcfcfb; --page:#f9f9f7; --text-primary:#0b0b0b; --text-secondary:#52514e;
+    --muted:#898781; --gridline:#e1e0d9; --border:rgba(11,11,11,0.10);
+    --blue:#2a78d6; --aqua:#1baf7a; --yellow:#eda100; --green:#008300;
+    --violet:#4a3aa7; --red:#e34948; --magenta:#e87ba4; --orange:#eb6834;
+    --good:#0ca30c; --warning:#fab219; --serious:#ec835a; --critical:#d03b3b;
+    --credential:#a67c00; --credential-ink:#5c4600;
+    --shadow: 0 2px 10px rgba(11,11,11,0.06);
+  }
+  [data-theme="dark"]{
+    --surface-1:#1a1a19; --page:#0d0d0d; --text-primary:#ffffff; --text-secondary:#c3c2b7;
+    --muted:#898781; --gridline:#2c2c2a; --border:rgba(255,255,255,0.10);
+    --blue:#3987e5; --aqua:#199e70; --yellow:#c98500; --green:#2fae2f;
+    --violet:#9085e9; --red:#e66767; --magenta:#d55181; --orange:#d95926;
+    --credential:#e0b400; --credential-ink:#f5dd8a;
+    --shadow: 0 2px 14px rgba(0,0,0,0.5);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--page); color:var(--text-primary);
+    font-family: system-ui, -apple-system, "Segoe UI", Tahoma, sans-serif;
+    line-height:1.65;
+  }
+  a{color:var(--blue);}
+  .layout{display:flex; max-width:1280px; margin:0 auto;}
+  aside.toc{
+    width:270px; flex:0 0 270px; position:sticky; top:0; align-self:flex-start;
+    height:100vh; overflow-y:auto; padding:22px 16px; border-right:1px solid var(--border);
+  }
+  aside.toc h4{font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 12px 4px;}
+  aside.toc ol{list-style:none; margin:0; padding:0; counter-reset:sec;}
+  aside.toc li{margin-bottom:2px;}
+  aside.toc a{
+    display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text-secondary);
+    padding:8px 10px; border-radius:8px; font-size:.9rem; transition:background .15s;
+  }
+  aside.toc a:hover{background:var(--border);}
+  aside.toc a.active{background:var(--border); color:var(--text-primary); font-weight:600;}
+  aside.toc .dot{width:9px; height:9px; border-radius:50%; flex:0 0 9px;}
+  .theme-toggle{
+    margin-top:18px; width:100%; padding:9px 12px; border-radius:8px; border:1px solid var(--border);
+    background:var(--surface-1); color:var(--text-primary); cursor:pointer; font-size:.85rem;
+  }
+  main{flex:1; min-width:0; padding:40px 48px 100px;}
+  header.hero{margin-bottom:28px;}
+  header.hero .kicker{
+    color:var(--blue); font-weight:700; font-size:.8rem; text-transform:uppercase; letter-spacing:.1em;
+  }
+  header.hero h1{font-size:2.1rem; margin:8px 0 10px; line-height:1.25;}
+  header.hero p.lead{color:var(--text-secondary); font-size:1.05rem; max-width:760px;}
+  .pitch{
+    background:var(--surface-1); border:1px solid var(--border); border-left:4px solid var(--blue);
+    border-radius:10px; padding:18px 20px; margin:22px 0 8px; box-shadow:var(--shadow);
+  }
+  .pitch h3{margin:0 0 8px; font-size:.95rem; text-transform:uppercase; letter-spacing:.04em; color:var(--blue);}
+  .pitch p{margin:0; color:var(--text-secondary);}
+  section{padding-top:52px; margin-top:-12px; scroll-margin-top:20px;}
+  section .sec-head{display:flex; align-items:center; gap:12px; margin-bottom:6px;}
+  .badge{
+    width:34px; height:34px; border-radius:9px; display:flex; align-items:center; justify-content:center;
+    color:#fff; font-weight:700; font-size:.95rem; flex:0 0 34px;
+  }
+  section h2{margin:0; font-size:1.5rem;}
+  section .sec-sub{color:var(--muted); font-size:.85rem; margin:0 0 22px 46px;}
+  .card{
+    background:var(--surface-1); border:1px solid var(--border); border-radius:12px;
+    padding:20px 22px; margin-bottom:16px; box-shadow:var(--shadow);
+  }
+  .card h3{margin-top:0; font-size:1.05rem;}
+  .card p, .card li{color:var(--text-secondary);}
+  .grid{display:grid; grid-template-columns:repeat(auto-fit, minmax(230px,1fr)); gap:14px; margin:18px 0;}
+  .pill-card{
+    background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:16px 18px;
+    border-top:4px solid var(--accent); box-shadow:var(--shadow);
+  }
+  .pill-card .icon{font-size:1.4rem;}
+  .pill-card h4{margin:8px 0 6px; font-size:.98rem;}
+  .pill-card p{margin:0; font-size:.88rem; color:var(--text-secondary);}
+  table{width:100%; border-collapse:collapse; background:var(--surface-1); border:1px solid var(--border); border-radius:10px; overflow:hidden; box-shadow:var(--shadow); margin:16px 0;}
+  th,td{padding:11px 14px; text-align:left; border-bottom:1px solid var(--gridline); font-size:.9rem; vertical-align:top;}
+  th{background:var(--page); color:var(--text-secondary); font-size:.78rem; text-transform:uppercase; letter-spacing:.04em;}
+  tr:last-child td{border-bottom:none;}
+  .flow{display:flex; align-items:stretch; gap:8px; flex-wrap:wrap; margin:18px 0;}
+  .flow .step{
+    flex:1; min-width:140px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px;
+    padding:14px; text-align:center; box-shadow:var(--shadow); font-size:.85rem;
+  }
+  .flow .arrow{display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:1.3rem; flex:0 0 24px;}
+  .callout{
+    border-radius:10px; padding:14px 16px; margin:14px 0; font-size:.9rem; border:1px solid var(--border);
+  }
+  .callout.warn{background:color-mix(in srgb, var(--warning) 12%, var(--surface-1)); border-left:4px solid var(--warning);}
+  .callout.good{background:color-mix(in srgb, var(--good) 10%, var(--surface-1)); border-left:4px solid var(--good);}
+  .callout.critical{background:color-mix(in srgb, var(--critical) 10%, var(--surface-1)); border-left:4px solid var(--critical);}
+  .stack{display:flex; flex-direction:column; gap:8px; margin:20px 0;}
+  .stack .layer{
+    border-radius:10px; padding:14px 18px; color:#fff; box-shadow:var(--shadow);
+  }
+  .stack .layer h4{margin:0 0 4px; font-size:1rem;}
+  .stack .layer p{margin:0; font-size:.85rem; opacity:.92;}
+  details{
+    background:var(--surface-1); border:1px solid var(--border); border-radius:10px;
+    padding:12px 16px; margin-bottom:10px; box-shadow:var(--shadow);
+  }
+  details summary{cursor:pointer; font-weight:600; font-size:.95rem; list-style:none;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:"▸ "; color:var(--orange);}
+  details[open] summary::before{content:"▾ "; color:var(--orange);}
+  details .ans{margin-top:10px; padding-top:10px; border-top:1px dashed var(--gridline); color:var(--text-secondary); font-size:.9rem;}
+  details .ans li{margin-bottom:4px;}
+  dl.glossary{display:grid; grid-template-columns:repeat(auto-fit, minmax(280px,1fr)); gap:12px; margin:18px 0;}
+  dl.glossary div{background:var(--surface-1); border:1px solid var(--border); border-radius:10px; padding:14px 16px; box-shadow:var(--shadow);}
+  dl.glossary dt{font-weight:700; font-size:.9rem; margin-bottom:4px;}
+  dl.glossary dd{margin:0; font-size:.85rem; color:var(--text-secondary);}
+  footer{border-top:1px solid var(--border); margin-top:60px; padding-top:20px; font-size:.82rem; color:var(--muted);}
+  footer ul{padding-left:18px;}
+  code{background:var(--border); padding:1px 6px; border-radius:4px; font-size:.85em;}
+
+  /* ---- Credential / DAMA DMBOK2 section ---- */
+  .credential-banner{
+    display:flex; align-items:center; gap:18px; border-radius:14px; padding:20px 24px; margin-bottom:22px;
+    background:linear-gradient(120deg, color-mix(in srgb, var(--credential) 18%, var(--surface-1)), var(--surface-1));
+    border:1px solid var(--border); border-left:5px solid var(--credential); box-shadow:var(--shadow);
+  }
+  .credential-banner .seal{font-size:2.4rem; flex:0 0 auto;}
+  .credential-banner h3{margin:0 0 4px; color:var(--credential-ink); font-size:1.05rem;}
+  .credential-banner p{margin:0; color:var(--text-secondary); font-size:.9rem;}
+  .credential-banner .chip{
+    display:inline-block; margin-top:8px; font-size:.72rem; font-weight:700; letter-spacing:.03em;
+    padding:3px 9px; border-radius:999px; background:var(--credential); color:#fff;
+  }
+  .badge.credential{background:var(--credential);}
+  section .sec-sub .dama-tag{
+    display:inline-block; margin-left:6px; font-size:.68rem; font-weight:700; padding:1px 7px; border-radius:999px;
+    background:color-mix(in srgb, var(--credential) 25%, transparent); color:var(--credential-ink); vertical-align:middle;
+  }
+  .chapter-card{
+    background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:18px 20px;
+    margin-bottom:16px; box-shadow:var(--shadow); border-top:4px solid var(--credential);
+  }
+  .chapter-card h3{margin:0 0 10px; font-size:1.02rem;}
+  .chapter-card .kt{color:var(--text-secondary); font-size:.88rem;}
+  .chapter-card .kt li{margin-bottom:5px;}
+  .strategy-box, .usecase-box{
+    border-radius:9px; padding:11px 14px; margin-top:10px; font-size:.85rem; border:1px solid var(--border);
+  }
+  .strategy-box{background:color-mix(in srgb, var(--blue) 9%, var(--surface-1)); border-left:3px solid var(--blue);}
+  .usecase-box{background:color-mix(in srgb, var(--aqua) 9%, var(--surface-1)); border-left:3px solid var(--aqua);}
+  .strategy-box b, .usecase-box b{display:block; margin-bottom:4px; font-size:.75rem; text-transform:uppercase; letter-spacing:.04em;}
+
+  /* DAMA wheel */
+  .dama-wheel{position:relative; width:380px; height:340px; margin:22px auto 10px; max-width:100%;}
+  .dama-wheel .hub{
+    position:absolute; left:130px; top:110px; width:120px; height:120px; border-radius:50%;
+    background:var(--credential); color:#fff; display:flex; align-items:center; justify-content:center;
+    text-align:center; font-weight:700; font-size:.82rem; padding:8px; box-shadow:var(--shadow); z-index:2; line-height:1.2;
+  }
+  .dama-wheel .witem{
+    position:absolute; width:96px; padding:7px 8px; border-radius:8px; text-align:center; font-size:.68rem;
+    line-height:1.25; border:1px solid var(--border); background:var(--surface-1); color:var(--text-secondary);
+    box-shadow:var(--shadow);
+  }
+  .dama-wheel .witem.covered{
+    background:color-mix(in srgb, var(--credential) 16%, var(--surface-1)); border-color:var(--credential);
+    color:var(--text-primary); font-weight:600;
+  }
+  .dama-wheel .witem .chk{color:var(--credential-ink); font-size:.62rem; display:block; margin-top:2px;}
+  .wheel-legend{display:flex; gap:16px; justify-content:center; flex-wrap:wrap; font-size:.78rem; color:var(--muted); margin-top:6px;}
+  .wheel-legend span{display:inline-flex; align-items:center; gap:5px;}
+  .wheel-legend i{width:10px; height:10px; border-radius:3px; display:inline-block;}
+
+  /* CAP triangle */
+  .cap-wrap{position:relative; width:230px; height:200px; margin:16px auto;}
+  .cap-wrap svg{position:absolute; top:0; left:0;}
+  .cap-node{
+    position:absolute; width:78px; padding:8px; border-radius:9px; text-align:center; font-size:.72rem;
+    background:var(--surface-1); border:1px solid var(--border); box-shadow:var(--shadow); font-weight:700;
+  }
+  .cap-node small{display:block; font-weight:400; color:var(--text-secondary); font-size:.65rem; margin-top:2px;}
+  .cap-center{
+    position:absolute; left:74px; top:82px; width:82px; font-size:.62rem; text-align:center; color:var(--muted);
+  }
+
+  /* Org models (Centralized / Replicated / Federated) */
+  .org-set{display:grid; grid-template-columns:repeat(auto-fit, minmax(220px,1fr)); gap:16px; margin:18px 0;}
+  .org-box{background:var(--surface-1); border:1px solid var(--border); border-radius:12px; padding:16px; box-shadow:var(--shadow); text-align:center;}
+  .org-box h4{margin:0 0 10px; font-size:.9rem;}
+  .org-parent{
+    display:inline-block; background:var(--credential); color:#fff; font-size:.72rem; font-weight:700;
+    padding:7px 10px; border-radius:7px; margin-bottom:4px;
+  }
+  .org-arrow{color:var(--muted); font-size:1rem; margin:2px 0;}
+  .org-children{display:flex; gap:6px; justify-content:center; flex-wrap:wrap;}
+  .org-children .node{
+    flex:1; min-width:58px; background:var(--page); border:1px dashed var(--credential); border-radius:6px;
+    padding:6px 4px; font-size:.65rem; color:var(--text-secondary);
+  }
+  .org-box p.note{margin:10px 0 0; font-size:.76rem; color:var(--muted);}
+
+  /* Data model levels */
+  .model-levels{display:flex; align-items:center; gap:6px; margin:16px 0; flex-wrap:wrap;}
+  .model-levels .lv{
+    flex:1; min-width:150px; background:var(--surface-1); border:1px solid var(--border); border-radius:10px;
+    padding:14px; box-shadow:var(--shadow); text-align:center;
+  }
+  .model-levels .lv b{display:block; font-size:.85rem; margin-bottom:4px;}
+  .model-levels .lv span{font-size:.76rem; color:var(--text-secondary);}
+  .model-levels .arrow{color:var(--muted); font-size:1.2rem; flex:0 0 20px; text-align:center;}
+
+  /* Zachman mini grid */
+  .zachman{display:grid; grid-template-columns:repeat(6,1fr); gap:6px; margin:16px 0; font-size:.68rem; text-align:center;}
+  .zachman div{padding:8px 4px; border-radius:7px; background:var(--surface-1); border:1px solid var(--border);}
+  .zachman .q{background:color-mix(in srgb, var(--blue) 12%, var(--surface-1)); font-weight:700; color:var(--blue);}
+  .zachman .p{background:color-mix(in srgb, var(--credential) 12%, var(--surface-1)); color:var(--credential-ink); font-weight:600;}
+
+  @media (max-width: 880px){
+    aside.toc{display:none;}
+    main{padding:24px 20px 80px;}
+  }
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="toc">
+    <h4>Nội dung bài giảng</h4>
+    <ol>
+      <li><a href="#s1"><span class="dot" style="background:var(--blue)"></span>1. DG là gì & vì sao cần?</a></li>
+      <li><a href="#s2"><span class="dot" style="background:var(--aqua)"></span>2. Ẩn dụ "dọn nhà cũ"</a></li>
+      <li><a href="#s3"><span class="dot" style="background:var(--yellow)"></span>3. DG vs Data Management</a></li>
+      <li><a href="#s4"><span class="dot" style="background:var(--green)"></span>4. ITSM — bệ đỡ vận hành</a></li>
+      <li><a href="#s5"><span class="dot" style="background:var(--violet)"></span>5. DG trong kỷ nguyên AI/ML</a></li>
+      <li><a href="#s6"><span class="dot" style="background:var(--red)"></span>6. Khung tổng hợp (mental model)</a></li>
+      <li><a href="#sdama"><span class="dot" style="background:var(--credential)"></span>7. DAMA DMBOK2 (CDMP) 🎓</a></li>
+      <li><a href="#s8"><span class="dot" style="background:var(--orange)"></span>8. Bộ câu hỏi phỏng vấn</a></li>
+      <li><a href="#s9"><span class="dot" style="background:var(--magenta)"></span>9. Thuật ngữ cốt lõi</a></li>
+    </ol>
+    <button class="theme-toggle" id="themeToggle">🌓 Đổi giao diện Sáng/Tối</button>
+  </aside>
+
+  <main>
+    <header class="hero">
+      <div class="kicker">Bài giảng nhập môn · Chuẩn bị phỏng vấn Giám đốc / Chuyên gia Data Governance</div>
+      <h1>Quản trị Dữ liệu (Data Governance) — Từ khái niệm nền tảng đến khung tư duy cấp lãnh đạo</h1>
+      <p class="lead">Tài liệu này tổng hợp 6 nguồn học liệu trong <code>Data Governance/</code> thành một bài giảng liền mạch: từ định nghĩa cơ bản, ẩn dụ trực quan, đối sánh với Data Management, vai trò của ITSM, ứng dụng trong AI/ML, cho tới nền tảng chuẩn ngành <strong>DAMA DMBOK2 (CDMP)</strong> — kết lại bằng một khung tư duy tổng hợp và bộ câu hỏi phỏng vấn thực chiến.</p>
+    </header>
+
+    <div class="pitch">
+      <h3>⚡ Tóm tắt 60 giây (đọc lại ngay trước khi vào phỏng vấn)</h3>
+      <p>
+      Data Governance là việc thiết lập <strong>accountability</strong> (ai chịu trách nhiệm) và <strong>authority</strong> (ai có thẩm quyền quyết định) đối với dữ liệu của tổ chức. Nó là <strong>chiến lược / bản thiết kế</strong> ("cái gì cần làm" — chính sách, quyền sở hữu, tuân thủ), còn <strong>Data Management</strong> là <strong>vận hành / thi công</strong> ("làm như thế nào" — ETL, lưu trữ, bảo mật kỹ thuật). <strong>ITSM</strong> là bệ đỡ vận hành giúp hiện thực hoá governance qua vòng đời dữ liệu, CMDB, quản lý sự cố/truy cập. Trong kỷ nguyên AI, DG là điều kiện sống còn: dữ liệu rác đưa vào mô hình sẽ cho ra kết quả rác — ba trụ cột bắt buộc là <strong>Cataloging, Quality, Lineage</strong>, thực thi bằng nguyên tắc <strong>co-ownership</strong> (Business + IT) và <strong>sửa lỗi tận gốc</strong>, không vá ở khâu cuối. Nền tảng lý thuyết chuẩn hoá theo <strong>DAMA DMBOK2</strong> (mục 7) bổ sung ngôn ngữ chuyên môn: DAMA Wheel, Data Stewardship, Operating Models, Data Ethics, Data Architecture/Modeling, CAP theorem.
+      </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section id="s1">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--blue)">1</div>
+        <h2>Data Governance là gì & vì sao tổ chức cần nó?</h2>
+      </div>
+      <p class="sec-sub">Nguồn: "Introduction to Data Governance"</p>
+
+      <div class="card">
+        <h3>🚧 Vấn đề khi thiếu Quản trị Dữ liệu</h3>
+        <ul>
+          <li><strong>Thiếu "Nguồn sự thật duy nhất" (Single Source of Truth):</strong> dữ liệu rải rác nhiều hệ thống, không đồng bộ → nhiều phiên bản khác nhau của cùng một dữ liệu.</li>
+          <li><strong>Thiếu trách nhiệm & khó lưu trữ:</strong> không có người/ứng dụng chịu trách nhiệm rõ ràng để dẫn dắt và quản lý dữ liệu.</li>
+          <li><strong>Sử dụng sai ngữ cảnh:</strong> thiếu định nghĩa rõ ràng về mục đích, tầm quan trọng của từng thành phần dữ liệu.</li>
+          <li><strong>Thiếu tài liệu hướng dẫn:</strong> nhân sự khó tra cứu, hiểu đúng về dữ liệu của tổ chức.</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h3>📖 Định nghĩa cốt lõi</h3>
+        <p>Hiểu đơn giản nhất: <strong>Quản trị dữ liệu là quá trình thiết lập tính trách nhiệm giải trình (accountability) và thẩm quyền (authority)</strong> trong tất cả các khía cạnh xoay quanh dữ liệu của một tổ chức.</p>
+      </div>
+
+      <h3 style="margin-top:26px;">Bốn trụ cột cốt lõi</h3>
+      <div class="grid">
+        <div class="pill-card" style="--accent:var(--blue)">
+          <div class="icon">🏛️</div>
+          <h4>Chính sách & Hướng dẫn</h4>
+          <p>Data Governance Council gồm đại diện Business + IT thiết lập quy tắc quản lý dữ liệu.</p>
+        </div>
+        <div class="pill-card" style="--accent:var(--aqua)">
+          <div class="icon">🏷️</div>
+          <h4>Quản lý Metadata</h4>
+          <p>Ghi lại, theo dõi luồng di chuyển dữ liệu — bao gồm cả metadata kỹ thuật lẫn metadata nghiệp vụ.</p>
+        </div>
+        <div class="pill-card" style="--accent:var(--yellow)">
+          <div class="icon">✅</div>
+          <h4>Chất lượng Dữ liệu</h4>
+          <p>Đo lường độ tin cậy, đảm bảo dữ liệu luôn chính xác.</p>
+        </div>
+        <div class="pill-card" style="--accent:var(--violet)">
+          <div class="icon">🔒</div>
+          <h4>Bảo mật Dữ liệu</h4>
+          <p>Kiểm soát quyền truy cập và quyền riêng tư của dữ liệu.</p>
+        </div>
+      </div>
+
+      <div class="callout good">💡 <strong>Kết luận:</strong> Quản trị dữ liệu không chỉ giải quyết vấn đề vận hành mà còn cải thiện đáng kể <strong>ROI (Return on Investment)</strong> của tổ chức. Xu hướng công nghệ: các nền tảng chuyên dụng (vd. Informatica) và AI/ML ngày càng được dùng để tự động hoá trích xuất & phân loại metadata, kiểm soát chất lượng dữ liệu.</div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="s2">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--aqua)">2</div>
+        <h2>Ẩn dụ dễ hiểu: "Dọn dẹp một căn nhà cũ hàng chục năm"</h2>
+      </div>
+      <p class="sec-sub">Nguồn: "Data Governance Explained in 5 minutes"</p>
+
+      <p>Video ví quá trình quản trị dữ liệu như việc dọn dẹp, sắp xếp lại một căn nhà cũ — mỗi giai đoạn dọn nhà tương ứng với một quy trình nền tảng của Data Governance.</p>
+
+      <table>
+        <thead><tr><th>Hoạt động dọn nhà</th><th>Tương đương trong Data Governance</th></tr></thead>
+        <tbody>
+          <tr><td>Khám phá đồ vật trong tầng hầm, gác mái</td><td><strong>Data Discovery</strong> — nhận diện toàn bộ tài sản dữ liệu (cloud, on-prem, SaaS), kể cả dữ liệu "ẩn"/chưa biết.</td></tr>
+          <tr><td>Phân loại đồ vật: kỷ vật gia đình, ảnh, đồ chơi, hồ sơ tài chính</td><td><strong>Data Classification</strong> — gán nhãn tài sản dữ liệu (khách hàng, sản phẩm, tài chính…) theo loại và độ nhạy cảm.</td></tr>
+          <tr><td>Đặt quy tắc: giữ lại / quyên góp / bỏ đi</td><td><strong>Policies &amp; Rules</strong> — chính sách định nghĩa cách xử lý dữ liệu; quy tắc thực thi tự động, ví dụ <strong>PII (thông tin định danh cá nhân)</strong> phải được <strong>mask</strong>.</td></tr>
+          <tr><td>Dán nhãn, đóng thùng đồ đã giữ lại</td><td><strong>Metadata</strong> — lớp mô tả: ai tạo ra, chứa gì, nguồn gốc từ đâu — giúp tìm và hiểu dữ liệu như mục lục thư viện.</td></tr>
+          <tr><td>Bán các kỷ vật có giá trị</td><td><strong>Data Monetization</strong> — quản trị tốt giúp phát lộ giá trị kinh doanh ẩn trong dữ liệu, không chỉ để lưu trữ hay tuân thủ.</td></tr>
+          <tr><td>Ước gì việc dọn nhà được tự động hoá</td><td><strong>Automation</strong> — công cụ hiện đại cho phép tự động hoá discovery, classification, policy enforcement để mở rộng quy mô.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout warn">⚠️ <strong>Điểm mấu chốt:</strong> chính sách (policy) chỉ có giá trị khi được gắn với <strong>rule thực thi</strong> cụ thể — ví dụ chính sách "bảo vệ PII" phải đi kèm rule "tự động mask số an sinh xã hội / số CMND" khi phát hiện trong dataset.</div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="s3">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--yellow)">3</div>
+        <h2>Data Governance vs Data Management — góc nhìn Ngân hàng</h2>
+      </div>
+      <p class="sec-sub">Nguồn: "Hệ sinh thái Dữ liệu trong Ngân hàng"</p>
+
+      <div class="grid">
+        <div class="card" style="border-top:4px solid var(--yellow); margin-bottom:0;">
+          <h3>⚙️ Data Management — khía cạnh vận hành</h3>
+          <p>Tập hợp quy trình, công nghệ, best-practice để thu thập, lưu trữ, xử lý, phân tích dữ liệu — đảm bảo dữ liệu <strong>sẵn sàng, đáng tin cậy, bảo mật</strong>.</p>
+          <ul>
+            <li><strong>Thu thập & lưu trữ:</strong> core banking, Data Warehouse, Data Lake.</li>
+            <li><strong>Tích hợp & xử lý (ETL):</strong> Extract từ nguồn (core, CRM) → Transform (làm sạch, chuẩn hoá) → Load vào hệ thống đích phục vụ báo cáo pháp lý, phát hiện gian lận, 360° khách hàng.</li>
+            <li><strong>Chất lượng & bảo mật:</strong> kiểm soát truy cập, mã hoá, an ninh mạng.</li>
+            <li><strong>Phân tích & AI:</strong> BI + AI để trích xuất insight.</li>
+          </ul>
+        </div>
+        <div class="card" style="border-top:4px solid var(--blue); margin-bottom:0;">
+          <h3>🏛️ Data Governance — khía cạnh chiến lược</h3>
+          <p>Khung chính sách, quy trình, tiêu chuẩn xác định cách tổ chức <strong>sở hữu, quản lý và bảo vệ</strong> dữ liệu.</p>
+          <ul>
+            <li><strong>Ownership & Accountability:</strong> phân công <strong>Data Steward</strong> giám sát thực thi chính sách.</li>
+            <li><strong>Tuân thủ pháp lý:</strong> Basel III, BCBS 239 — đặc thù ngành tài chính bị quản lý nghiêm ngặt.</li>
+            <li><strong>Chất lượng & Metadata:</strong> chuẩn hoá dữ liệu, ghi chép cấu trúc/định nghĩa/nguồn gốc tài sản dữ liệu.</li>
+            <li><strong>Kiểm toán & rủi ro:</strong> theo dõi cách dữ liệu được sử dụng phục vụ audit nội bộ, báo cáo quy định.</li>
+          </ul>
+        </div>
+      </div>
+
+      <h3 style="margin-top:10px;">Mối quan hệ tương hỗ: bản thiết kế và quá trình thi công</h3>
+      <div class="flow">
+        <div class="step" style="border-top:3px solid var(--blue);"><strong>Governance</strong><br>thiết lập quy tắc<br><span style="color:var(--muted); font-size:.8rem;">("cái gì cần làm")</span></div>
+        <div class="arrow">→</div>
+        <div class="step" style="border-top:3px solid var(--yellow);"><strong>Management</strong><br>thực thi quy tắc<br><span style="color:var(--muted); font-size:.8rem;">("làm như thế nào")</span></div>
+        <div class="arrow">→</div>
+        <div class="step" style="border-top:3px solid var(--serious);"><strong>Vận hành</strong><br>phát hiện lỗi / lỗ hổng</div>
+        <div class="arrow">→</div>
+        <div class="step" style="border-top:3px solid var(--good);"><strong>Phản hồi</strong><br>cập nhật khung Governance</div>
+      </div>
+      <div class="callout good">🎯 Cả hai chia sẻ mục tiêu chung: <strong>Tuân thủ (Compliance), Tin cậy (Trust), Tạo giá trị (Value)</strong>. Governance = bản thiết kế, Management = quá trình thi công.</div>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="s4">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--green)">4</div>
+        <h2>ITSM — bệ đỡ vận hành cho Data Governance</h2>
+      </div>
+      <p class="sec-sub">Nguồn: podcast "ITSM & Data Governance"</p>
+
+      <p>Dữ liệu được ví như "vàng" — <strong>ITSM (IT Service Management)</strong> chính là khung vận hành và bảo mật giúp đảm bảo nguồn "vàng" đó được xử lý an toàn, hiệu quả, xuyên suốt vòng đời.</p>
+
+      <table>
+        <thead><tr><th>Quy trình ITSM</th><th>Vai trò với Data Governance</th><th>Mục tiêu / Kết quả</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Data Lifecycle Mgmt</strong><br><span style="color:var(--muted); font-size:.8rem;">Service Request, Change Enablement</span></td><td>Kiểm soát quyền truy cập / thay đổi hệ thống liên quan đến dữ liệu.</td><td>Dữ liệu được xử lý an toàn, chính xác từ khởi tạo → xoá bỏ.</td></tr>
+          <tr><td><strong>Asset & Config Mgmt</strong><br><span style="color:var(--muted); font-size:.8rem;">CMDB</span></td><td>Định vị nơi lưu trữ, độ nhạy cảm, chủ sở hữu, chính sách áp dụng cho từng dữ liệu.</td><td>Kiểm soát & nhận biết toàn diện tài sản dữ liệu.</td></tr>
+          <tr><td><strong>Incident Mgmt</strong></td><td>Coi mất mát/hư hỏng dữ liệu là sự cố ưu tiên khắc phục nhanh.</td><td>Giảm thiểu thời gian gián đoạn / dữ liệu không khả dụng.</td></tr>
+          <tr><td><strong>Problem Mgmt</strong></td><td>Điều tra nguyên nhân gốc rễ (root cause) của sự cố dữ liệu.</td><td>Ngăn sự cố tái diễn.</td></tr>
+          <tr><td><strong>Access Mgmt</strong></td><td>Kiểm soát quyền truy cập dữ liệu nhạy cảm qua phê duyệt chính thức.</td><td>Bảo mật + tuân thủ GDPR, CCPA.</td></tr>
+          <tr><td><strong>Information Security Mgmt</strong></td><td>Thực thi chính sách bảo mật, vá lỗ hổng, ứng phó tấn công mạng.</td><td>Bảo vệ tính toàn vẹn dữ liệu.</td></tr>
+          <tr><td><strong>Continual Improvement</strong></td><td>Vòng lặp đánh giá & tối ưu định kỳ các chỉ số ITSM/DG.</td><td>Kết quả governance tốt hơn, đồng bộ mục tiêu kinh doanh.</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout good">ITSM không đơn thuần là vận hành kỹ thuật — nó là bệ đỡ cốt lõi để hiện thực hoá Data Governance, biến dữ liệu thành nền tảng vững chắc cho thành công của doanh nghiệp.</div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="s5">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--violet)">5</div>
+        <h2>Data Governance trong kỷ nguyên AI/ML</h2>
+      </div>
+      <p class="sec-sub">Nguồn: thảo luận chuyên gia về DG & AI/ML</p>
+
+      <div class="callout critical">🐕 <strong>Ví dụ kinh điển:</strong> huấn luyện mô hình AI toàn bằng ảnh "chó có 3 chân" → AI sẽ kết luận sai rằng mọi con chó chỉ có 3 chân. <em>Garbage in, garbage out</em> — dữ liệu phải được chuẩn hoá <strong>trước</strong> khi vào mô hình, không chờ đến khi hệ thống báo lỗi mới xử lý (cách tiếp cận thụ động, tốn kém).</div>
+
+      <h3 style="margin-top:22px;">Ba trụ cột để dữ liệu sẵn sàng cho AI</h3>
+      <div class="grid">
+        <div class="pill-card" style="--accent:var(--violet)">
+          <div class="icon">📚</div>
+          <h4>Data Cataloging</h4>
+          <p>Metadata + mô tả ngữ cảnh kinh doanh để mọi người hiểu dữ liệu đang đại diện cho điều gì.</p>
+        </div>
+        <div class="pill-card" style="--accent:var(--aqua)">
+          <div class="icon">✅</div>
+          <h4>Data Quality</h4>
+          <p>Đảm bảo dữ liệu đạt chuẩn, phù hợp mục đích: đầy đủ, độ phủ, nhất quán.</p>
+        </div>
+        <div class="pill-card" style="--accent:var(--blue)">
+          <div class="icon">🔗</div>
+          <h4>Data Lineage</h4>
+          <p>Theo dõi luồng dữ liệu từ nguồn → báo cáo cuối, hiểu ảnh hưởng tới KPI kinh doanh.</p>
+        </div>
+      </div>
+
+      <h3>Best practices thực chiến</h3>
+      <div class="card">
+        <ul>
+          <li><strong>Co-ownership:</strong> DG không phải việc riêng của Data team — kỹ sư dữ liệu không thể hiểu hết nghiệp vụ bằng Subject Matter Experts, cần hợp tác chặt giữa kỹ thuật & kinh doanh.</li>
+          <li><strong>Ưu tiên theo độ trưởng thành:</strong> DG là hành trình dài — bắt đầu từ mục tiêu cơ bản (theo dõi khối lượng, độ mới dữ liệu) tới phức tạp (kiểm tra model, business logic).</li>
+          <li><strong>Sửa lỗi tận gốc:</strong> tránh "vá" ở khâu cuối (báo cáo, ETL) — phát hiện & sửa lỗi ngay tại hệ thống nguồn (CRM, DB gốc) để không lặp lại công sức.</li>
+        </ul>
+      </div>
+
+      <div class="callout good">🤖 <strong>AI hoá kiểm soát chất lượng:</strong> thay vì viết rule thủ công (không scale được), dùng chính AI/ML phân tích lịch sử → tự đề xuất/tạo rule chất lượng dữ liệu. Có thể giải quyết tới <strong>95%</strong> khối lượng công việc, ROI cao gấp <strong>14–18 lần</strong>.</div>
+      <div class="callout warn">🔮 <strong>Xu hướng:</strong> LLM/GenAI sẽ tạo trợ lý AI tương tác ngôn ngữ tự nhiên với dữ liệu — nhưng AI <strong>không tự hiểu ngữ cảnh kinh doanh</strong>. Sự tham gia của con người để cung cấp ngữ cảnh vẫn không thể thay thế.</div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section id="s6">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--red)">6</div>
+        <h2>Khung tổng hợp: Mental model 4 lớp cho vai trò lãnh đạo DG</h2>
+      </div>
+      <p class="sec-sub">Tổng hợp toàn bộ 5 nguồn thành một khung tư duy duy nhất</p>
+
+      <p>Khi được hỏi "anh/chị hiểu Data Governance như thế nào?" ở cấp Giám đốc/Chuyên gia, hãy trình bày theo <strong>4 lớp chồng lên nhau</strong> — mỗi lớp trả lời một câu hỏi khác nhau:</p>
+
+      <div class="stack">
+        <div class="layer" style="background:var(--blue);">
+          <h4>1. Lớp Chiến lược & Trách nhiệm giải trình <span style="opacity:.8; font-weight:400;">— "Ai quyết định, ai chịu trách nhiệm?"</span></h4>
+          <p>Data Governance Council (Business + IT) · Chính sách & tiêu chuẩn · Data Owner / Data Steward · Compliance (Basel III, BCBS 239, GDPR, CCPA)</p>
+        </div>
+        <div class="layer" style="background:var(--green);">
+          <h4>2. Lớp Vận hành & Công nghệ <span style="opacity:.8; font-weight:400;">— "Thực thi bằng công cụ, quy trình nào?"</span></h4>
+          <p>Data Management (ETL, kho/hồ dữ liệu) · ITSM (CMDB, Incident/Problem, Access, InfoSec Mgmt, Change Enablement)</p>
+        </div>
+        <div class="layer" style="background:var(--violet);">
+          <h4>3. Lớp Tài sản Dữ liệu <span style="opacity:.8; font-weight:400;">— "Dữ liệu có tin cậy, hiểu được, kiểm soát được không?"</span></h4>
+          <p>Discovery & Classification · Metadata (kỹ thuật + nghiệp vụ) · Data Cataloging · Data Quality · Data Lineage · Bảo mật/PII Masking</p>
+        </div>
+        <div class="layer" style="background:var(--orange);">
+          <h4>4. Lớp Giá trị & Tác động <span style="opacity:.8; font-weight:400;">— "DG mang lại giá trị gì cho tổ chức?"</span></h4>
+          <p>Data Monetization · AI/ML enablement · Giảm rủi ro & sự cố · ROI đo lường được (14–18x khi tự động hoá QC)</p>
+        </div>
+      </div>
+
+      <div class="callout good">🔁 <strong>Vòng lặp liên tục xuyên suốt 4 lớp:</strong> Governance thiết lập quy tắc → Management/ITSM thực thi → vận hành phát hiện lỗi/lỗ hổng → phản hồi cập nhật lại chính sách. Đây chính là "Continual Improvement" — và cũng là câu trả lời cho câu hỏi "làm sao DG không trở thành một dự án làm-một-lần-rồi-thôi".</div>
+    </section>
+
+    <!-- SECTION DAMA DMBOK2 (credential) -->
+    <section id="sdama">
+      <div class="sec-head">
+        <div class="badge credential">7</div>
+        <h2>DAMA-DMBOK2 — Nền tảng chứng chỉ CDMP <span style="font-size:1.1rem;">🎓</span></h2>
+      </div>
+      <p class="sec-sub">Nguồn: ghi chú học tập cá nhân — 6 chương DAMA-DMBOK2 <span class="dama-tag">Chứng minh đã học có hệ thống</span></p>
+
+      <div class="credential-banner">
+        <div class="seal">🎓</div>
+        <div>
+          <h3>Certified Data Management Professional (CDMP) — DAMA-DMBOK2</h3>
+          <p>Phần này tách riêng để làm nổi bật rằng kiến thức Data Governance của bạn không chỉ đến từ video/podcast phổ thông (mục 1–6) mà còn được chuẩn hoá theo <strong>DAMA-DMBOK2</strong> — cuốn cẩm nang tham chiếu được công nhận rộng rãi nhất của ngành Data Management, nền tảng của chứng chỉ CDMP. Dùng các key-point dưới đây để thể hiện chiều sâu chuyên môn khi phỏng vấn.</p>
+          <span class="chip">6/6 CHƯƠNG ĐÃ HỌC</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:26px; text-align:center;">DAMA Wheel — bức tranh toàn cảnh ngành Data Management</h3>
+      <div class="dama-wheel">
+        <div class="hub">🏛️<br>Data<br>Governance</div>
+        <div class="witem" style="left:142px; top:3px;">Metadata</div>
+        <div class="witem" style="left:227px; top:31px;">Data Quality</div>
+        <div class="witem" style="left:280px; top:103px;">Data Warehousing &amp; BI</div>
+        <div class="witem" style="left:280px; top:193px;">Reference &amp; Master Data</div>
+        <div class="witem" style="left:227px; top:265px;">Document &amp; Content Mgmt</div>
+        <div class="witem" style="left:142px; top:293px;">Data Integration &amp; Interoperability</div>
+        <div class="witem" style="left:57px; top:265px;">Data Security</div>
+        <div class="witem covered" style="left:4px; top:193px;">Data Storage &amp; Operations<span class="chk">✓ Chương 6</span></div>
+        <div class="witem covered" style="left:4px; top:103px;">Data Modeling &amp; Design<span class="chk">✓ Chương 5</span></div>
+        <div class="witem covered" style="left:57px; top:31px;">Data Architecture<span class="chk">✓ Chương 4</span></div>
+      </div>
+      <div class="wheel-legend">
+        <span><i style="background:var(--credential)"></i> Data Governance — trung tâm điều phối</span>
+        <span><i style="background:color-mix(in srgb, var(--credential) 30%, var(--surface-1)); border:1px solid var(--credential);"></i> Lĩnh vực được đào sâu trong tài liệu này</span>
+        <span><i style="background:var(--surface-1); border:1px solid var(--border);"></i> Lĩnh vực khác của DAMA Wheel</span>
+      </div>
+      <p style="text-align:center; font-size:.78rem; color:var(--muted); margin:4px 0 26px;">Data Governance luôn ở vị trí trung tâm, giám sát &amp; định hướng cho 10 lĩnh vực kiến thức xung quanh — đây là khung tổng thể của toàn ngành Data Management theo DAMA-DMBOK2.</p>
+
+      <div class="chapter-card">
+        <h3>📘 Chương 1 — Data Management (Quản lý Dữ liệu)</h3>
+        <ul class="kt">
+          <li><strong>Bản chất độc đáo của dữ liệu:</strong> là tài sản kinh tế nhưng khác tài sản vật lý/tài chính — không bị tiêu hao khi dùng, dễ sao chép/di chuyển nhưng rất khó tái tạo nếu mất.</li>
+          <li><strong>Định giá dữ liệu (Data Valuation):</strong> giá trị mang tính ngữ cảnh & thời điểm. IBM ước tính chi phí do dữ liệu kém chất lượng tại Mỹ (2016) lên tới <strong>3,1 nghìn tỷ USD</strong>.</li>
+          <li><strong>Strategic Alignment Model:</strong> liên kết chéo giữa Chiến lược Kinh doanh, Chiến lược IT, Hạ tầng tổ chức và Hạ tầng IT.</li>
+          <li><strong>Context Diagram:</strong> mọi lĩnh vực quản lý dữ liệu vận hành theo luồng Suppliers → Inputs → Processes → Deliverables → Consumers.</li>
+        </ul>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>Chứng minh giá trị (ROI): nhấn mạnh định giá dữ liệu là công cụ quản lý sự thay đổi (Change Management) & xin ngân sách — biết cách lượng hoá chi phí dữ liệu lỗi (làm lại, phạt tuân thủ, bỏ lỡ cơ hội). Nhấn mạnh: quản lý dữ liệu phải <strong>business-driven</strong>, không phải IT-driven — vai trò của bạn là phá vỡ rào cản phòng ban vì dữ liệu di chuyển ngang (horizontal) qua tổ chức.</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Một chiến dịch marketing chạy sai tập khách hàng do lỗi định dạng dữ liệu (garbage in, garbage out). Giám đốc DG xây báo cáo đo lường chi phí ẩn (hidden costs) của việc xử lý lại dữ liệu và tổn hại uy tín, từ đó thuyết phục Ban Giám đốc đầu tư nền tảng quản lý metadata và data quality.</div>
+      </div>
+
+      <div class="chapter-card">
+        <h3>⚖️ Chương 2 — Data Handling Ethics (Đạo đức xử lý dữ liệu)</h3>
+        <ul class="kt">
+          <li><strong>3 nguyên tắc cốt lõi (Belmont Report):</strong> (1) Tôn trọng con người — quyền riêng tư, danh dự; (2) Hướng thiện — tối đa hoá lợi ích, giảm thiểu tác hại; (3) Công bằng — không nhóm nào bị đối xử bất công bởi dữ liệu/thuật toán.</li>
+          <li><strong>Bias (thiên kiến):</strong> thiên kiến thu thập/sử dụng dữ liệu để củng cố giả định có sẵn (hunch and search), hoặc tập mẫu bị lệch (biased sampling).</li>
+          <li><strong>Misleading visualizations:</strong> thao túng tỷ lệ biểu đồ hoặc bỏ qua ngữ cảnh dữ liệu.</li>
+          <li><strong>Obfuscation bị vô hiệu:</strong> dữ liệu dù đã ẩn danh (anonymized) vẫn có thể bị truy ngược ra danh tính thật khi kết hợp với các tập dữ liệu lớn khác.</li>
+        </ul>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>Không chỉ tuân thủ luật (GDPR, PIPEDA) mà phải thiết lập một "Mô hình rủi ro đạo đức" (Ethical risk model). Nêu rõ trong phỏng vấn rằng hệ thống có cơ chế bảo vệ <strong>whistleblowers</strong> — nhân viên dám báo cáo hành vi lạm dụng dữ liệu.</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Một ngân hàng áp dụng AI duyệt vay tín dụng. Giám đốc DG phát hiện mô hình loại bỏ khách hàng thu nhập thấp ở khu vực địa lý cụ thể (phân biệt đối xử). DG can thiệp, yêu cầu Data Science rà soát lại tập dữ liệu huấn luyện để loại bỏ bias, áp dụng nguyên tắc Công bằng (Justice).</div>
+      </div>
+
+      <div class="chapter-card">
+        <h3>🏛️ Chương 3 — Data Governance (Quản trị Dữ liệu)</h3>
+        <ul class="kt">
+          <li><strong>Định nghĩa:</strong> thực thi thẩm quyền, kiểm soát, lập kế hoạch, giám sát đối với tài sản dữ liệu — tách biệt hoàn toàn với Quản trị IT (tập trung phần cứng/phần mềm/dự án IT).</li>
+          <li><strong>Phân loại Data Stewards:</strong> <em>Executive</em> — lãnh đạo cấp cao trong Data Governance Council; <em>Enterprise/Business</em> — chuyên gia nghiệp vụ định nghĩa dữ liệu, thường là Data Owners; <em>Technical</em> — chuyên gia IT đảm bảo thực thi (DBA, Data Integrators).</li>
+          <li><strong>Business Glossary:</strong> từ điển thuật ngữ kinh doanh để thống nhất định nghĩa, giảm rủi ro hiểu sai dữ liệu xuyên phòng ban.</li>
+        </ul>
+        <h4 style="margin:16px 0 4px; font-size:.85rem; color:var(--text-secondary);">3 mô hình vận hành Data Governance (Operating Models)</h4>
+        <div class="org-set">
+          <div class="org-box">
+            <h4>Centralized</h4>
+            <div class="org-parent">DG Trung tâm</div>
+            <div class="org-arrow">↓ kiểm soát toàn bộ</div>
+            <div class="org-children"><div class="node">BU 1</div><div class="node">BU 2</div><div class="node">BU 3</div></div>
+            <p class="note">Một tổ chức DG duy nhất giám sát toàn bộ doanh nghiệp.</p>
+          </div>
+          <div class="org-box">
+            <h4>Replicated</h4>
+            <div class="org-children"><div class="node">BU1+DG</div><div class="node">BU2+DG</div><div class="node">BU3+DG</div></div>
+            <p class="note">Các đơn vị kinh doanh dùng chung 1 mô hình/tiêu chuẩn, vận hành độc lập.</p>
+          </div>
+          <div class="org-box">
+            <h4>Federated</h4>
+            <div class="org-parent">DG Trung tâm (điều phối)</div>
+            <div class="org-arrow">↓ &nbsp; ↓ &nbsp; ↓</div>
+            <div class="org-children"><div class="node">BU1 tự chủ</div><div class="node">BU2 tự chủ</div><div class="node">BU3 tự chủ</div></div>
+            <p class="note">Trung tâm phối hợp cùng nhiều đơn vị độc lập để duy trì định nghĩa chuẩn.</p>
+          </div>
+        </div>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>DG thực chất là quản lý con người (Organizational Change Management — OCM): vạch chiến lược truyền thông, đào tạo, đo lường sự sẵn sàng thay đổi. Phân biệt rõ <strong>Policy</strong> (quy định phải/không được làm gì) với <strong>Standard &amp; Procedure</strong> (hướng dẫn làm như thế nào). Trình bày quy trình leo thang (escalate) vấn đề dữ liệu lên Data Governance Council (DGC) để ra quyết định cuối cùng.</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Phòng Tài chính và Marketing có định nghĩa khác nhau về "Khách hàng đang hoạt động" (Active Customer), dẫn đến sai lệch báo cáo doanh thu. Giám đốc DG tổ chức phiên họp Data Stewardship Committee, thống nhất một định nghĩa chuẩn duy nhất, lưu vào Business Glossary và bắt buộc mọi báo cáo trích xuất logic từ hệ thống này.</div>
+      </div>
+
+      <div class="chapter-card">
+        <h3>🧭 Chương 4 — Data Architecture (Kiến trúc Dữ liệu)</h3>
+        <ul class="kt">
+          <li><strong>Mục tiêu:</strong> kiến trúc dữ liệu là cầu nối giữa chiến lược kinh doanh và thực thi công nghệ.</li>
+          <li><strong>Enterprise Data Model (EDM):</strong> cái nhìn khái quát toàn bộ subject areas của doanh nghiệp, đảm bảo tính nhất quán — xây dần từng lớp thay vì làm tất cả cùng lúc.</li>
+          <li><strong>Data Flow Design:</strong> dùng ma trận/sơ đồ để lập bản đồ vòng đời dữ liệu — nguồn gốc, nơi lưu trữ, cách biến đổi qua hệ thống (Data Lineage).</li>
+        </ul>
+        <h4 style="margin:16px 0 4px; font-size:.85rem; color:var(--text-secondary);">Zachman Framework — ma trận 6×6</h4>
+        <div class="zachman">
+          <div class="q">Cái gì<br><span style="font-weight:400;">What</span></div>
+          <div class="q">Làm thế nào<br><span style="font-weight:400;">How</span></div>
+          <div class="q">Ở đâu<br><span style="font-weight:400;">Where</span></div>
+          <div class="q">Ai<br><span style="font-weight:400;">Who</span></div>
+          <div class="q">Khi nào<br><span style="font-weight:400;">When</span></div>
+          <div class="q">Tại sao<br><span style="font-weight:400;">Why</span></div>
+          <div class="p">Planner<br><span style="font-weight:400;">Lập kế hoạch</span></div>
+          <div class="p">Owner<br><span style="font-weight:400;">Chủ sở hữu</span></div>
+          <div class="p">Designer<br><span style="font-weight:400;">Thiết kế</span></div>
+          <div class="p">Builder<br><span style="font-weight:400;">Xây dựng</span></div>
+          <div class="p">Subcontractor<br><span style="font-weight:400;">Triển khai</span></div>
+          <div class="p">User<br><span style="font-weight:400;">Người dùng</span></div>
+        </div>
+        <p style="text-align:center; font-size:.76rem; color:var(--muted); margin-top:-8px;">Zachman thực chất là khung <strong>Kiến trúc Doanh nghiệp (Enterprise Architecture)</strong> tổng quát: 6 câu hỏi (hàng trên) × 6 lăng kính vai trò (hàng dưới) → ma trận 36 ô. Cột <strong>"What" (Cái gì)</strong> chính là dữ liệu — nên kiến trúc dữ liệu là <em>một lát cắt</em> trong khung tổng thể này, chứ Zachman không chỉ dành riêng cho dữ liệu.</p>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>Đảm bảo Data Architects thiết kế bám sát tiêu chuẩn tổ chức. Kiểm soát nghiêm ngặt tình trạng sao chép dữ liệu tràn lan (replication control) để tránh "interface spaghetti". Xây Data Roadmap bắt đầu từ dữ liệu cốt lõi ít phụ thuộc nhất (Master Data: Sản phẩm, Khách hàng), sau đó mới tới dữ liệu phụ thuộc cao (giao dịch, hoá đơn).</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Một đội Agile/DevOps muốn triển khai nhanh, tự ý tạo bảng dữ liệu mới không theo chuẩn. Giám đốc DG cài một "Enterprise Data Architect" vào quá trình Design Review để đảm bảo thực thể mới vẫn tuân thủ EDM và tái sử dụng (reuse) cấu trúc sẵn có.</div>
+      </div>
+
+      <div class="chapter-card">
+        <h3>🧩 Chương 5 — Data Modeling and Design (Mô hình hoá Dữ liệu)</h3>
+        <div class="model-levels">
+          <div class="lv"><b>🧠 Conceptual</b><span>Yêu cầu kinh doanh cấp cao, thực thể &amp; quy tắc nghiệp vụ cốt lõi.</span></div>
+          <div class="arrow">→</div>
+          <div class="lv"><b>🔧 Logical</b><span>Chi tiết hoá thuộc tính (attributes), miền giá trị (domains), khoá (keys).</span></div>
+          <div class="arrow">→</div>
+          <div class="lv"><b>💾 Physical</b><span>Áp dụng cho DBMS cụ thể — tối ưu qua partitioning / denormalization.</span></div>
+        </div>
+        <ul class="kt">
+          <li><strong>Relational (3NF):</strong> thiết kế chuẩn hoá, loại dư thừa — phù hợp hệ thống giao dịch OLTP.</li>
+          <li><strong>Dimensional (Star/Snowflake):</strong> tối ưu phân tích/Data Warehouse — Fact tables (số đo) + Dimension tables (mô tả).</li>
+          <li><strong>NoSQL:</strong> Document, Key-value, Column-oriented, Graph — linh hoạt cho Big Data, đánh đổi tính nhất quán tuyệt đối (BASE thay vì ACID).</li>
+        </ul>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>Không tự vẽ mô hình, nhưng quản lý chất lượng qua <strong>Data Model Scorecard</strong>: mô hình có đáp ứng yêu cầu? cấu trúc tốt? tuân chuẩn đặt tên (Naming Standards — ISO 11179)? metadata có khớp dữ liệu thực tế? Chấp nhận <strong>khử chuẩn (denormalization) có kiểm soát</strong> trong Data Warehouse để tăng tốc truy vấn, kèm quy trình kiểm tra Data Quality.</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Khi xây 2 Data Mart cho HR và Finance, cả hai đều tự tạo bảng "Thời gian" (Calendar) riêng. Giám đốc DG bắt buộc áp dụng <strong>Conformed Dimensions</strong> (một bảng Calendar chuẩn duy nhất) — khi gộp báo cáo từ 2 phòng ban, số liệu đối chiếu luôn khớp hoàn hảo.</div>
+      </div>
+
+      <div class="chapter-card">
+        <h3>🗄️ Chương 6 — Data Storage and Operations (Lưu trữ &amp; Vận hành)</h3>
+        <ul class="kt">
+          <li><strong>Vai trò DBA:</strong> Production (vận hành thực tế, sao lưu/phục hồi) · Application (hỗ trợ phát triển ứng dụng) · Procedural/Development (hỗ trợ thử nghiệm &amp; logic CSDL).</li>
+          <li><strong>ACID vs BASE:</strong> ACID (Atomicity, Consistency, Isolation, Durability) cho CSDL quan hệ truyền thống — nhất quán tuyệt đối; BASE (Basically Available, Soft state, Eventual consistency) cho NoSQL/Big Data — ưu tiên sẵn sàng.</li>
+          <li><strong>Retention &amp; Purging:</strong> Archiving — chuyển dữ liệu ít dùng sang lưu trữ rẻ hơn; Purging — xoá vĩnh viễn khi chi phí lưu trữ vượt giá trị hoặc theo yêu cầu pháp luật.</li>
+        </ul>
+        <h4 style="margin:16px 0 4px; font-size:.85rem; color:var(--text-secondary);">Định lý CAP — hệ phân tán chỉ chọn được 2/3</h4>
+        <div class="cap-wrap">
+          <svg width="230" height="200" viewBox="0 0 230 200">
+            <line x1="115" y1="18" x2="25" y2="178" style="stroke:var(--gridline); stroke-width:2;"></line>
+            <line x1="115" y1="18" x2="205" y2="178" style="stroke:var(--gridline); stroke-width:2;"></line>
+            <line x1="25" y1="178" x2="205" y2="178" style="stroke:var(--gridline); stroke-width:2;"></line>
+          </svg>
+          <div class="cap-node" style="left:76px; top:0px; border-top:3px solid var(--blue);">Consistency<small>Nhất quán</small></div>
+          <div class="cap-node" style="left:0px; top:150px; border-top:3px solid var(--aqua);">Availability<small>Sẵn sàng</small></div>
+          <div class="cap-node" style="left:152px; top:150px; border-top:3px solid var(--yellow);">Partition tolerance<small>Chịu phân vùng</small></div>
+          <div class="cap-center">chỉ chọn được 2/3</div>
+        </div>
+        <div class="callout warn" style="margin-top:4px;">🎓 <strong>Nâng cao — điểm dễ bị vặn khi phỏng vấn Expert:</strong> Cách nói "chọn 2 trong 3" là cách trình bày <em>cổ điển</em> (và là cách DMBOK2 tóm tắt), nhưng đã bị chính giới học thuật xem là gây hiểu nhầm. Thực tế: trong mọi hệ phân tán, <strong>Partition tolerance (P) là điều bắt buộc phải chấp nhận</strong> — mạng luôn có thể lỗi. Vì vậy bài toán thực chất là <strong>đánh đổi giữa Consistency và Availability KHI xảy ra phân vùng mạng</strong>. Nói cách khác, bạn chọn giữa <strong>CP</strong> (hệ tài chính/ngân hàng — ưu tiên nhất quán, chấp nhận từ chối dịch vụ) hoặc <strong>AP</strong> (mạng xã hội, giỏ hàng — ưu tiên sẵn sàng, chấp nhận nhất quán sau — eventual consistency).</div>
+        <div class="strategy-box"><b>🎯 Chiến lược phỏng vấn</b>Đảm bảo SLA &amp; Business Continuity qua Kế hoạch phục hồi thảm hoạ (Disaster Recovery), phân loại mức ưu tiên khôi phục (Immediate/Critical/Non-critical) cho từng loại Database. Ban hành chính sách <strong>masking dữ liệu Production</strong> khi đưa vào môi trường Test.</div>
+        <div class="usecase-box"><b>💼 Use-case thực tế</b>Trong một dự án sáp nhập công ty, Giám đốc DG chỉ đạo Data Migration, áp dụng chiến lược Log-shipping hoặc Mirroring (Replication) để vừa chuyển đổi vừa duy trì tính sẵn sàng cao, không giao dịch nào bị gián đoạn hay thất thoát.</div>
+      </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="s8">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--orange)">8</div>
+        <h2>Bộ câu hỏi phỏng vấn thường gặp & gợi ý trả lời</h2>
+      </div>
+      <p class="sec-sub">Dành cho vị trí Giám đốc / Chuyên gia Data Governance — bấm để mở gợi ý</p>
+
+      <details>
+        <summary>Anh/chị định nghĩa Data Governance và phân biệt với Data Management như thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>DG = accountability + authority (ai quyết, ai chịu trách nhiệm) → <em>chiến lược, "cái gì"</em>.</li>
+            <li>Data Management = quy trình/công nghệ thực thi → <em>vận hành, "làm như thế nào"</em>.</li>
+            <li>Dùng ẩn dụ "bản thiết kế vs thi công" để trả lời gọn, súc tích, dễ nhớ.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Làm sao thiết lập một Data Governance Council hiệu quả?</summary>
+        <div class="ans">
+          <ul>
+            <li>Đại diện cân bằng Business + IT, có tiếng nói quyết định thực sự (không chỉ mang tính hình thức).</li>
+            <li>Gắn với Data Owner/Data Steward cụ thể theo từng domain dữ liệu.</li>
+            <li>Council ra chính sách → phải có rule enforcement đi kèm (nêu ví dụ PII masking) để chính sách không nằm trên giấy.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Data Steward khác Data Owner ở điểm nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Data Owner: chịu trách nhiệm giải trình cấp cao cho một miền dữ liệu (accountability).</li>
+            <li>Data Steward: người thực thi/giám sát hàng ngày việc tuân thủ chính sách, chất lượng, metadata cho miền dữ liệu đó (được Owner uỷ quyền).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Anh/chị đo lường ROI / thành công của một chương trình Data Governance như thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Chỉ số vận hành: giảm số sự cố dữ liệu, giảm thời gian khắc phục (MTTR), % dữ liệu có metadata/owner đầy đủ.</li>
+            <li>Chỉ số kinh doanh: dữ liệu được monetize, tốc độ ra quyết định nhanh hơn, giảm rủi ro tuân thủ (phạt/audit finding).</li>
+            <li>Dẫn ví dụ cụ thể: tự động hoá kiểm soát chất lượng dữ liệu bằng AI có thể đạt ROI gấp 14–18 lần.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Kể về một vấn đề chất lượng dữ liệu lớn anh/chị từng xử lý và cách tiếp cận root-cause?</summary>
+        <div class="ans">
+          <ul>
+            <li>Nhấn mạnh nguyên tắc "sửa tận gốc" — không vá ở báo cáo/ETL cuối mà quay lại hệ thống nguồn (CRM, core system).</li>
+            <li>Dùng khung Incident Mgmt (khắc phục nhanh) → Problem Mgmt (tìm nguyên nhân gốc, kỹ thuật hay lỗ hổng chính sách) → cập nhật lại policy.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Data Governance hỗ trợ gì cho các sáng kiến AI/ML của tổ chức?</summary>
+        <div class="ans">
+          <ul>
+            <li>Ba trụ cột: Cataloging (hiểu dữ liệu), Quality (tin cậy được), Lineage (giải thích được nguồn gốc/impact tới KPI).</li>
+            <li>Ví dụ trực quan "chó 3 chân" minh hoạ hậu quả bias khi bỏ qua DG.</li>
+            <li>Nhấn mạnh: AI hỗ trợ tự động hoá DG (đề xuất rule chất lượng), nhưng không thay thế con người trong việc cung cấp ngữ cảnh nghiệp vụ.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Anh/chị tiếp cận tuân thủ pháp lý (GDPR, CCPA, Basel III, BCBS 239) như thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Xem compliance là output tự nhiên của một chương trình DG vận hành tốt (ownership rõ, audit trail, access control), không phải một dự án riêng lẻ chạy song song.</li>
+            <li>Với ngành tài chính: nhấn mạnh đặc thù hậu khủng hoảng — Basel III/BCBS 239 đòi hỏi tổng hợp rủi ro chính xác, kịp thời → cần data lineage & data quality mạnh.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Làm sao cân bằng giữa tốc độ đổi mới (agility) và kiểm soát (control)?</summary>
+        <div class="ans">
+          <ul>
+            <li>Áp dụng nguyên tắc trưởng thành theo giai đoạn: bắt đầu với kiểm soát cơ bản (volume, freshness) rồi mới tới kiểm soát phức tạp (model, business logic) — tránh over-engineering ngay từ đầu làm chậm tổ chức.</li>
+            <li>Dùng automation (AI đề xuất rule, ~95% khối lượng công việc) để giảm ma sát giữa tốc độ và kiểm soát.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>ITSM đóng vai trò gì trong chương trình Data Governance của anh/chị?</summary>
+        <div class="ans">
+          <ul>
+            <li>ITSM là "bệ đỡ vận hành": CMDB định vị tài sản dữ liệu, Access Mgmt kiểm soát quyền, Incident/Problem Mgmt xử lý sự cố dữ liệu, Change Enablement kiểm soát thay đổi hệ thống liên quan tới dữ liệu.</li>
+            <li>Nhấn mạnh: không tích hợp ITSM thì DG chỉ dừng ở chính sách trên giấy, không có cơ chế thực thi & giám sát.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>90 ngày đầu tiên ở vị trí Giám đốc Data Governance, anh/chị sẽ ưu tiên gì?</summary>
+        <div class="ans">
+          <ul>
+            <li>Discovery & đánh giá độ trưởng thành hiện tại (giống bước "khám phá tầng hầm, gác mái").</li>
+            <li>Thành lập/kiện toàn Governance Council với đại diện Business + IT thực chất.</li>
+            <li>Chọn 1–2 domain dữ liệu ưu tiên (theo rủi ro/giá trị kinh doanh) để làm thí điểm đầy đủ chu trình: classification → policy → metadata → quality → automation, tạo quick-win chứng minh giá trị trước khi scale toàn tổ chức.</li>
+          </ul>
+        </div>
+      </details>
+
+      <h3 style="margin-top:26px;">Câu hỏi theo khung DAMA-DMBOK2 <span class="dama-tag">CDMP</span></h3>
+
+      <details>
+        <summary>Anh/chị chứng minh ROI của một chương trình Data Governance với Ban Giám đốc như thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Dùng Data Valuation (Chương 1): lượng hoá chi phí dữ liệu kém — chi phí làm lại, phạt tuân thủ, cơ hội bỏ lỡ. Có thể trích dẫn con số tham chiếu ngành: IBM ước tính dữ liệu kém chất lượng gây thiệt hại 3,1 nghìn tỷ USD tại Mỹ (2016).</li>
+            <li>Đóng khung DG như công cụ Change Management để xin ngân sách, không phải chi phí "tuân thủ thuần tuý".</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Tổ chức của anh/chị nên chọn mô hình vận hành DG nào: Centralized, Replicated, hay Federated?</summary>
+        <div class="ans">
+          <ul>
+            <li>Centralized: phù hợp tổ chức nhỏ/tập trung quyền lực, cần kiểm soát chặt.</li>
+            <li>Replicated: phù hợp tập đoàn đa đơn vị nhưng muốn chuẩn hoá — mỗi đơn vị tự vận hành theo cùng khuôn mẫu.</li>
+            <li>Federated: phù hợp tổ chức lớn, nhiều BU có đặc thù riêng — trung tâm chỉ điều phối, BU vẫn tự chủ. Đây thường là lựa chọn thực tế nhất ở doanh nghiệp lớn.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Anh/chị xây dựng "văn hoá đạo đức dữ liệu" (data ethics) trong tổ chức ra sao?</summary>
+        <div class="ans">
+          <ul>
+            <li>Áp dụng 3 nguyên tắc Belmont Report: Tôn trọng con người, Hướng thiện, Công bằng — không chỉ tuân thủ luật (GDPR/PIPEDA).</li>
+            <li>Thiết lập Ethical risk model + cơ chế bảo vệ whistleblower để phát hiện sớm hành vi lạm dụng dữ liệu/thiên kiến thuật toán.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Anh/chị đánh giá chất lượng một data model như thế nào mà không tự tay thiết kế?</summary>
+        <div class="ans">
+          <ul>
+            <li>Dùng Data Model Scorecard: đáp ứng yêu cầu nghiệp vụ, cấu trúc tốt, tuân chuẩn đặt tên (ISO 11179), metadata khớp dữ liệu thực tế.</li>
+            <li>Với Data Warehouse: chấp nhận denormalization có kiểm soát để tăng hiệu năng, miễn có quy trình kiểm tra chất lượng đi kèm; ưu tiên Conformed Dimensions khi nhiều bộ phận cùng dùng chung một khái niệm (vd. lịch/Calendar).</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Anh/chị đảm bảo tính sẵn sàng (availability) và toàn vẹn dữ liệu trong hạ tầng phân tán như thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Vận dụng định lý CAP: hệ phân tán chỉ chọn được 2/3 giữa Consistency – Availability – Partition tolerance → phải biết đánh đổi có chủ đích theo yêu cầu nghiệp vụ (giao dịch tài chính ưu tiên Consistency, hệ thống realtime ưu tiên Availability).</li>
+            <li>SLA/Disaster Recovery: phân loại mức ưu tiên khôi phục theo loại dữ liệu; masking dữ liệu Production khi dùng cho môi trường Test.</li>
+          </ul>
+        </div>
+      </details>
+    </section>
+
+    <!-- SECTION 9 -->
+    <section id="s9">
+      <div class="sec-head">
+        <div class="badge" style="background:var(--magenta)">9</div>
+        <h2>Thuật ngữ cốt lõi</h2>
+      </div>
+      <p class="sec-sub">Tra cứu nhanh trước khi phỏng vấn</p>
+
+      <dl class="glossary">
+        <div><dt>Single Source of Truth</dt><dd>Một nguồn dữ liệu duy nhất được công nhận là chính xác, tránh nhiều phiên bản mâu thuẫn nhau.</dd></div>
+        <div><dt>Data Steward</dt><dd>Người thực thi/giám sát hàng ngày việc tuân thủ chính sách, chất lượng, metadata cho một miền dữ liệu.</dd></div>
+        <div><dt>Data Owner</dt><dd>Người/bộ phận chịu trách nhiệm giải trình cấp cao nhất cho một miền dữ liệu.</dd></div>
+        <div><dt>Metadata (kỹ thuật vs nghiệp vụ)</dt><dd>Kỹ thuật: cấu trúc, kiểu dữ liệu, hệ thống nguồn. Nghiệp vụ: ý nghĩa, ngữ cảnh sử dụng trong kinh doanh.</dd></div>
+        <div><dt>PII & Data Masking</dt><dd>Personally Identifiable Information — thông tin định danh cá nhân; masking là kỹ thuật che/ẩn giá trị nhạy cảm khi hiển thị hoặc xử lý.</dd></div>
+        <div><dt>CMDB</dt><dd>Configuration Management Database — cơ sở dữ liệu quản lý cấu hình, dùng để định vị tài sản IT/dữ liệu, độ nhạy cảm, chủ sở hữu.</dd></div>
+        <div><dt>Data Lineage</dt><dd>Khả năng truy vết luồng dữ liệu từ hệ thống nguồn tới báo cáo/KPI cuối cùng.</dd></div>
+        <div><dt>Data Cataloging</dt><dd>Cung cấp metadata + ngữ cảnh kinh doanh để người dùng hiểu và tìm được dữ liệu.</dd></div>
+        <div><dt>ETL</dt><dd>Extract – Transform – Load: quy trình trích xuất, chuyển đổi/làm sạch, và tải dữ liệu vào hệ thống đích.</dd></div>
+        <div><dt>Basel III / BCBS 239</dt><dd>Khung quy định quốc tế cho ngành ngân hàng, đòi hỏi năng lực tổng hợp và báo cáo rủi ro chính xác, kịp thời — phụ thuộc mạnh vào data lineage & quality.</dd></div>
+        <div><dt>GDPR / CCPA</dt><dd>Khung pháp lý bảo vệ dữ liệu cá nhân của EU và bang California (Mỹ) — chi phối yêu cầu về access control và quyền riêng tư.</dd></div>
+        <div><dt>Data Monetization</dt><dd>Khai thác giá trị kinh doanh/tài chính trực tiếp từ tài sản dữ liệu đã được quản trị tốt.</dd></div>
+        <div><dt>Data Governance Council (DGC)</dt><dd>Hội đồng ra quyết định cấp cao về dữ liệu, nơi các vấn đề không giải quyết được ở cấp phòng ban được leo thang (escalate) lên để phân xử.</dd></div>
+        <div><dt>Executive / Business / Technical Data Steward</dt><dd>3 cấp Data Steward theo DAMA-DMBOK2: Executive (lãnh đạo trong DGC), Business (chuyên gia nghiệp vụ định nghĩa dữ liệu), Technical (IT thực thi — DBA, Data Integrator).</dd></div>
+        <div><dt>Operating Model: Centralized / Replicated / Federated</dt><dd>3 cách tổ chức vận hành DG: tập trung một đầu mối, nhân bản cùng chuẩn cho từng đơn vị, hoặc liên bang (trung tâm điều phối + đơn vị tự chủ).</dd></div>
+        <div><dt>Policy vs Standard vs Procedure</dt><dd>Policy quy định "phải/không được làm gì"; Standard & Procedure hướng dẫn "làm như thế nào" để tuân thủ policy đó.</dd></div>
+        <div><dt>Business Glossary</dt><dd>Từ điển thuật ngữ kinh doanh dùng để thống nhất định nghĩa dữ liệu xuyên phòng ban, giảm rủi ro hiểu sai.</dd></div>
+        <div><dt>Belmont Report (3 nguyên tắc đạo đức)</dt><dd>Tôn trọng con người, Hướng thiện (beneficence), Công bằng (justice) — nền tảng đạo đức xử lý dữ liệu trong DAMA-DMBOK2.</dd></div>
+        <div><dt>Zachman Framework</dt><dd>Ma trận 6×6 kết hợp 6 câu hỏi (What/How/Where/Who/When/Why) với 6 lăng kính vai trò, dùng để mô tả kiến trúc dữ liệu từ nhiều góc nhìn.</dd></div>
+        <div><dt>Enterprise Data Model (EDM)</dt><dd>Mô hình dữ liệu tổng thể bao quát toàn bộ các subject area của doanh nghiệp, xây dựng dần theo từng lớp để đảm bảo tính nhất quán.</dd></div>
+        <div><dt>Conformed Dimensions</dt><dd>Các bảng chiều (dimension) dùng chung, chuẩn hoá giữa nhiều Data Mart để khi gộp báo cáo, số liệu luôn đối chiếu khớp nhau.</dd></div>
+        <div><dt>Data Model Scorecard</dt><dd>Thẻ điểm đánh giá chất lượng mô hình dữ liệu: đáp ứng yêu cầu, cấu trúc tốt, tuân chuẩn đặt tên (ISO 11179), khớp metadata.</dd></div>
+        <div><dt>ACID vs BASE</dt><dd>ACID: Atomicity, Consistency, Isolation, Durability — nhất quán tuyệt đối (CSDL quan hệ). BASE: Basically Available, Soft state, Eventual consistency — ưu tiên sẵn sàng (NoSQL/Big Data).</dd></div>
+        <div><dt>Định lý CAP</dt><dd>Hệ phân tán không thể đồng thời đạt cả Consistency, Availability và Partition tolerance — cổ điển gọi là "chọn 2/3". Cách hiểu hiện đại: P là bắt buộc, nên thực chất là đánh đổi C ↔ A khi có phân vùng mạng (CP vs AP).</dd></div>
+        <div><dt>Organizational Change Management (OCM)</dt><dd>Quản lý sự thay đổi tổ chức — chiến lược truyền thông, đào tạo, đo lường mức độ sẵn sàng thay đổi khi triển khai DG.</dd></div>
+      </dl>
+    </section>
+
+    <footer>
+      <p><strong>Nguồn tham khảo</strong> (tổng hợp từ các file trong <code>Data Governance/</code>):</p>
+      <ul>
+        <li>Introduction to Data Governance — <a href="https://www.youtube.com/watch?v=UNXAUc9gG-4" target="_blank" rel="noopener">youtube.com/watch?v=UNXAUc9gG-4</a></li>
+        <li>Data Governance Explained in 5 minutes (ẩn dụ dọn nhà)</li>
+        <li>Podcast: ITSM & Data Governance</li>
+        <li>Data Management & Governance trong Ngân hàng — <a href="https://www.youtube.com/watch?v=IBE05i5Ai7w" target="_blank" rel="noopener">youtube.com/watch?v=IBE05i5Ai7w</a></li>
+        <li>Data Governance trong thế giới AI & ML — <a href="https://www.youtube.com/watch?v=9A3t-C_SvkU" target="_blank" rel="noopener">youtube.com/watch?v=9A3t-C_SvkU</a></li>
+        <li>DAMA-DMBOK2 (Chapters 1–6) — ghi chú học tập cá nhân, nền tảng CDMP (Certified Data Management Professional)</li>
+      </ul>
+      <p>Phần "Khung tổng hợp" (mục 6) và "Bộ câu hỏi phỏng vấn" (mục 8) là tổng hợp/diễn giải thêm nhằm phục vụ mục đích chuẩn bị phỏng vấn, dựa trên nội dung của 6 nguồn trên.</p>
+    </footer>
+  </main>
+</div>
+
+<script>
+  // Theme toggle
+  const root = document.documentElement;
+  const btn = document.getElementById('themeToggle');
+  const saved = localStorage.getItem('dg-theme');
+  if (saved) root.setAttribute('data-theme', saved);
+  else if (window.matchMedia('(prefers-color-scheme: dark)').matches) root.setAttribute('data-theme', 'dark');
+  btn.addEventListener('click', () => {
+    const cur = root.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+    root.setAttribute('data-theme', cur);
+    localStorage.setItem('dg-theme', cur);
+  });
+
+  // TOC active-section highlight
+  const links = document.querySelectorAll('aside.toc a');
+  const sections = document.querySelectorAll('main section[id]');
+  const map = {};
+  links.forEach(a => map[a.getAttribute('href').slice(1)] = a);
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      const link = map[entry.target.id];
+      if (!link) return;
+      if (entry.isIntersecting) {
+        links.forEach(a => a.classList.remove('active'));
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-15% 0px -70% 0px' });
+  sections.forEach(s => observer.observe(s));
+</script>
+</body>
+</html>
