@@ -85,6 +85,3 @@ Tài xế thường có hành vi (Personas):
     *   Xây dựng module "Incentive Engine": Tính toán giá Surge và tự động áp dụng khi chênh lệch Cung/Cầu vượt ngưỡng.
 *   **Phase 4: Dashboard & Metrics**
     *   Bảng điều khiển cho Operation Manager theo dõi: Tỉ lệ hoàn thành cuốc (Fulfillment rate), Thời gian chờ trung bình (ETA), Chi phí khuyến mãi (Incentive spend).
-
----
-*Ghi chú: Nếu bạn muốn bắt đầu bằng cách mô phỏng sinh dữ liệu mock-data (H3 và vị trí tài xế tại HCM) và dựng Heatmap ngay, hãy cho tôi biết!*
