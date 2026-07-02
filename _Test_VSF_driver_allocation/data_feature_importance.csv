@@ -1,0 +1,11 @@
+feature,importance
+hour,1785
+lag_1,1060
+dist_to_center,710
+lag_2,686
+dist_to_airport,608
+day_of_week,513
+dist_to_phu_my_hung,300
+is_raining,264
+location_factor,26
+is_weekend,2

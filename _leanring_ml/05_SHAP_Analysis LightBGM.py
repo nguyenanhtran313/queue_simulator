@@ -1,0 +1,83 @@
+import pandas as pd
+import shap
+import joblib
+import matplotlib.pyplot as plt
+
+def main():
+    print("--- STEP 5: SHAP Feature Importance Analysis ---")
+    df = pd.read_csv('customer_promo_data.csv')
+    X = df.drop(columns=['Customer_ID', 'Historical_Promo_Response', 'Estimated_CLV_VND'])
+    
+    # Load model XGBoost đã train từ file
+    try:
+        model_pipeline = joblib.load('04_xgboost_model.pkl')
+    except FileNotFoundError:
+        print("Error: Model not found. Run 04_XGBoost_Production.py first.")
+        return
+        
+    # Transform raw data sang định dạng số đã encode để đưa vào SHAP
+    # Vì thuật toán XGBoost/SHAP chỉ hiểu số (sau khi chạy qua preprocessor của Pipeline)
+    X_transformed = model_pipeline.named_steps['preprocessor'].transform(X)
+    feature_names = model_pipeline.named_steps['preprocessor'].get_feature_names_out(X.columns)
+    X_transformed_df = pd.DataFrame(X_transformed, columns=feature_names)
+    
+    # Dùng TreeExplainer của SHAP cho XGBoost
+    # Mục đích SHAP: Biến AI từ "Hộp đen" (Black Box) thành "Hộp trong suốt" (White Box).
+    # Giả sử sếp hỏi "Tại sao model lại khuyên gửi khuyến mãi cho KH Nguyễn Văn A?", SHAP sẽ chỉ ra là do "Anh này vừa đăng nhập app nhiều, số dư cao,..."
+    xgb_model = model_pipeline.named_steps['classifier']
+    explainer = shap.TreeExplainer(xgb_model)
+    shap_values = explainer.shap_values(X_transformed_df)
+    
+    import numpy as np
+    # Xử lý trường hợp shap_values trả về list (ví dụ trong một số phiên bản classifier đa lớp)
+    sv = shap_values[1] if isinstance(shap_values, list) else shap_values
+
+    print("\n[Đang tạo biểu đồ...]")
+    # 1. Bar Chart: Feature Importance tuyệt đối
+    plt.figure()
+    shap.summary_plot(shap_values, X_transformed_df, plot_type="bar", show=False)
+    plt.tight_layout()
+    plt.savefig('05_shap_summary_bar.png')
+    plt.close()
+    print("- Đã lưu Biểu đồ Bar (Feature Importance) vào 05_shap_summary_bar.png")
+    
+    # 2. Dot Plot: Chiều hướng tác động (Đồ thị cũ)
+    plt.figure()
+    shap.summary_plot(shap_values, X_transformed_df, show=False)
+    plt.tight_layout()
+    plt.savefig('05_shap_summary_dot.png')
+    plt.close()
+    print("- Đã lưu Biểu đồ Dot (Tác động chiều hướng) vào 05_shap_summary_dot.png")
+    
+    # Tìm 2 biến quan trọng nhất để vẽ Dependence Plot
+    vals = np.abs(sv).mean(0)
+    feature_importance = pd.DataFrame(list(zip(X_transformed_df.columns, vals)), columns=['col_name','importance'])
+    feature_importance.sort_values(by=['importance'], ascending=False, inplace=True)
+    top_feature_1 = feature_importance.iloc[0]['col_name']
+    top_feature_2 = feature_importance.iloc[1]['col_name']
+    
+    # 3. Dependence Plot cho biến Top 1
+    shap.dependence_plot(top_feature_1, sv, X_transformed_df, show=False)
+    plt.tight_layout()
+    plt.savefig('05_shap_dependence_top1.png')
+    plt.close()
+    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_1}' vào 05_shap_dependence_top1.png")
+    
+    # 4. Dependence Plot cho biến Top 2
+    shap.dependence_plot(top_feature_2, sv, X_transformed_df, show=False)
+    plt.tight_layout()
+    plt.savefig('05_shap_dependence_top2.png')
+    plt.close()
+    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_2}' vào 05_shap_dependence_top2.png")
+
+    print("\n" + "="*50)
+    print("HƯỚNG DẪN ĐỌC BIỂU ĐỒ & KẾT LUẬN:")
+    print("="*50)
+    print("Để kết luận insight một cách thuyết phục, ta phối hợp 3 loại biểu đồ như sau:")
+    print(f"Bước 1 (Nhìn rộng): Xem ảnh '05_shap_summary_bar.png'. Ta thấy {top_feature_1} và {top_feature_2} là 2 nhân tố đứng đầu, đóng vai trò quyết định lớn nhất tới việc khách hàng có dùng khuyến mãi hay không.")
+    print(f"Bước 2 (Nhìn chiều hướng): Xem ảnh '05_shap_summary_dot.png'. Tìm dòng chữ {top_feature_1}. Nếu các chấm màu ĐỎ nằm bên PHẢI trục 0, tức là khách hàng có chỉ số {top_feature_1} càng CAO thì xác suất 'chốt đơn' càng TĂNG. Ngược lại nếu ĐỎ nằm bên TRÁI là tác động giảm.")
+    print(f"Bước 3 (Nhìn chi tiết ngưỡng): Xem ảnh '05_shap_dependence_top1.png' (của {top_feature_1}). Biểu đồ này vẽ chính xác từng mức giá trị của khách hàng. Ta có thể tìm được 'điểm bùng phát' (tiếp tuyến dốc lên). Ví dụ: Qua ngưỡng X lần giao dịch thì giá trị dự đoán đột ngột tăng vọt lên mức dương. Đó chính là ngưỡng ta nên dùng để lọc tệp khách hàng mục tiêu trong tương lai!")
+    print("="*50 + "\n")
+
+if __name__ == "__main__":
+    main()

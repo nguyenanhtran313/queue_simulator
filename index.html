@@ -365,29 +365,48 @@
                         }
 
                         // Advance & collect done
-                        let done = 0;
+                        let doneCustomers = [];
                         s.processing[nid] = s.processing[nid].filter(p => {
                             p.rem -= dt;
-                            if (p.rem <= 0) { done++; return false; }
+                            if (p.rem <= 0) { doneCustomers.push(p); return false; }
                             return true;
                         });
 
                         // Move done customers downstream
-                        for (let c = 0; c < done; c++) {
-                            if (idx < nodes.length - 1) {
-                                const nxt = nodes[idx + 1].id;
-                                if (s.queues[nxt] === undefined) s.queues[nxt] = [];
-                                s.queues[nxt].push({ enterTime: s.time });
+                        let walkerTargetIdx = null;
+                        for (let c = 0; c < doneCustomers.length; c++) {
+                            let chosenTargetId = null;
+                            if (node.routes && node.routes.length > 0) {
+                                const r = Math.random();
+                                let accum = 0;
+                                for (const route of node.routes) {
+                                    accum += route.probability;
+                                    if (r <= accum) {
+                                        chosenTargetId = route.targetId;
+                                        break;
+                                    }
+                                }
+                            } else if (idx < nodes.length - 1) {
+                                chosenTargetId = nodes[idx + 1].id;
+                            }
+
+                            if (chosenTargetId) {
+                                if (s.queues[chosenTargetId] === undefined) s.queues[chosenTargetId] = [];
+                                s.queues[chosenTargetId].push({ enterTime: s.time });
+                                if (c === 0) {
+                                    const targetIndex = nodes.findIndex(n => n.id === chosenTargetId);
+                                    if (targetIndex !== -1) walkerTargetIdx = targetIndex;
+                                }
                             } else {
                                 s.completed++;
                             }
                         }
 
                         // Spawn walker (max 1 per node per tick)
-                        if (done > 0 && idx < nodes.length - 1 && s.walkers.length < 20) {
+                        if (walkerTargetIdx !== null && s.walkers.length < 20) {
                             freshWalkers.push({
                                 id: s.nextWId++,
-                                from: idx, to: idx + 1,
+                                from: idx, to: walkerTargetIdx,
                                 ts: Date.now()
                             });
                         }
@@ -566,15 +585,30 @@
             // --- Chart History ---
             const [history, setHistory] = useState({ labels: Array(30).fill(''), data: {} });
 
-            // --- Math Engine (unchanged) ---
+            // --- Math Engine (Updated for Routing) ---
             const metrics = useMemo(() => {
-                let currentIncoming = arrivalRate;
-                return nodes.map(node => {
+                const incomingRates = {};
+                nodes.forEach(n => incomingRates[n.id] = 0);
+                if (nodes.length > 0) incomingRates[nodes[0].id] = arrivalRate;
+
+                return nodes.map((node, i) => {
+                    const currentIncoming = incomingRates[node.id] || 0;
                     const capacity = node.servers * (1 / node.processTime);
                     const rho = capacity > 0 ? currentIncoming / capacity : 0;
                     const isBottleneck = rho >= 1;
                     const queueGrowth = isBottleneck ? (currentIncoming - capacity).toFixed(1) : 0;
                     const outputRate = Math.min(currentIncoming, capacity);
+
+                    // Route output to next nodes
+                    if (node.routes && node.routes.length > 0) {
+                        node.routes.forEach(route => {
+                            if (incomingRates[route.targetId] !== undefined) {
+                                incomingRates[route.targetId] += outputRate * route.probability;
+                            }
+                        });
+                    } else if (i < nodes.length - 1) {
+                        incomingRates[nodes[i+1].id] += outputRate;
+                    }
 
                     let estimatedQueue = 0;
                     let waitTimeStr = '0s';
@@ -586,13 +620,11 @@
                         waitTimeStr = 'Tăng vô hạn';
                     }
 
-                    const result = {
+                    return {
                         ...node, incoming: currentIncoming, capacity, rho, isBottleneck,
                         queueGrowth, estimatedQueue: isBottleneck ? 'Tăng vô hạn' : Math.round(estimatedQueue),
                         waitTimeStr, outputRate
                     };
-                    currentIncoming = outputRate;
-                    return result;
                 });
             }, [arrivalRate, nodes]);
 
@@ -647,6 +679,25 @@
                 setResetTrigger(v => v + 1);
             };
 
+            const loadLuggageTemplate = () => {
+                const b = Date.now();
+                setNodes([
+                    { id: b+1, name: '1. Gate 1/2/3', servers: 3, processTime: 0.8, abandonThreshold: 10 },
+                    { id: b+2, name: '2. Scan Cấp 1', servers: 3, processTime: 0.05, abandonThreshold: 10, routes: [
+                        { targetId: b+4, probability: 0.9 },
+                        { targetId: b+3, probability: 0.1 }
+                    ]},
+                    { id: b+3, name: '3. Scan Cấp 2 (10%)', servers: 2, processTime: 0.5, abandonThreshold: 10, routes: [
+                        { targetId: b+4, probability: 1.0 }
+                    ]},
+                    { id: b+4, name: '4. Checkout cổng', servers: 2, processTime: 0.4, abandonThreshold: 10 },
+                ]);
+                setBaseArrivalRate(180); // 3 khách/phút = 180 khách/giờ
+                setScenario('normal');
+                setIsRunning(false);
+                setResetTrigger(v => v + 1);
+            };
+
             const loadAirportTemplate = () => {
                 const b = Date.now();
                 setNodes([
@@ -686,18 +737,19 @@
             const isSimStarted = sim.simTime > 0 || isRunning;
 
             const totalTheoWaitMin = useMemo(() => {
-                let total = 0;
+                let totalL = 0;
+                let isBN = false;
                 metrics.forEach(m => {
-                    let w = 0;
-                    if (m.rho < 1 && m.rho > 0 && m.incoming > 0) {
-                        w = m.estimatedQueue / m.incoming;
-                    } else if (m.isBottleneck) {
-                        return; // Bottleneck causes infinite wait
+                    if (m.isBottleneck) {
+                        isBN = true;
+                    } else if (m.rho < 1 && m.rho > 0 && m.incoming > 0) {
+                        // L_q = estimatedQueue, L_s = incoming * processTime
+                        totalL += m.estimatedQueue + (m.incoming * m.processTime);
                     }
-                    total += (w + m.processTime);
                 });
-                return total;
-            }, [metrics]);
+                if (isBN) return 0;
+                return arrivalRate > 0 ? totalL / arrivalRate : 0;
+            }, [metrics, arrivalRate]);
             
             const isAnyBottleneck = metrics.some(m => m.isBottleneck);
 
@@ -865,6 +917,10 @@
                             <button onClick={loadAirportTemplate}
                                 className="w-full py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-xl text-[11px] font-semibold shadow-sm hover:from-indigo-600 hover:to-purple-700 transition-all">
                                 ✈️ Sân bay Tân Sơn Nhất (8 Bước)
+                            </button>
+                            <button onClick={loadLuggageTemplate}
+                                className="w-full py-2 bg-gradient-to-r from-cyan-500 to-blue-500 text-white rounded-xl text-[11px] font-semibold shadow-sm hover:from-cyan-600 hover:to-blue-600 transition-all">
+                                🧳 Băng chuyền Hành lý (4 Bước, Rẽ nhánh)
                             </button>
                         </div>
 
