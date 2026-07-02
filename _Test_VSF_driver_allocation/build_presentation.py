@@ -147,9 +147,9 @@ def build_html_presentation():
     print("--- Building Final HTML Presentation ---")
     
     # Load data
-    drivers_df = pd.read_csv('mock_drivers.csv')
-    riders_df = pd.read_csv('mock_riders.csv')
-    heatmap_df = pd.read_csv('realtime_heatmap.csv')
+    drivers_df = pd.read_csv('./_Test_VSF_driver_allocation/mock_drivers.csv')
+    riders_df = pd.read_csv('./_Test_VSF_driver_allocation/mock_riders.csv')
+    heatmap_df = pd.read_csv('./_Test_VSF_driver_allocation/realtime_heatmap.csv')
     
     # Chạy các phases
     importance_df, sample_hist = phase2_demand_prediction(heatmap_df)

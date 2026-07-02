@@ -85,9 +85,9 @@ def simulate_data(num_drivers=2000, num_riders=2000, h3_resolution=9):
     print(heatmap_df.sort_values(by='gap', ascending=False).head())
     
     # Lưu ra file CSV
-    df_drivers.to_csv('mock_drivers.csv', index=False)
-    df_riders.to_csv('mock_riders.csv', index=False)
-    heatmap_df.to_csv('realtime_heatmap.csv', index=False)
+    df_drivers.to_csv('./_Test_VSF_driver_allocation/mock_drivers.csv', index=False)
+    df_riders.to_csv('./_Test_VSF_driver_allocation/mock_riders.csv', index=False)
+    heatmap_df.to_csv('./_Test_VSF_driver_allocation/realtime_heatmap.csv', index=False)
     print("\nĐã lưu mock_drivers.csv, mock_riders.csv và realtime_heatmap.csv")
 
 if __name__ == "__main__":
