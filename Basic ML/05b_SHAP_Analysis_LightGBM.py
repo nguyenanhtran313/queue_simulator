@@ -9,15 +9,15 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 
 def main():
-    print("--- STEP 5: SHAP Feature Importance Analysis (XGBoost) ---")
+    print("--- STEP 5b: SHAP Feature Importance Analysis (LightGBM) ---")
     df = pd.read_csv('customer_promo_data.csv')
     X = df.drop(columns=['Customer_ID', 'Historical_Promo_Response', 'Estimated_CLV_VND'])
 
-    # Load model XGBoost đã train từ file
+    # Load model LightGBM đã train từ file
     try:
-        model_pipeline = joblib.load('04_xgboost_model.pkl')
+        model_pipeline = joblib.load('04b_lightgbm_model.pkl')
     except FileNotFoundError:
-        print("Error: Model not found. Run 04_XGBoost_Production.py first.")
+        print("Error: Model not found. Run 04b_LightGBM_Production.py first.")
         return
 
     # Transform raw data sang định dạng số đã encode để đưa vào SHAP
@@ -25,10 +25,9 @@ def main():
     feature_names = model_pipeline.named_steps['preprocessor'].get_feature_names_out(X.columns)
     X_transformed_df = pd.DataFrame(X_transformed, columns=feature_names)
 
-    # Dùng TreeExplainer của SHAP cho XGBoost
-    # Mục đích SHAP: Biến AI từ "Hộp đen" (Black Box) thành "Hộp trong suốt" (White Box).
-    xgb_model = model_pipeline.named_steps['classifier']
-    explainer = shap.TreeExplainer(xgb_model)
+    # Dùng TreeExplainer của SHAP cho LightGBM
+    lgbm_model = model_pipeline.named_steps['classifier']
+    explainer = shap.TreeExplainer(lgbm_model)
     shap_values = explainer.shap_values(X_transformed_df)
 
     # Chuẩn hóa shap_values về dạng 2D (n_samples, n_features) — các bản shap khác nhau có thể trả về
@@ -45,17 +44,17 @@ def main():
     plt.figure()
     shap.summary_plot(sv, X_transformed_df, plot_type="bar", show=False)
     plt.tight_layout()
-    plt.savefig('05_shap_summary_bar_xgb.png')
+    plt.savefig('05b_shap_summary_bar_lgbm.png')
     plt.close()
-    print("- Đã lưu Biểu đồ Bar (Feature Importance) vào 05_shap_summary_bar_xgb.png")
+    print("- Đã lưu Biểu đồ Bar (Feature Importance) vào 05b_shap_summary_bar_lgbm.png")
 
     # 2. Dot Plot: Chiều hướng tác động
     plt.figure()
     shap.summary_plot(sv, X_transformed_df, show=False)
     plt.tight_layout()
-    plt.savefig('05_shap_summary_dot_xgb.png')
+    plt.savefig('05b_shap_summary_dot_lgbm.png')
     plt.close()
-    print("- Đã lưu Biểu đồ Dot (Tác động chiều hướng) vào 05_shap_summary_dot_xgb.png")
+    print("- Đã lưu Biểu đồ Dot (Tác động chiều hướng) vào 05b_shap_summary_dot_lgbm.png")
 
     # Tìm 2 biến quan trọng nhất để vẽ Dependence Plot
     vals = np.abs(sv).mean(0)
@@ -67,24 +66,23 @@ def main():
     # 3. Dependence Plot cho biến Top 1
     shap.dependence_plot(top_feature_1, sv, X_transformed_df, show=False)
     plt.tight_layout()
-    plt.savefig('05_shap_dependence_top1_xgb.png')
+    plt.savefig('05b_shap_dependence_top1_lgbm.png')
     plt.close()
-    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_1}' vào 05_shap_dependence_top1_xgb.png")
+    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_1}' vào 05b_shap_dependence_top1_lgbm.png")
 
     # 4. Dependence Plot cho biến Top 2
     shap.dependence_plot(top_feature_2, sv, X_transformed_df, show=False)
     plt.tight_layout()
-    plt.savefig('05_shap_dependence_top2_xgb.png')
+    plt.savefig('05b_shap_dependence_top2_lgbm.png')
     plt.close()
-    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_2}' vào 05_shap_dependence_top2_xgb.png")
+    print(f"- Đã lưu Biểu đồ Dependence cho '{top_feature_2}' vào 05b_shap_dependence_top2_lgbm.png")
 
     print("\n" + "=" * 50)
-    print("HƯỚNG DẪN ĐỌC BIỂU ĐỒ & KẾT LUẬN (XGBoost):")
+    print("HƯỚNG DẪN ĐỌC BIỂU ĐỒ & KẾT LUẬN (LightGBM):")
     print("=" * 50)
-    print("Để kết luận insight một cách thuyết phục, ta phối hợp 3 loại biểu đồ như sau:")
-    print(f"Bước 1 (Nhìn rộng): Xem ảnh '05_shap_summary_bar_xgb.png'. Ta thấy {top_feature_1} và {top_feature_2} là 2 nhân tố đứng đầu, đóng vai trò quyết định lớn nhất tới việc khách hàng có dùng khuyến mãi hay không.")
-    print(f"Bước 2 (Nhìn chiều hướng): Xem ảnh '05_shap_summary_dot_xgb.png'. Tìm dòng chữ {top_feature_1}. Nếu các chấm màu ĐỎ nằm bên PHẢI trục 0, tức là khách hàng có chỉ số {top_feature_1} càng CAO thì xác suất 'chốt đơn' càng TĂNG. Ngược lại nếu ĐỎ nằm bên TRÁI là tác động giảm.")
-    print(f"Bước 3 (Nhìn chi tiết ngưỡng): Xem ảnh '05_shap_dependence_top1_xgb.png' (của {top_feature_1}). Biểu đồ này vẽ chính xác từng mức giá trị của khách hàng, giúp tìm 'điểm bùng phát' để lọc tệp khách hàng mục tiêu trong tương lai!")
+    print("So sánh với bộ ảnh SHAP của XGBoost (05_shap_*_xgb.png): nếu 2 model đồng thuận về")
+    print(f"thứ tự quan trọng của {top_feature_1}/{top_feature_2}, đó là bằng chứng mạnh (robust) hơn")
+    print("là chỉ tin vào 1 model duy nhất — dùng để thuyết phục stakeholder không rành kỹ thuật.")
     print("=" * 50 + "\n")
 
 

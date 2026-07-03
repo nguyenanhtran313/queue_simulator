@@ -1,0 +1,32 @@
+{
+  "cost_per_email": 500,
+  "reward_per_response": 12000,
+  "scenarios": {
+    "Mass Marketing (gửi toàn bộ)": {
+      "n_send": 10000,
+      "cost": 5000000,
+      "revenue": 6192000,
+      "profit": 1192000
+    },
+    "Logistic Regression-optimized": {
+      "n_send": 7795,
+      "cost": 3897500,
+      "revenue": 6192000,
+      "profit": 2294500
+    },
+    "XGBoost-optimized": {
+      "n_send": 3737,
+      "cost": 1868500,
+      "revenue": 6108000,
+      "profit": 4239500
+    },
+    "LightGBM-optimized": {
+      "n_send": 3183,
+      "cost": 1591500,
+      "revenue": 6096000,
+      "profit": 4504500
+    }
+  },
+  "best_scenario": "LightGBM-optimized",
+  "best_scenario_uplift_vs_mass": 3312500
+}

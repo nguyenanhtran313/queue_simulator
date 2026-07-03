@@ -1,4 +1,7 @@
+import json
+import os
 import pandas as pd
+import joblib
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
@@ -52,6 +55,32 @@ def main():
     print("\nClassification Report (Logistic Regression Benchmark):")
     print(classification_report(y_test, y_pred))
     print(f"ROC-AUC Score: {roc_auc_score(y_test, y_proba):.4f}")
+
+    # Ghi kết quả vào model_metrics.json (đọc-sửa-ghi) để 04c_Model_Comparison.py có luôn
+    # mốc benchmark khi so sánh XGBoost/LightGBM, không chỉ đọc bằng mắt trên console.
+    report = classification_report(y_test, y_pred, output_dict=True)
+    metrics_path = 'model_metrics.json'
+    all_metrics = {}
+    if os.path.exists(metrics_path):
+        with open(metrics_path, 'r', encoding='utf-8') as f:
+            all_metrics = json.load(f)
+    all_metrics['logistic_regression'] = {
+        'display_name': 'Logistic Regression (Benchmark)',
+        'roc_auc': roc_auc_score(y_test, y_proba),
+        'accuracy': report['accuracy'],
+        'precision': report['1']['precision'],
+        'recall': report['1']['recall'],
+        'f1': report['1']['f1-score'],
+    }
+    with open(metrics_path, 'w', encoding='utf-8') as f:
+        json.dump(all_metrics, f, indent=2, ensure_ascii=False)
+    print(f"\nSaved benchmark metrics to {metrics_path}")
+
+    # Lưu model benchmark ra .pkl để 06_Expected_Profit_Calculation.py tính luôn Expected Profit
+    # cho Logistic Regression, không chỉ 2 model tree-based — cần thiết để trả lời câu hỏi kinh doanh
+    # "ROC-AUC nhỉnh hơn của XGBoost/LightGBM có thực sự đổi ra lợi nhuận cao hơn benchmark hay không?"
+    joblib.dump(model, '03_logreg_model.pkl')
+    print("Saved benchmark model to 03_logreg_model.pkl")
 
 if __name__ == "__main__":
     main()

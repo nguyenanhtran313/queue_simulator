@@ -1,11 +1,14 @@
+import sys
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from xgboost import XGBClassifier
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.compose import ColumnTransformer
 
+sys.stdout.reconfigure(encoding='utf-8')
+
+
 def main():
-    print("--- STEP 7: Uplift Modeling for ROI Optimization ---")
+    print("--- STEP 7: Uplift Modeling for ROI Optimization (S-Learner: XGBoost) ---")
     # Uplift Modeling giúp tìm ra những KH chỉ giao dịch KHI CÓ KHUYẾN MÃI (Persuadables)
     # Khác với model thông thường (chỉ tìm người dễ mua), Uplift chia làm 4 nhóm:
     # 1. Sure things: Lúc nào cũng mua (Không cần tốn tiền gửi Promo).
@@ -31,7 +34,7 @@ def main():
     
     X_encoded = preprocessor.fit_transform(X_slearner)
     
-    model = XGBClassifier(use_label_encoder=False, eval_metric='logloss', random_state=42)
+    model = XGBClassifier(eval_metric='logloss', random_state=42)
     model.fit(X_encoded, y)
     
     # Tính Uplift Score cho toàn bộ tập KH (Sức mạnh của khuyến mãi lên quyết định của từng người)
@@ -52,9 +55,12 @@ def main():
     df['Uplift_Score'] = prob_treat_1 - prob_treat_0
     
     # Tính Incremental ROI (ROI gia tăng do Uplift)
-    # Giả sử chi phí 500đ, Lợi nhuận mang lại 50.000đ
+    # Dùng cùng giả định kinh doanh với 06_Expected_Profit_Calculation.py — kênh Zalo ZNS, cost=500đ/tin
+    # gửi thành công, reward=12.000đ = lợi nhuận gộp nếu khách convert (suy từ tỷ lệ convert TB 5% và
+    # lợi nhuận gộp sau cùng TB 100đ/khách hàng) — để 2 bước có thể so sánh trực tiếp với nhau. Breakeven
+    # = 4.17%, xấp xỉ tỷ lệ convert nền nên Uplift Score lọc được 1 phần đáng kể khách hàng dưới trung bình.
     cost_per_email = 500
-    reward_per_response = 50000
+    reward_per_response = 12000
     
     # Quyết định: Chỉ gửi mail cho người có Lợi nhuận gia tăng > 0
     # Expected_Incremental_Profit = (Xác suất mua TĂNG THÊM do KM) * Lợi nhuận - Chi phí KM

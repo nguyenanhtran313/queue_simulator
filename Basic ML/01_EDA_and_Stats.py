@@ -60,41 +60,12 @@ print("Saved correlation matrix plot to 01_correlation_matrix.png")
 # if __name__ == "__main__":
 #     main()
 
-
-
-# ### 📌 1. Nhóm Biến "Vàng" (Bắt buộc phải giữ lại)
-
-# Đây là những biến vừa có ý nghĩa thống kê ($p\text{-value} < 0.05$), vừa thể hiện lực tương quan rõ rệt với biến mục tiêu `Historical_Promo_Response`:
-
-# * **`Promo_Txn_Count_3M` ($p = 0.0000$, Tương quan = $0.20$):** Đây là tín hiệu mạnh nhất. Khách hàng càng chăm dùng khuyến mãi trong 3 tháng gần đây thì tỷ lệ họ tiếp tục phản hồi chiến dịch mới càng cao.
-# * **`Last_Active_Days` ($p = 0.0000$, Tương quan = $-0.16$):** Mang giá trị tương quan âm. Nghĩa là số ngày rời xa hệ thống càng lớn (khách hàng càng lười hoạt động) thì khả năng họ phản hồi khuyến mãi càng thấp. Mô hình sẽ cần biến này để né các "user chết".
-# * **`Avg_Monthly_Balance_VND` ($p = 0.0086$, Tương quan = $0.09$):** Số dư tài khoản trung bình thực sự có ảnh hưởng đến hành vi của khách.
-# * **`Segment` ($p = 0.0046$):** Phân khúc khách hàng là yếu tố định tính quan trọng quyết định tỷ lệ tương tác.
-
-# ---
-
-# ### 📌 2. Cảnh báo "Bẫy dữ liệu" (🚨 Nguy hiểm)
-
-# Hãy nhìn kỹ vào ma trận tương quan ở hai biến: **`Avg_Monthly_Balance_VND`** và **`Estimated_CLV_VND`** (Giá trị vòng đời khách hàng dự kiến).
-
-# * Hệ số tương quan giữa 2 biến này là **`1.00`** (màu đỏ đậm). Điều này có nghĩa là chúng chứa thông tin giống hệt nhau $100\%$ (có thể CLV được tính toán trực tiếp từ số dư).
-# * **Hành động:** Nếu bạn giữ lại cả 2 biến, mô hình (đặc biệt là Logistic Regression hoặc các mô hình tuyến tính) sẽ bị dính lỗi **Đa cộng tuyến (Multicollinearity)** làm sai lệch kết quả dự đoán. Bạn **bắt buộc phải xóa 1 trong 2 biến này** trước khi train model (khuyên xóa `Estimated_CLV_VND` vì T-test đã chứng minh biến Số dư chạy rất tốt).
-
-# ---
-
-# ### 📌 3. Nhóm Biến "Nhiễu" (Nên mạnh dạn loại bỏ)
-
-# Những biến này có $p\text{-value} > 0.05$ và hệ số tương quan với Target gần như bằng $0$. Chúng không giúp ích gì cho mô hình mà chỉ làm model nặng và dễ bị quá khớp (overfitting):
-
-# * **Nhân khẩu học (`Age` có $p = 0.9842$, `Gender` có $p = 0.1064$):** Tuổi tác và giới tính hoàn toàn không ảnh hưởng đến việc khách hàng có chịu nhận ưu đãi hay không.
-# * **Hành vi thông thường (`Txn_Count_3M`, `Txn_Amount_3M_VND`, `App_Logins_3M`):** Khá bất ngờ là việc khách hàng đăng nhập app nhiều hay chuyển tiền nhiều (nói chung) lại không liên quan đến việc họ có thích bấm vào promo hay không. Bản thân các biến này cũng tự tương quan chéo với nhau rất cao ($0.70$ - $0.86$).
-
-# ---
-
-# ### 📌 Chốt hạ danh sách biến cho mô hình của bạn:
-
-# 1. **Biến mục tiêu (Target):** `Historical_Promo_Response`
-# 2. **Biến đầu vào (Features) giữ lại:** `Promo_Txn_Count_3M`, `Last_Active_Days`, `Avg_Monthly_Balance_VND`, và `Segment`.
-# 3. **Biến loại bỏ:** Tất cả các biến còn lại.
-
-# Bộ khung này sẽ giúp mô hình Machine Learning của bạn vừa nhẹ, vừa học nhanh lại vừa đạt độ chính xác tối ưu nhất!
+# ### 📌 Cách đọc kết quả ở trên (số cụ thể thay đổi mỗi lần chạy lại 00_generate_data.py, nên không hard-code ở đây):
+#
+# 1. Nhóm biến "vàng" (giữ lại): những biến có T-test/Chi-square p-value < 0.05 VÀ hệ số tương quan
+#    rõ rệt với `Historical_Promo_Response` trong 01_correlation_matrix.png.
+# 2. Bẫy đa cộng tuyến: nhìn hệ số tương quan giữa `Avg_Monthly_Balance_VND` và `Estimated_CLV_VND` —
+#    nếu gần 1.00, bắt buộc loại 1 trong 2 biến trước khi train (khuyên loại `Estimated_CLV_VND`).
+# 3. Nhóm biến "nhiễu" (loại bỏ): p-value > 0.05, tương quan với target gần 0 — thường là nhân khẩu học
+#    (Age, Gender) và cụm hành vi thông thường (Txn_Count_3M, Txn_Amount_3M_VND, App_Logins_3M, vốn tự
+#    tương quan chéo cao với nhau nhưng không liên quan tới việc phản hồi khuyến mãi).
