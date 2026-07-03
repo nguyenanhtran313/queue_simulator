@@ -52,9 +52,9 @@ def main():
     df['Uplift_Score'] = prob_treat_1 - prob_treat_0
     
     # Tính Incremental ROI (ROI gia tăng do Uplift)
-    # Giả sử chi phí 500đ, Lợi nhuận mang lại 50.000đ
+    # Chi phí gửi ZNS 500đ, lợi nhuận trung bình/khách hàng phản hồi 10.000đ
     cost_per_email = 500
-    reward_per_response = 50000
+    reward_per_response = 10000
     
     # Quyết định: Chỉ gửi mail cho người có Lợi nhuận gia tăng > 0
     # Expected_Incremental_Profit = (Xác suất mua TĂNG THÊM do KM) * Lợi nhuận - Chi phí KM

@@ -3,11 +3,19 @@ import shap
 import joblib
 import matplotlib.pyplot as plt
 
+SHAP_SAMPLE_SIZE = 5000  # SHAP TreeExplainer chính xác nhưng vẫn tốn O(n) thời gian/bộ nhớ
+# theo số dòng -> lấy mẫu ngẫu nhiên là thực hành chuẩn khi vẽ biểu đồ diễn giải
+# (summary/dependence plot), không cần chạy trên toàn bộ dữ liệu dù data lớn cỡ nào.
+
+
 def main():
     print("--- STEP 5: SHAP Feature Importance Analysis ---")
     df = pd.read_csv('customer_promo_data.csv')
+    if len(df) > SHAP_SAMPLE_SIZE:
+        print(f"Lấy mẫu ngẫu nhiên {SHAP_SAMPLE_SIZE:,} dòng để tính SHAP (data gốc {len(df):,} dòng).")
+        df = df.sample(n=SHAP_SAMPLE_SIZE, random_state=42)
     X = df.drop(columns=['Customer_ID', 'Historical_Promo_Response', 'Estimated_CLV_VND'])
-    
+
     # Load model XGBoost đã train từ file
     try:
         model_pipeline = joblib.load('04_xgboost_model.pkl')

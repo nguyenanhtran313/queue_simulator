@@ -3,11 +3,11 @@ import joblib
 
 def main():
     print("--- STEP 6: Expected Profit Calculation ---")
-    # Biến số kinh doanh (Business Constraints/Assumptions)
-    # Giả sử: Chi phí gửi 1 email/SMS marketing là 500 VND.
-    # Nếu KH phản hồi (mua hàng/click), công ty lời được 50.000 VND (Reward).
-    cost_per_email = 500  # VND
-    reward_per_response = 50000  # VND
+    # Biến số kinh doanh (Business Constraints/Assumptions) — cập nhật theo context mới:
+    # Chi phí gửi 1 tin ZNS promotion là 500 VND/tin/khách hàng.
+    # Nếu KH phản hồi, lợi nhuận trung bình mang lại là 10.000 VND/khách hàng.
+    cost_per_email = 500  # VND — chi phí gửi ZNS
+    reward_per_response = 10000  # VND — lợi nhuận trung bình/khách hàng phản hồi
     
     df = pd.read_csv('customer_promo_data.csv')
     X = df.drop(columns=['Customer_ID', 'Historical_Promo_Response', 'Estimated_CLV_VND'])
@@ -29,8 +29,8 @@ def main():
     df['Expected_Profit'] = (df['Predicted_Prob'] * reward_per_response) - cost_per_email
     
     # Quyết định: Gửi email KH này nếu Lợi nhuận kỳ vọng > 0 (Tức là khoản đầu tư sinh lời).
-    # Equivalent to: P(Response) > Cost/Reward = 500/50000 = 1%
-    # Giả sử nếu model đoán xác suất mua > 1% ta sẽ gửi mail, ngược lại thì không.
+    # Equivalent to: P(Response) > Cost/Reward = 500/10000 = 5%
+    # Nếu model đoán xác suất mua > 5% ta sẽ gửi ZNS, ngược lại thì không.
     df['Send_Email'] = df['Expected_Profit'] > 0
     
     # --- Tính toán ROI Simulation (Đánh giá hiệu quả kinh doanh) ---

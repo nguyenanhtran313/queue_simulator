@@ -26,19 +26,22 @@ def main():
         ], remainder='passthrough')
         
     # LGBMClassifier: Thuật toán cực mạnh (thường nhanh hơn XGBoost).
-    # ĐỂ TĂNG RECALL: 
-    # 1. Dataset của bạn quá bé (chỉ có 800 dòng train). LightGBM mặc định thiết kế cho data hàng triệu dòng nên sẽ bị ngợp. Ta ép nhỏ `num_leaves` và `max_depth`.
-    # 2. Ta dùng `class_weight='balanced'` để tự cân bằng tỷ lệ.
+    # REVIEW (data đã lên quy mô lớn, ~80K+ dòng train): LightGBM giờ đúng vào "sân nhà"
+    # của nó — thiết kế vốn cho data cỡ lớn. Không cần ép nhỏ num_leaves/max_depth
+    # như bản cũ (khi chỉ có 800 dòng train, ép nhỏ để chống overfit); ở quy mô này ta dùng
+    # cấu hình tiêu chuẩn (num_leaves=31 mặc định) và tăng n_estimators vì có đủ data để cây
+    # học sâu hơn mà không sợ overfit.
+    # Ta vẫn dùng `class_weight='balanced'` để tự cân bằng tỷ lệ lớp.
     model = Pipeline(steps=[
         ('preprocessor', preprocessor),
         ('classifier', LGBMClassifier(
-            random_state=42, 
+            random_state=42,
             class_weight='balanced',
-            n_estimators=100, 
-            learning_rate=0.01,
-            num_leaves=15,          # Ép nhỏ cây lại cho data ít
-            max_depth=4,            # Chống overfit
-            min_child_samples=10,   # Data quá bé nên giảm số lượng sample tối thiểu ở lá
+            n_estimators=300,
+            learning_rate=0.05,
+            num_leaves=31,          # mặc định LightGBM, phù hợp data lớn
+            max_depth=-1,           # không giới hạn, để cây tự học độ sâu cần thiết
+            min_child_samples=20,   # mặc định, data lớn không cần giảm nữa
             verbose=-1
         ))
     ])

@@ -13,7 +13,24 @@ Một ngân hàng (dữ liệu mẫu có mã khách hàng tiền tố `TCB...`, 
 
 ## 2. Dữ liệu đầu vào
 
-File: `customer_promo_data.csv` — 1,000 khách hàng, các cột:
+> **Cập nhật (2026-07-03):** dữ liệu đã được scale lên **100,000 khách hàng** bằng
+> `00_generate_data.py` (bản gốc 1,000 dòng lưu backup ở `customer_promo_data_1k_backup.csv`;
+> ban đầu thử 1,000,000 dòng nhưng đã giảm xuống 100,000 theo yêu cầu — nhẹ hơn, chạy toàn bộ
+> pipeline 00→09 chỉ mất khoảng 1 phút thay vì vài phút, vẫn đủ lớn để minh hoạ rõ lợi ích của
+> targeting bằng ML so với gửi đại trà).
+> Đây KHÔNG phải random thuần — script sinh dữ liệu được hiệu chỉnh để tái lập đúng các quan
+> hệ thống kê mà `01_EDA_and_Stats.py` đã phát hiện trên bộ gốc, CỘNG THÊM một hiệu ứng nhân
+> quả dị biệt (heterogeneous treatment effect) giả lập 4 nhóm Persuadables/Sure things/Lost
+> causes/Sleeping dogs để bài Uplift Modeling (Bước 7-8) có tín hiệu thật để học, thay vì suy
+> biến thành "gửi cho tất cả" (xem docstring của script để biết chi tiết công thức). Response
+> rate đã CHỦ ĐỘNG hạ từ 37.3% (bộ gốc) xuống ~12% — với business constants mới (cost 500đ /
+> reward 10.000đ → break-even 5%), baseline 37% khiến hầu như ai cũng vượt ngưỡng hoà vốn, làm
+> mất hết giá trị minh hoạ của việc target chọn lọc. `Promo_Txn_Count_3M` vẫn là tín hiệu mạnh
+> nhất, `Last_Active_Days` tương quan âm, `Avg_Monthly_Balance_VND` tương quan dương yếu,
+> `Age`/`Gender`/`Txn_Count_3M`/`Txn_Amount_3M_VND`/`App_Logins_3M` vẫn là nhiễu, và bẫy đa
+> cộng tuyến `Estimated_CLV_VND` ~ `Avg_Monthly_Balance_VND` vẫn còn nguyên.
+
+File: `customer_promo_data.csv` — 100,000 khách hàng, các cột:
 
 | Cột | Ý nghĩa |
 |---|---|
@@ -31,6 +48,11 @@ File: `customer_promo_data.csv` — 1,000 khách hàng, các cột:
 ## 3. Yêu cầu từng bước (Scope of Work)
 
 > **Về tính "tuần tự":** đánh số 01→07 gợi ý một pipeline liền mạch, nhưng đọc kỹ code (`grep` các lệnh `read_csv`/`joblib.load`) thì phần lớn các bước **không thực sự nạp lại output của bước trước** — mỗi bước tự đọc `customer_promo_data.csv` gốc và tự train model riêng. Sự phụ thuộc **kỹ thuật (file/model)** thật sự chỉ có ở Bước 4 → Bước 5 và Bước 4 → Bước 6 (qua file `.pkl`). Các bước còn lại nối với nhau theo **mạch lý luận kinh doanh/phân tích**, không phải theo dữ liệu. Mỗi bước dưới đây có ghi rõ *"Mục đích cho bước sau"* để phân biệt 2 loại liên kết này.
+
+### Bước 0 — Sinh dữ liệu quy mô lớn (`00_generate_data.py`)
+- Sinh 100,000 dòng mock thay cho bộ 1,000 dòng gốc, hiệu chỉnh để tái lập đúng các quan hệ thống kê mà Bước 1 đã phát hiện + hiệu ứng nhân quả dị biệt cho Uplift Modeling (xem mục 2 ở trên).
+- **Deliverable:** ghi đè `customer_promo_data.csv`; bộ gốc 1,000 dòng lưu ở `customer_promo_data_1k_backup.csv`.
+- **Mục đích cho bước sau:** nền tảng dữ liệu cho toàn bộ pipeline 01→08 — chạy trước tiên.
 
 ### Bước 1 — EDA & Statistical Tests (`01_EDA_and_Stats.py`)
 - Kiểm tra chất lượng dữ liệu (missing values, outlier) và baseline response rate.
@@ -65,7 +87,7 @@ File: `customer_promo_data.csv` — 1,000 khách hàng, các cột:
 
 ### Bước 6 — Expected Profit Calculation (`06_Expected_Profit_Calculation.py`)
 - Load lại model `.pkl` từ Bước 4 để lấy xác suất phản hồi từng khách hàng.
-- Gắn giả định kinh doanh: chi phí gửi 1 lượt = 500 VND, lợi nhuận nếu khách phản hồi = 50,000 VND.
+- Gắn giả định kinh doanh (cập nhật 2026-07-03): chi phí gửi 1 tin ZNS = 500 VND, lợi nhuận nếu khách phản hồi = 10,000 VND.
 - Tính lợi nhuận kỳ vọng từng khách hàng = `P(phản hồi) × reward − cost`; chỉ gửi khuyến mãi nếu > 0.
 - So sánh 2 kịch bản: gửi đại trà (mass marketing) vs gửi chọn lọc theo ML, ra con số **chênh lệch lợi nhuận (ROI improvement)**.
 - **Deliverable:** `06_campaign_decisions.csv` (danh sách khách hàng nên gửi + xác suất + lợi nhuận kỳ vọng).
@@ -76,13 +98,26 @@ File: `customer_promo_data.csv` — 1,000 khách hàng, các cột:
 - Dùng S-Learner (đưa biến `Treatment` = từng dùng khuyến mãi hay chưa vào làm feature, **tự train một model XGBoost mới** — không tái dùng `.pkl` của Bước 4) để tính Uplift Score = P(mua | có KM) − P(mua | không KM).
 - Tính lợi nhuận gia tăng (Incremental Profit) từ Uplift Score, quyết định gửi khuyến mãi theo tiêu chí này thay vì chỉ theo xác suất mua thô ở Bước 6.
 - **Deliverable:** `07_uplift_decisions.csv` — danh sách khách hàng target theo Uplift, sắp xếp theo Uplift Score giảm dần.
-- **Mục đích cho bước sau:** đây là bước cuối, không có bước tiếp theo — deliverable là **quyết định kinh doanh cuối cùng** (danh sách khách hàng target theo Uplift) để đối chiếu với Bước 6 và chốt chiến lược gửi khuyến mãi tối ưu nhất.
+- **Mục đích cho bước sau:** trước đây là bước cuối; nay là input lý luận cho Bước 8 (so sánh công bằng cả 6 model, gồm cả 3 biến thể Uplift).
+
+### Bước 8 — So sánh 6 mô hình (`08_Model_Comparison_ROI.py`)
+- **Bổ sung mới (2026-07-03)** để trả lời câu hỏi phỏng vấn: so sánh công bằng Accuracy/Precision/Recall/Profit giữa **3 model Propensity** (Logistic Regression, XGBoost, LightGBM — dự đoán P(phản hồi)) và **3 model Uplift S-Learner** cùng thuật toán (dự đoán mức tăng thêm xác suất phản hồi nhờ khuyến mãi).
+- Khác biệt quan trọng so với 03/04/04b/06/07: chỉ **chia train/test một lần duy nhất** (80/20, stratify) dùng chung cho cả 6 model, và đánh giá **chỉ trên tập test** — tránh lạc quan giả do data leakage mà các script trước đó có thể mắc phải khi đánh giá lại trên toàn bộ dữ liệu (vd Bước 6 dùng `df` đầy đủ, không tách test).
+- Quy ước "gửi ZNS": Propensity gửi nếu `P(phản hồi) > 5%` (break-even = cost/reward); Uplift gửi nếu `Uplift Score > 5%`.
+- **Deliverable:** `08_model_comparison_results.csv` (6 dòng: model, family, accuracy, precision, recall, roc_auc, profit_vnd), `08_uplift_gain_by_decile.csv`, `08_feature_importance.csv`, `08_baselines.json`.
+- **Mục đích cho bước sau:** nguồn số liệu chính thức cho Bước 9 (presentation) — không dùng lại số liệu in-sample của các bước 03-07.
+
+### Bước 9 — Xây Presentation (`09_Build_Presentation.py`)
+- Đọc toàn bộ output của Bước 8 (+ ảnh EDA/SHAP nếu có), dựng `presentation.html` tự chứa (self-contained) theo từng bước trình bày cho buổi phỏng vấn, mỗi biểu đồ kèm nhận định (insight) rút ra từ số liệu thật.
+- Kết luận cuối bài trả lời 2 kịch bản kinh doanh: ưu tiên ROI ngắn hạn vs ưu tiên Accuracy để scale ổn định dài hạn.
+- **Deliverable:** `presentation.html`.
 
 ## 4. Ràng buộc & quy ước kỹ thuật
 
-- Về mặt **file/code**, chỉ Bước 5 và Bước 6 thực sự bắt buộc phải chạy Bước 4 trước (để có `04_xgboost_model.pkl`/bản LightGBM) — các bước còn lại tự đọc `customer_promo_data.csv` gốc và không phụ thuộc file của nhau. Tuy vậy vẫn nên chạy **tuần tự 01→07** vì thứ tự này phản ánh đúng **mạch lý luận trình bày cho business** (EDA → phân khúc → benchmark → model mạnh hơn → giải thích → định lượng lợi nhuận → tối ưu lợi nhuận), dù không phải lúc nào cũng là ràng buộc kỹ thuật.
+- Về mặt **file/code**, chỉ Bước 5 và Bước 6 thực sự bắt buộc phải chạy Bước 4 trước (để có `04_xgboost_model.pkl`/bản LightGBM) — các bước còn lại tự đọc `customer_promo_data.csv` gốc và không phụ thuộc file của nhau. Tuy vậy vẫn nên chạy **tuần tự 00→09** vì thứ tự này phản ánh đúng **mạch lý luận trình bày cho business** (sinh data → EDA → phân khúc → benchmark → model mạnh hơn → giải thích → định lượng lợi nhuận → tối ưu lợi nhuận → so sánh công bằng → trình bày), dù không phải lúc nào cũng là ràng buộc kỹ thuật.
 - Luôn loại `Customer_ID` và `Estimated_CLV_VND` khỏi feature set khi train (tránh học nhiễu / đa cộng tuyến).
-- Metric đánh giá chính: ROC-AUC (so sánh model) và Expected Profit/ROI (so sánh giá trị kinh doanh) — không chỉ dừng ở accuracy vì dữ liệu mất cân bằng lớp.
+- Metric đánh giá chính: ROC-AUC (so sánh model) và Expected Profit/ROI (so sánh giá trị kinh doanh) — không chỉ dừng ở accuracy vì dữ liệu mất cân bằng lớp. Bước 8 bổ sung Accuracy/Precision/Recall thống nhất trên tập test để so sánh trực tiếp cả 6 model.
+- Business constants hiện hành (từ 2026-07-03): chi phí gửi ZNS = 500 VND/tin/khách hàng; lợi nhuận trung bình/khách hàng phản hồi = 10,000 VND (break-even threshold = 5%).
 
 ## 5. Tiêu chí thành công suy luận được (Success Criteria)
 
