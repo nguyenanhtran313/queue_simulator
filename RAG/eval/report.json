@@ -1,0 +1,273 @@
+{
+  "summary": {
+    "total": 18,
+    "grounded_accuracy": 1.0,
+    "doc_hit_rate": 1.0,
+    "doc_hit_checked": 15
+  },
+  "results": [
+    {
+      "question": "Queue Simulator có cần cài Node.js hay build step gì không?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "queue_simulator",
+      "doc_ids_returned": [
+        "faq_repo",
+        "repo_overview",
+        "queue_simulator"
+      ],
+      "doc_hit": true,
+      "answer": "Không. Queue Simulator **không cần** cài đặt Node.js, không cần chạy `npm install` và **không có bước build** (build step) [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Queue Simulator có cần cài đặt gì không?].\n\nChi tiết:\n* Đây là một file HTML đơn (`Queue Simulator/index.html`) tự chứa React qua UMD build, Babel-standalone để biên dịch JSX ngay trên trình duyệt, kết hợp với Tailwind CDN và Chart.js CDN [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Queue Simulator có cần cài đặt gì không?], [Queue Simulator — Website giả lập lý thuyết xếp hàng sân bay, Mục: Kiến trúc công nghệ].\n* Để chạy ứng dụng, bạn chỉ cần mở trực tiếp file `index.html` bằng trình duyệt (double-click hoặc dùng lệnh `start index.html`) [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Queue Simulator có cần cài đặt gì không?], [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con]."
+    },
+    {
+      "question": "Queue Simulator mô phỏng lý thuyết xếp hàng cho loại hình nào?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "queue_simulator",
+      "doc_ids_returned": [
+        "queue_simulator",
+        "repo_overview",
+        "queue_simulator",
+        "queue_simulator",
+        "queue_simulator"
+      ],
+      "doc_hit": true,
+      "answer": "Queue Simulator mô phỏng lý thuyết xếp hàng cho quy trình tại **sân bay** [Queue Simulator — Website giả lập lý thuyết xếp hàng sân bay, Tổng quan hệ thống]. \n\nCụ thể, hệ thống mô phỏng chuỗi quy trình xếp hàng 4 chặng nối tiếp nhau bao gồm: **Check-in → An ninh → Xuất nhập cảnh (Hải quan) → Cửa khởi hành** [Queue Simulator — Website giả lập lý thuyết xếp hàng sân bay, Tổng quan hệ thống] [Queue Simulator — Website giả lập lý thuyết xếp hàng sân bay, Thiết kế logic]."
+    },
+    {
+      "question": "Test_VSF_driver_allocation là Phase mấy của case study Xanh SM?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "driver_allocation",
+      "doc_ids_returned": [
+        "changelog",
+        "faq_repo",
+        "forecast_demand",
+        "repo_overview",
+        "driver_allocation"
+      ],
+      "doc_hit": true,
+      "answer": "`Test_VSF_driver_allocation` là **Phase 3 và Phase 4** của case study tuyển dụng \"Xanh SM — Smart Dispatching & Demand Forecasting\" [Changelog minh hoạ — Các mốc phát triển đáng chú ý trong repo, Mục: Ghi chú lịch sử (suy ra từ _REQUIREMENT.md, không có ngày chính xác)].\n\nChi tiết nội dung của các phase này gồm:\n* **Phase 3**: Điều phối tài xế, Bipartite Matching, phân tích hành vi và cơ chế điều phối/hoa hồng cho tài xế [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Test_VSF_driver_allocation và Test_VSF_forecast_demand khác nhau thế nào?], [Test_VSF_driver_allocation — Xanh SM Smart Dispatching System (Phase 3 & 4), Mục: Bối cảnh].\n* **Phase 4**: Dashboard & Metrics [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Test_VSF_driver_allocation và Test_VSF_forecast_demand khác nhau thế nào?], [Test_VSF_driver_allocation — Xanh SM Smart Dispatching System (Phase 3 & 4), Mục: Bối cảnh]."
+    },
+    {
+      "question": "Smart Dispatching trong driver allocation dùng để làm gì?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "driver_allocation",
+      "doc_ids_returned": [
+        "driver_allocation",
+        "driver_allocation",
+        "forecast_demand",
+        "repo_overview",
+        "glossary"
+      ],
+      "doc_hit": true,
+      "answer": "Trong dự án, **Smart Dispatching** (nằm trong phần mô phỏng phân bổ tài xế và điều phối xe của Phase 3 & 4) được dùng để giải quyết hai bài toán chính:\n\n*   **Bài toán Matching (Ghép cặp tối ưu):** Thay vì dùng thuật toán Greedy (tài xế gần nhất), hệ thống gom các yêu cầu (request) trong cửa sổ 3–5 giây (batching window) và sử dụng thuật toán **Bipartite Matching** (Kuhn-Munkres/Hungarian Algorithm) để ghép cặp $N$ tài xế với $M$ khách hàng sao cho tổng thời gian chờ (ETA) của toàn hệ thống là nhỏ nhất [Test_VSF_driver_allocation — Xanh SM Smart Dispatching System (Phase 3 & 4), Mục: Bài toán Matching & Repositioning].\n*   **Bài toán Repositioning (Điều phối đón đầu):** Khi mô hình dự báo một khu vực sắp thiếu xe, hệ thống sẽ phát tín hiệu heatmap trên ứng dụng của tài xế để điều hướng những tài xế đang rảnh di chuyển đến khu vực đó trước [Test_VSF_driver_allocation — Xanh SM Smart Dispatching System (Phase 3 & 4), Mục: Bài toán Matching & Repositioning].\n\nVề mặt tổng thể, đây là công cụ dùng để mô phỏng phân bổ tài xế và điều phối xe thông minh cho case study \"Xanh SM\" [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con]."
+    },
+    {
+      "question": "Test_VSF_forecast_demand dự báo nhu cầu đặt xe dựa trên lưới không gian nào?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "forecast_demand",
+      "doc_ids_returned": [
+        "glossary",
+        "forecast_demand",
+        "faq_repo",
+        "repo_overview",
+        "driver_allocation"
+      ],
+      "doc_hit": true,
+      "answer": "Dự án `Test_VSF_forecast_demand` dự báo nhu cầu đặt xe dựa trên **lưới không gian lục giác Uber H3** (sử dụng thư viện `h3`) [Glossary — Thuật ngữ kỹ thuật dùng trong các dự án của repo, Mục: H3 (Uber H3 Spatial Index)].\n\nCác thông số cấu hình cụ thể bao gồm:\n* **Độ phân giải**: Resolution 8 (diện tích khoảng ~0.7 km²/ô) [Test_VSF_forecast_demand — Dự báo Nhu cầu Đặt xe (Xanh SM Phase 1 & 2), Mục: Phương pháp luận].\n* **Phạm vi**: Tâm đặt tại khu vực Hoàn Kiếm - Hà Nội, mở rộng với bán kính 4 ô lục giác, tạo thành tổng cộng 61 hexagons [Test_VSF_forecast_demand — Dự báo Nhu cầu Đặt xe (Xanh SM Phase 1 & 2), Mục: Phương pháp luận]."
+    },
+    {
+      "question": "forecast_demand dùng thuật toán ML nào để dự báo?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "forecast_demand",
+      "doc_ids_returned": [
+        "faq_repo",
+        "repo_overview",
+        "forecast_demand",
+        "driver_allocation",
+        "forecast_demand"
+      ],
+      "doc_hit": true,
+      "answer": "Dự án `Test_VSF_forecast_demand` sử dụng thuật toán **LightGBM** (cụ thể là **LightGBM Regressor**) để thực hiện dự báo nhu cầu đặt xe [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Test_VSF_driver_allocation và Test_VSF_forecast_demand khác nhau thế nào?], [Test_VSF_forecast_demand — Dự báo Nhu cầu Đặt xe (Xanh SM Phase 1 & 2), Mục: Các bước triển khai]."
+    },
+    {
+      "question": "Test_VSF_dinhgia_bds có liên quan gì tới case study Xanh SM không?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "dinhgia_bds",
+      "doc_ids_returned": [
+        "changelog",
+        "faq_repo",
+        "dinhgia_bds",
+        "repo_overview"
+      ],
+      "doc_hit": true,
+      "answer": "Thư mục `Test_VSF_dinhgia_bds` **không liên quan** gì tới case study Xanh SM:\n\n* **Chỉ là trùng hợp tên gọi:** Tiền tố `Test_VSF_` trùng nhau chỉ là sự trùng hợp ngẫu nhiên khi đặt tên thư mục, không phải là bằng chứng cho thấy chúng thuộc cùng một case study [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Tại sao Test_VSF_dinhgia_bds có tên giống Test_VSF nhưng lại không liên quan?].\n* **Nội dung hoàn toàn độc lập:** Đây là một bài toán định giá bất động sản tự động (AVM) độc lập dành cho căn hộ chung cư dựa trên dữ liệu giao dịch lịch sử mô phỏng [Test_VSF_dinhgia_bds — Định giá Bất động sản tự động (AVM), Bối cảnh].\n* **Không có tài liệu liên quan:** Trong thư mục này không có tài liệu hay tệp `presentation.html` nào nhắc tới \"Xanh SM\" hay \"Vinsmart\" [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Tại sao Test_VSF_dinhgia_bds có tên giống Test_VSF nhưng lại không liên quan?]."
+    },
+    {
+      "question": "Model tốt nhất trong bài định giá bất động sản là gì và R2 bao nhiêu?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "dinhgia_bds",
+      "doc_ids_returned": [
+        "dinhgia_bds",
+        "ops_troubleshooting",
+        "dinhgia_bds",
+        "dinhgia_bds",
+        "dinhgia_bds"
+      ],
+      "doc_hit": true,
+      "answer": "Model tốt nhất trong bài định giá bất động sản là **LightGBM Regressor** với chỉ số $R^2$ đạt **97.3%** [Nguồn: Test_VSF_dinhgia_bds — Định giá Bất động sản tự động (AVM), Mục: Kết quả]."
+    },
+    {
+      "question": "Basic ML là case study dự đoán cái gì và gồm những bài nào?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "basic_ml",
+      "doc_ids_returned": [
+        "basic_ml",
+        "basic_ml",
+        "faq_repo",
+        "basic_ml",
+        "glossary"
+      ],
+      "doc_hit": true,
+      "answer": "**Basic ML** là case study dự đoán **khách hàng nào có khả năng phản hồi cao nhất đối với chiến dịch khuyến mãi (SMS/email)** của một ngân hàng, từ đó quy đổi thành quyết định kinh doanh và tối ưu hóa con số ROI so với việc gửi đại trà [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Bối cảnh nghiệp vụ].\n\nCase study này gồm các bài (bước pipeline từ 00 đến 09) sau:\n*   **00:** Sinh dữ liệu quy mô lớn [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **01:** EDA & Statistical Tests (T-test, Chi-square, correlation heatmap) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **02:** KMeans Customer Segmentation (phân tích độc lập, không nằm trong luồng dữ liệu chính) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **03:** Logistic Regression Benchmark (mốc ROC-AUC) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **04 / 04b:** XGBoost / LightGBM Production (lưu model dưới dạng `.pkl`) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **05:** SHAP Explainability (đọc file `.pkl` từ bước 4 để giải thích model) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **06:** Expected Profit Calculation (đọc file `.pkl` để tính lợi nhuận kỳ vọng) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **07:** Uplift Modeling ROI (S-Learner để phân loại khách hàng thành Persuadables, Sure things, Lost causes, Sleeping dogs) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **08:** So sánh 6 model (3 Propensity + 3 Uplift, train/test split một lần duy nhất để tránh data leakage) [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n*   **09:** Xây dựng file báo cáo `presentation.html` [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)]."
+    },
+    {
+      "question": "Trong Basic ML, bài nào dùng SHAP để giải thích model?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "basic_ml",
+      "doc_ids_returned": [
+        "glossary",
+        "basic_ml",
+        "basic_ml",
+        "faq_repo",
+        "ops_troubleshooting"
+      ],
+      "doc_hit": true,
+      "answer": "Trong Basic ML, **Bước 5 (05 SHAP Explainability / script `05_SHAP_Analysis.py`)** là bài sử dụng kỹ thuật SHAP để giải thích model XGBoost/LightGBM dự đoán phản hồi khuyến mãi [Glossary — Thuật ngữ kỹ thuật dùng trong các dự án của repo, Mục: SHAP (SHapley Additive exPlanations)] [Basic ML — Dự đoán & Tối ưu hóa Phản hồi Khuyến mãi Khách hàng, Mục: Các bước pipeline (00 → 09)].\n\nScript này hoạt động bằng cách đọc lại file model `.pkl` đã được huấn luyện và lưu từ Bước 4 trước đó để tiến hành phân tích và diễn giải [FAQ nội bộ — Câu hỏi thường gặp về các dự án trong repo, Mục: Vì sao Basic ML phải chạy đúng thứ tự 00 → 09?] [Vận hành & Khắc phục sự cố thường gặp, Mục: Lỗi thiếu file .pkl khi chạy Basic ML/05_SHAP_Analysis.py hoặc 06_Expected_Profit_Calculation.py]."
+    },
+    {
+      "question": "Repo queue_simulator có bao nhiêu thư mục dự án con và mỗi thư mục chạy thế nào?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "repo_overview",
+      "doc_ids_returned": [
+        "repo_overview",
+        "repo_overview",
+        "changelog",
+        "changelog"
+      ],
+      "doc_hit": true,
+      "answer": "Dựa vào thông tin được cung cấp, repo `queue_simulator` có **6 thư mục dự án con** độc lập. Dưới đây là danh sách chi tiết và cách chạy của từng thư mục:\n\n### 1. Queue Simulator/ Universal Queue Simulator\n* **Cách chạy:** Mở trực tiếp file `index.html` trong trình duyệt. Đây là single-file React (UMD) + Babel-standalone + Tailwind CDN + Chart.js và không có build step [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con].\n\n### 2. Test_VSF_driver_allocation/\n* **Cách chạy:** Chạy file `phase1_simulation.py` để thực hiện simulation, sau đó chạy `build_presentation.py` để đọc kết quả và sinh ra file `presentation.html` [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con].\n\n### 3. Test_VSF_forecast_demand/\n* **Cách chạy:** Chạy `step1_2_pipeline.py` để sinh mock data + train model, và chạy `generate_eda.py` để vẽ thêm EDA [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con].\n* **Lưu ý:** Hai script trên đang bị hard-code đường dẫn output tuyệt đối tới máy khác, do đó bạn phải sửa lại đường dẫn (path) trước khi chạy lại [Changelog minh hoạ — Các mốc phát triển đáng chú ý trong repo, Mục: Ghi chú lịch sử (suy ra từ _REQUIREMENT.md, không có ngày chính xác)].\n\n### 4. Test_VSF_dinhgia_bds/\n* **Cách chạy:** Chạy `generate_data.py` để sinh file dữ liệu `real_estate_valuation_dataset.csv`, sau đó chạy `compare_models.py` để so sánh 5 thuật toán regression [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con].\n\n### 5. Basic ML/\n* **Cách chạy:** Phải chạy tuần tự theo đúng thứ tự đánh số từ trước ra sau vì bài sau sử dụng file output (`.pkl`, `.csv`) của bài trước: \n  `01_EDA_and_Stats` → `02_KMeans_Segmentation` → `03_Logistic_Regression_Benchmark` → `04_XGBoost_Production/04b_LightGBM_Production` → `05_SHAP_Analysis` → `06_Expected_Profit_Calculation` → `07_Uplift_Modeling_ROI` → `08_Model_Comparison_ROI` [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con].\n\n### 6. RAG/\n* **Cách chạy:** Đây là một RAG engine tự build bằng Python. Nó hoạt động bằng cách cung cấp một REST API (`POST /ask`) để các chatbot bên ngoài (như Dify, N8N) gọi vào nhằm thực hiện hỏi–đáp [queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Danh sách thư mục con], [Changelog minh hoạ — Các mốc phát triển đáng chú ý trong repo, Mục: 2026-07-03 — Thêm thư mục RAG/]."
+    },
+    {
+      "question": "Vì sao mỗi thư mục con trong repo lại có file _REQUIREMENT.md?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "repo_overview",
+      "doc_ids_returned": [
+        "repo_overview",
+        "faq_repo",
+        "changelog",
+        "changelog"
+      ],
+      "doc_hit": true,
+      "answer": "Mỗi thư mục con trong repo có file `_REQUIREMENT.md` nhằm mục đích:\n\n* Dùng để mô tả đề bài, yêu cầu hoặc kế hoạch của thư mục con đó [Nguồn: queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Quy ước chung của repo].\n* Tên file có dấu gạch dưới ở đầu (`_`) để file này luôn nổi lên đầu danh sách thư mục cho dễ theo dõi [Nguồn: queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Quy ước chung của repo]."
+    },
+    {
+      "question": "Có được tự ý pip install package còn thiếu trong repo này không?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "repo_overview",
+      "doc_ids_returned": [
+        "repo_overview",
+        "ops_troubleshooting",
+        "dinhgia_bds"
+      ],
+      "doc_hit": true,
+      "answer": "Không, bạn **không được tự ý** `pip install` các package còn thiếu trong repo này khi chưa hỏi ý kiến người dùng (user) [Nguồn: queue_simulator — Tổng quan repo & cấu trúc thư mục, Mục: Quy ước chung của repo]. \n\nQuy ước chung của repo yêu cầu phải hỏi user trước khi thực hiện cài đặt bất kỳ package nào [Nguồn: Vận hành & Khắc phục sự cố thường gặp, Mục: Test_VSF_dinhgia_bds/compare_models.py chạy nhưng không thấy LightGBM trong kết quả so sánh]."
+    },
+    {
+      "question": "H3 và AVM trong glossary của repo nghĩa là gì?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "glossary",
+      "doc_ids_returned": [
+        "glossary",
+        "glossary",
+        "driver_allocation",
+        "dinhgia_bds",
+        "changelog"
+      ],
+      "doc_hit": true,
+      "answer": "Dưới đây là định nghĩa của H3 và AVM theo tài liệu của repo:\n\n*   **AVM (Automated Valuation Model)**: Là mô hình định giá bất động sản tự động, sử dụng Machine Learning để ước tính giá trị của một tài sản (thường là căn hộ, nhà đất) dựa trên các đặc điểm của tài sản đó và dữ liệu giao dịch lịch sử, thay thế cho phương pháp thẩm định giá thủ công. Mô hình này được sử dụng trong thư mục `Test_VSF_dinhgia_bds/` [Glossary — Thuật ngữ kỹ thuật dùng trong các dự án của repo, Mục: AVM (Automated Valuation Model)].\n*   **H3 (Uber H3 Spatial Index)**: Là hệ thống lưới không gian dạng lục giác do Uber phát triển, dùng để chia bản đồ thành các ô lục giác (hexagon) có kích thước đều nhau ở mỗi độ phân giải (resolution). So với lưới vuông (như Google S2), H3 có ưu điểm là khoảng cách từ tâm của một ô đến tất cả các ô lân cận đều bằng nhau, rất thuận tiện cho việc tính toán bán kính đón khách hoặc ETA trong bài toán gọi xe. Hệ thống này được sử dụng trong `Test_VSF_driver_allocation/` và `Test_VSF_forecast_demand/` với Resolution 8 (~0.7 km²/ô) [Glossary — Thuật ngữ kỹ thuật dùng trong các dự án của repo, Mục: H3 (Uber H3 Spatial Index)]."
+    },
+    {
+      "question": "Giá cổ phiếu Apple hôm nay là bao nhiêu?",
+      "expect_grounded": false,
+      "got_grounded": false,
+      "grounded_ok": true,
+      "expect_doc_id": null,
+      "doc_ids_returned": [],
+      "doc_hit": null,
+      "answer": "Không tìm thấy thông tin này trong tài liệu hiện có. Bạn thử hỏi lại theo hướng khác hoặc nêu rõ tên dự án con (vd Queue Simulator, Basic ML, Test_VSF_driver_allocation...) xem sao."
+    },
+    {
+      "question": "Cách nấu phở bò truyền thống miền Bắc?",
+      "expect_grounded": false,
+      "got_grounded": false,
+      "grounded_ok": true,
+      "expect_doc_id": null,
+      "doc_ids_returned": [],
+      "doc_hit": null,
+      "answer": "Không tìm thấy thông tin này trong tài liệu hiện có. Bạn thử hỏi lại theo hướng khác hoặc nêu rõ tên dự án con (vd Queue Simulator, Basic ML, Test_VSF_driver_allocation...) xem sao."
+    },
+    {
+      "question": "Đội tuyển bóng đá Việt Nam vừa thắng trận nào gần đây nhất?",
+      "expect_grounded": false,
+      "got_grounded": false,
+      "grounded_ok": true,
+      "expect_doc_id": null,
+      "doc_ids_returned": [],
+      "doc_hit": null,
+      "answer": "Không tìm thấy thông tin này trong tài liệu hiện có. Bạn thử hỏi lại theo hướng khác hoặc nêu rõ tên dự án con (vd Queue Simulator, Basic ML, Test_VSF_driver_allocation...) xem sao."
+    },
+    {
+      "question": "Lỗi thiếu file .pkl khi chạy SHAP Analysis trong Basic ML thì khắc phục thế nào?",
+      "expect_grounded": true,
+      "got_grounded": true,
+      "grounded_ok": true,
+      "expect_doc_id": "ops_troubleshooting",
+      "doc_ids_returned": [
+        "faq_repo",
+        "ops_troubleshooting",
+        "basic_ml",
+        "basic_ml",
+        "glossary"
+      ],
+      "doc_hit": true,
+      "answer": "Để khắc phục lỗi thiếu file `.pkl` khi chạy SHAP Analysis (Bước 5), bạn thực hiện như sau:\n\n*   **Nguyên nhân:** Script `05_SHAP_Analysis.py` sử dụng `joblib.load()` để nạp lại model đã train từ Bước 4. Nếu chưa chạy Bước 4 trước, hệ thống sẽ báo lỗi không tìm thấy file `04_xgboost_model.pkl` hoặc `04b_lightgbm_model.pkl` [Nguồn: Vận hành & Khắc phục sự cố thường gặp, Mục: Lỗi thiếu file .pkl khi chạy Basic ML/05_SHAP_Analysis.py hoặc 06_Expected_Profit_Calculation.py].\n*   **Cách khắc phục:** Bạn cần chạy script `python 04_XGBoost_Production.py` (hoặc `04b_LightGBM_Production.py`) trước để train model và tạo ra file `.pkl`, sau đó mới tiến hành chạy lại Bước 5 (SHAP Analysis) [Nguồn: Vận hành & Khắc phục sự cố thường gặp, Mục: Lỗi thiếu file .pkl khi chạy Basic ML/05_SHAP_Analysis.py hoặc 06_Expected_Profit_Calculation.py]."
+    }
+  ]
+}

@@ -1,11 +1,19 @@
 """Ingest RAG/corpus/*.md -> semantic chunking -> Gemini embedding -> Chroma index.
 
-Chạy: python ingest.py
+Mặc định incremental: chỉ re-chunk/re-embed các file corpus có nội dung thay đổi
+(so với RAG/index/manifest.json), dựa vào hash nội dung từng file.
+
+Chạy: python ingest.py             # incremental (khuyến nghị)
+      python ingest.py --rebuild   # xoá và build lại toàn bộ collection từ đầu
 """
+import argparse
+import hashlib
+import json
 import os
 import re
 import statistics
 import sys
+import time
 from pathlib import Path
 
 sys.stdout.reconfigure(encoding="utf-8")
@@ -14,11 +22,13 @@ import chromadb
 import yaml
 from dotenv import load_dotenv
 from google import genai
+from google.genai import errors as genai_errors
 from google.genai import types
 
 HERE = Path(__file__).parent
 CORPUS_DIR = HERE / "corpus"
 INDEX_DIR = HERE / "index"
+MANIFEST_PATH = INDEX_DIR / "manifest.json"
 COLLECTION_NAME = "repo_knowledge"
 
 EMBED_MODEL = "models/gemini-embedding-001"
@@ -26,6 +36,22 @@ TARGET_CHARS = 800
 MAX_CHARS = 1200
 MIN_CHARS = 200
 BREAKPOINT_PERCENTILE = 80  # càng thấp càng cắt nhiều chunk nhỏ
+
+def with_retry(fn, *args, retries=4, base_delay=2.0, **kwargs):
+    """Retry với exponential backoff cho lỗi tạm thời (503 quá tải / 429 rate limit)."""
+    for attempt in range(retries):
+        try:
+            return fn(*args, **kwargs)
+        except genai_errors.ServerError:
+            if attempt == retries - 1:
+                raise
+            time.sleep(base_delay * (2 ** attempt))
+        except genai_errors.ClientError as e:
+            if getattr(e, "code", None) == 429 and attempt < retries - 1:
+                time.sleep(base_delay * (2 ** attempt))
+            else:
+                raise
+
 
 load_dotenv(HERE / ".env")
 client = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
@@ -78,7 +104,8 @@ def cosine(a, b):
 def embed_texts(texts, task_type):
     if not texts:
         return []
-    resp = client.models.embed_content(
+    resp = with_retry(
+        client.models.embed_content,
         model=EMBED_MODEL,
         contents=texts,
         config=types.EmbedContentConfig(task_type=task_type, output_dimensionality=768),
@@ -139,55 +166,147 @@ def semantic_chunk_section(text: str):
     return chunks
 
 
-def build_chunks():
+def file_hash(raw_text: str) -> str:
+    return hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+
+
+def build_chunks_for_doc(meta: dict, body: str, path: Path):
+    sections = split_into_sections(body) or [(None, body)]
     chunks = []
-    for path in sorted(CORPUS_DIR.glob("*.md")):
-        meta, body = load_corpus_file(path)
-        sections = split_into_sections(body) or [(None, body)]
-        doc_chunk_count = 0
-        for sec_idx, (heading, sec_text) in enumerate(sections):
-            sub_chunks = semantic_chunk_section(sec_text)
-            doc_chunk_count += len(sub_chunks)
-            for chunk_idx, chunk_text in enumerate(sub_chunks):
-                chunk_id = f"{meta['doc_id']}::{sec_idx}-{chunk_idx}"
-                chunks.append({
-                    "id": chunk_id,
-                    "text": chunk_text,
-                    "metadata": {
-                        "doc_id": meta.get("doc_id", path.stem),
-                        "title": meta.get("title", path.stem),
-                        "section": heading or meta.get("title", path.stem),
-                        "source": str(meta.get("source", "")),
-                        "type": meta.get("type", "unknown"),
-                        "lang": meta.get("lang", "vi"),
-                    },
-                })
-        print(f"[ingest] {path.name}: {len(sections)} section(s) -> {doc_chunk_count} chunk(s)")
+    for sec_idx, (heading, sec_text) in enumerate(sections):
+        sub_chunks = semantic_chunk_section(sec_text)
+        for chunk_idx, chunk_text in enumerate(sub_chunks):
+            chunk_id = f"{meta['doc_id']}::{sec_idx}-{chunk_idx}"
+            chunks.append({
+                "id": chunk_id,
+                "text": chunk_text,
+                "metadata": {
+                    "doc_id": meta.get("doc_id", path.stem),
+                    "title": meta.get("title", path.stem),
+                    "section": heading or meta.get("title", path.stem),
+                    "source": str(meta.get("source", "")),
+                    "type": meta.get("type", "unknown"),
+                    "lang": meta.get("lang", "vi"),
+                },
+            })
+    print(f"[ingest] {path.name}: {len(sections)} section(s) -> {len(chunks)} chunk(s)")
     return chunks
 
 
-def main():
-    INDEX_DIR.mkdir(exist_ok=True)
-    chunks = build_chunks()
-    print(f"[ingest] Tổng cộng {len(chunks)} chunk từ {len(list(CORPUS_DIR.glob('*.md')))} tài liệu.")
+def load_manifest():
+    if MANIFEST_PATH.exists():
+        return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
+    return {}
 
-    texts = [c["text"] for c in chunks]
-    embeddings = embed_texts(texts, task_type="RETRIEVAL_DOCUMENT")
 
-    db_client = chromadb.PersistentClient(path=str(INDEX_DIR))
+def save_manifest(manifest: dict):
+    MANIFEST_PATH.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
+def full_rebuild(db_client):
+    print("[ingest] --rebuild: xoá và build lại toàn bộ collection.")
     try:
         db_client.delete_collection(COLLECTION_NAME)
     except Exception:
         pass
     collection = db_client.create_collection(COLLECTION_NAME)
 
+    manifest = {}
+    all_chunks = []
+    for path in sorted(CORPUS_DIR.glob("*.md")):
+        raw = path.read_text(encoding="utf-8")
+        meta, body = load_corpus_file(path)
+        doc_chunks = build_chunks_for_doc(meta, body, path)
+        all_chunks.extend(doc_chunks)
+        manifest[meta["doc_id"]] = {"hash": file_hash(raw), "chunk_ids": [c["id"] for c in doc_chunks]}
+
+    texts = [c["text"] for c in all_chunks]
+    embeddings = embed_texts(texts, task_type="RETRIEVAL_DOCUMENT")
     collection.add(
-        ids=[c["id"] for c in chunks],
+        ids=[c["id"] for c in all_chunks],
         embeddings=embeddings,
         documents=texts,
-        metadatas=[c["metadata"] for c in chunks],
+        metadatas=[c["metadata"] for c in all_chunks],
     )
-    print(f"[ingest] Đã lưu index vào {INDEX_DIR} (collection='{COLLECTION_NAME}').")
+    save_manifest(manifest)
+    print(f"[ingest] Đã build lại {len(all_chunks)} chunk từ {len(manifest)} tài liệu.")
+
+
+def incremental_ingest(db_client):
+    manifest = load_manifest()
+    try:
+        collection = db_client.get_collection(COLLECTION_NAME)
+    except Exception:
+        collection = db_client.create_collection(COLLECTION_NAME)
+
+    files_on_disk = sorted(CORPUS_DIR.glob("*.md"))
+    seen_doc_ids = set()
+    changed_docs = []  # (meta, body, path, raw)
+    unchanged_count = 0
+
+    for path in files_on_disk:
+        raw = path.read_text(encoding="utf-8")
+        meta, body = load_corpus_file(path)
+        doc_id = meta["doc_id"]
+        seen_doc_ids.add(doc_id)
+        h = file_hash(raw)
+        if manifest.get(doc_id, {}).get("hash") == h:
+            unchanged_count += 1
+            continue
+        changed_docs.append((meta, body, path, raw, h))
+
+    removed_doc_ids = [d for d in manifest if d not in seen_doc_ids]
+
+    if not changed_docs and not removed_doc_ids:
+        print(f"[ingest] Không có thay đổi — {unchanged_count} tài liệu đã cập nhật, giữ nguyên index.")
+        return
+
+    # xoá chunk cũ của các doc bị đổi hoặc bị xoá khỏi corpus/
+    ids_to_delete = []
+    for doc_id in [*[m["doc_id"] for m, *_ in changed_docs], *removed_doc_ids]:
+        ids_to_delete.extend(manifest.get(doc_id, {}).get("chunk_ids", []))
+    if ids_to_delete:
+        collection.delete(ids=ids_to_delete)
+
+    # re-chunk + re-embed các doc thay đổi
+    new_chunks = []
+    for meta, body, path, raw, h in changed_docs:
+        doc_chunks = build_chunks_for_doc(meta, body, path)
+        new_chunks.extend(doc_chunks)
+        manifest[meta["doc_id"]] = {"hash": h, "chunk_ids": [c["id"] for c in doc_chunks]}
+
+    if new_chunks:
+        texts = [c["text"] for c in new_chunks]
+        embeddings = embed_texts(texts, task_type="RETRIEVAL_DOCUMENT")
+        collection.add(
+            ids=[c["id"] for c in new_chunks],
+            embeddings=embeddings,
+            documents=texts,
+            metadatas=[c["metadata"] for c in new_chunks],
+        )
+
+    for doc_id in removed_doc_ids:
+        del manifest[doc_id]
+
+    save_manifest(manifest)
+    print(
+        f"[ingest] {unchanged_count} không đổi, {len(changed_docs)} thay đổi/mới "
+        f"({len(new_chunks)} chunk), {len(removed_doc_ids)} tài liệu bị gỡ."
+    )
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--rebuild", action="store_true", help="Xoá và build lại toàn bộ collection từ đầu")
+    args = parser.parse_args()
+
+    INDEX_DIR.mkdir(exist_ok=True)
+    db_client = chromadb.PersistentClient(path=str(INDEX_DIR))
+
+    if args.rebuild or not MANIFEST_PATH.exists():
+        full_rebuild(db_client)
+    else:
+        incremental_ingest(db_client)
 
 
 if __name__ == "__main__":

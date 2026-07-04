@@ -1,0 +1,18 @@
+{"question": "Queue Simulator có cần cài Node.js hay build step gì không?", "expect_grounded": true, "expect_doc_id": "queue_simulator"}
+{"question": "Queue Simulator mô phỏng lý thuyết xếp hàng cho loại hình nào?", "expect_grounded": true, "expect_doc_id": "queue_simulator"}
+{"question": "Test_VSF_driver_allocation là Phase mấy của case study Xanh SM?", "expect_grounded": true, "expect_doc_id": "driver_allocation"}
+{"question": "Smart Dispatching trong driver allocation dùng để làm gì?", "expect_grounded": true, "expect_doc_id": "driver_allocation"}
+{"question": "Test_VSF_forecast_demand dự báo nhu cầu đặt xe dựa trên lưới không gian nào?", "expect_grounded": true, "expect_doc_id": "forecast_demand"}
+{"question": "forecast_demand dùng thuật toán ML nào để dự báo?", "expect_grounded": true, "expect_doc_id": "forecast_demand"}
+{"question": "Test_VSF_dinhgia_bds có liên quan gì tới case study Xanh SM không?", "expect_grounded": true, "expect_doc_id": "dinhgia_bds"}
+{"question": "Model tốt nhất trong bài định giá bất động sản là gì và R2 bao nhiêu?", "expect_grounded": true, "expect_doc_id": "dinhgia_bds"}
+{"question": "Basic ML là case study dự đoán cái gì và gồm những bài nào?", "expect_grounded": true, "expect_doc_id": "basic_ml"}
+{"question": "Trong Basic ML, bài nào dùng SHAP để giải thích model?", "expect_grounded": true, "expect_doc_id": "basic_ml"}
+{"question": "Repo queue_simulator có bao nhiêu thư mục dự án con và mỗi thư mục chạy thế nào?", "expect_grounded": true, "expect_doc_id": "repo_overview"}
+{"question": "Vì sao mỗi thư mục con trong repo lại có file _REQUIREMENT.md?", "expect_grounded": true, "expect_doc_id": "repo_overview"}
+{"question": "Có được tự ý pip install package còn thiếu trong repo này không?", "expect_grounded": true, "expect_doc_id": "repo_overview"}
+{"question": "H3 và AVM trong glossary của repo nghĩa là gì?", "expect_grounded": true, "expect_doc_id": "glossary"}
+{"question": "Giá cổ phiếu Apple hôm nay là bao nhiêu?", "expect_grounded": false, "expect_doc_id": null}
+{"question": "Cách nấu phở bò truyền thống miền Bắc?", "expect_grounded": false, "expect_doc_id": null}
+{"question": "Đội tuyển bóng đá Việt Nam vừa thắng trận nào gần đây nhất?", "expect_grounded": false, "expect_doc_id": null}
+{"question": "Lỗi thiếu file .pkl khi chạy SHAP Analysis trong Basic ML thì khắc phục thế nào?", "expect_grounded": true, "expect_doc_id": "ops_troubleshooting"}
