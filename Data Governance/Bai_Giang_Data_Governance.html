@@ -756,6 +756,38 @@
         </div>
       </details>
 
+      <details>
+        <summary>Ban Giám đốc chất vấn: "Đã chi hàng triệu đô mua Data Warehouse, ETL rồi, sao còn xin thêm ngân sách lập Data Governance Council?" — dùng ẩn dụ "dọn nhà cũ" để trả lời thế nào?</summary>
+        <div class="ans">
+          <ul>
+            <li>Công cụ (DW, ETL) chỉ là "hộp đựng đồ, xe tải chuyển nhà, kệ tủ mới" — giúp <strong>di chuyển và lưu trữ</strong> đồ nhanh hơn, nhưng không tự quyết định cái gì giữ lại, cái gì vứt, ai chịu trách nhiệm dọn phòng nào.</li>
+            <li>Không có Governance = có nhà to đẹp nhưng đồ đạc vẫn lộn xộn — chỉ là "chuyển rác từ tầng hầm cũ sang tầng hầm mới" nhanh và tự động hơn (garbage in, garbage out ở tốc độ cao hơn).</li>
+            <li>Ngân sách DG Council không phải "mua thêm công cụ" mà là mua <strong>accountability</strong>: ai là chủ của "phòng khách" (domain dữ liệu khách hàng), ai quyết định quy tắc "phân loại đồ" (data classification/policy) — thứ không phần mềm nào tự làm thay được.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Báo cáo doanh thu các phòng ban không khớp nhau (thiếu Single Source of Truth). Lỗi nằm ở Data Quality, Metadata Management hay Data Ownership? Ưu tiên trụ cột nào để "cầm máu" trước?</summary>
+        <div class="ans">
+          <ul>
+            <li>Ưu tiên số 1 luôn là <strong>Data Ownership</strong> — nếu chưa ai được giao quyền quyết định "định nghĩa Doanh thu chuẩn là gì", thì Quality tốt đến đâu hay Metadata đầy đủ đến đâu, mỗi phòng ban vẫn tự ý tính theo cách riêng.</li>
+            <li>Sau khi có Owner rõ ràng, mới tới <strong>Metadata Management</strong> (ghi định nghĩa thống nhất vào Business Glossary) — đây là bước "cầm máu" nhanh nhất, thường không cần sửa code, chỉ cần thống nhất định nghĩa và công bố.</li>
+            <li><strong>Data Quality</strong> là bước sau cùng — làm sạch dữ liệu theo một định nghĩa còn đang tranh cãi là lãng phí công sức, dễ phải làm lại từ đầu.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Pipeline vỡ trong đêm khiến Dashboard CEO sai số; Data Engineer lẳng lặng sửa code ETL cho xong chuyện. Bỏ qua ITSM (Incident/Problem Mgmt) mang rủi ro dài hạn gì? Luồng xử lý chuẩn nên thiết lập ra sao?</summary>
+        <div class="ans">
+          <ul>
+            <li>Rủi ro dài hạn: không có audit trail (không ai biết sự cố từng xảy ra, tần suất, mức ảnh hưởng); chỉ vá triệu chứng (Incident) mà không tìm root-cause (Problem Mgmt) → lỗi tương tự tái diễn ở pipeline khác; và nguy hiểm nhất — nếu CEO phát hiện dashboard từng sai mà không ai báo, niềm tin sụp đổ vào <strong>toàn bộ</strong> hệ thống báo cáo, không chỉ riêng dashboard đó.</li>
+            <li>Luồng chuẩn: (1) <strong>Incident Mgmt</strong> — khôi phục số liệu đúng nhanh nhất, mở ticket; (2) <strong>Problem Mgmt</strong> — điều tra root-cause trong 24–48h, không đóng ticket chỉ vì "sửa xong là thôi"; (3) <strong>Change Enablement</strong> — mọi sửa code ETL phải qua review, không sửa "lẳng lặng" trực tiếp trên production; (4) cập nhật lại CMDB/runbook để lần sau phát hiện nhanh hơn.</li>
+          </ul>
+        </div>
+      </details>
+
       <h3 style="margin-top:26px;">Câu hỏi theo khung DAMA-DMBOK2 <span class="dama-tag">CDMP</span></h3>
 
       <details>
@@ -805,6 +837,50 @@
           <ul>
             <li>Vận dụng định lý CAP: hệ phân tán chỉ chọn được 2/3 giữa Consistency – Availability – Partition tolerance → phải biết đánh đổi có chủ đích theo yêu cầu nghiệp vụ (giao dịch tài chính ưu tiên Consistency, hệ thống realtime ưu tiên Availability).</li>
             <li>SLA/Disaster Recovery: phân loại mức ưu tiên khôi phục theo loại dữ liệu; masking dữ liệu Production khi dùng cho môi trường Test.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Tập đoàn đa ngành: Marketing muốn tự định nghĩa "Active User" theo cách riêng, Tài chính đếm khác. Chọn mô hình nào giữa Centralized/Replicated/Federated? Vận hành Federated sao để không biến thành "cát cứ địa phương"?</summary>
+        <div class="ans">
+          <ul>
+            <li><strong>Federated</strong> là lựa chọn phù hợp nhất cho Tập đoàn đa ngành — cân bằng giữa tự chủ của từng Business Unit (BU) và tính thống nhất toàn Tập đoàn.</li>
+            <li>Để không biến thành "cát cứ địa phương": mọi định nghĩa <strong>Master Data</strong> cốt lõi và khái niệm dùng chung (như "Active User") bắt buộc do <strong>DGC trung tâm</strong> phê duyệt, lưu trong Business Glossary chung — BU chỉ tự chủ ở tầng vận hành/báo cáo riêng, không được tự ý định nghĩa lại tầng dùng chung.</li>
+            <li>Cần có cơ chế <strong>escalation</strong> rõ ràng lên DGC khi 2 BU tranh cãi định nghĩa, và duy trì cộng đồng thực hành (Data Steward Network) họp định kỳ để các BU đồng thuận thay vì bị áp đặt từ trên xuống.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Team kỹ thuật cứ có request là tạo bảng (Physical layer) ngay lập tức. Dựa trên vòng đời Conceptual → Logical → Physical và Zachman Framework, thiết lập Architecture Review Board thế nào để Business Requirement không bị "tam sao thất bản" xuống Database Schema?</summary>
+        <div class="ans">
+          <ul>
+            <li>Bắt buộc <strong>gate kiểm duyệt</strong> giữa mỗi tầng — không cho nhảy thẳng từ yêu cầu nghiệp vụ (Conceptual — "cái gì/tại sao") sang tạo bảng thật (Physical) mà bỏ qua tầng Logical (thuộc tính, khoá, quan hệ), vì đây chính là nơi phần lớn sai lệch nghiệp vụ bị "dịch sai".</li>
+            <li>Thành lập <strong>Architecture Review Board (ARB)</strong> gồm Enterprise Data Architect + đại diện Business Owner của domain liên quan, họp trước khi bảng mới nào được tạo trên production — dùng Zachman như checklist: đã trả lời đủ "Ai/Cái gì/Tại sao" (góc nhìn Owner) trước khi trả lời "Như thế nào/Ở đâu" (góc nhìn Builder) chưa?</li>
+            <li>Bắt buộc kiểm tra <strong>reuse</strong> trước khi tạo mới (đối chiếu Enterprise Data Model) để tránh tạo trùng thực thể đã có, kiểm soát tình trạng "interface spaghetti".</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Đội Engineering đề xuất chuyển Core từ CSDL Quan hệ (ACID) sang NoSQL phân tán (BASE) để dễ Scale. Đánh đổi Consistency lấy Availability sẽ tàn phá Master Data Management (MDM) như thế nào? Governance can thiệp ra sao?</summary>
+        <div class="ans">
+          <ul>
+            <li>Rủi ro cụ thể cho MDM: khi ưu tiên Availability (AP) lúc phân vùng mạng, các node khác nhau có thể tạm thời chấp nhận ghi giá trị khác nhau cho <strong>cùng một</strong> thực thể Master (vd. 2 node cùng lúc cho phép cập nhật hạn mức tín dụng của cùng 1 khách hàng theo 2 giá trị khác nhau) — đến khi "eventual consistency" đồng bộ lại, hệ thống phải tự quyết định bản ghi nào là "sự thật", có thể ghi đè mất dữ liệu đúng.</li>
+            <li>Với Master Data (Khách hàng, Sản phẩm) — vốn cần Single Source of Truth tuyệt đối — đây là rủi ro không chấp nhận được nếu áp dụng BASE cho toàn bộ Core.</li>
+            <li>Governance nên can thiệp bằng kiến trúc <strong>lai (hybrid)</strong>: giữ ACID/CP cho domain Master Data và giao dịch tài chính lõi, chỉ cho phép NoSQL/BASE ở domain phụ trợ (log, tương tác người dùng, dữ liệu phân tích) — không phải "tất cả hoặc không gì cả". Mọi đổi kiến trúc lưu trữ cho domain Master Data đều phải qua Architecture Review Board phê duyệt trước.</li>
+          </ul>
+        </div>
+      </details>
+
+      <details>
+        <summary>Mô hình AI phân bổ voucher bị phát hiện thiên vị (chỉ nhắm nam thành thị, loại phụ nữ nông thôn). Dữ liệu dù đã ẩn danh vẫn có nguy cơ bị dịch ngược. Áp dụng Nguyên tắc Belmont, giải trình rủi ro pháp lý/đạo đức với Ban Giám đốc ra sao? Chính sách nào cần ban hành ngay?</summary>
+        <div class="ans">
+          <ul>
+            <li>Áp Belmont: vi phạm <strong>Công bằng (Justice)</strong> rõ ràng (1 nhóm nhân khẩu học bị hệ thống loại trừ khỏi lợi ích); nguy cơ dịch ngược ẩn danh vi phạm <strong>Tôn trọng con người</strong> (quyền riêng tư không được bảo vệ thực chất dù đã "tuân thủ hình thức" bằng anonymization).</li>
+            <li>Giải trình nên tách 2 rủi ro: (1) <strong>pháp lý</strong> — phân biệt đối xử có thể vi phạm luật bảo vệ người tiêu dùng tuỳ thẩm quyền; (2) <strong>đạo đức/danh tiếng</strong> — dù không sai luật, thiên kiến vẫn gây tổn hại thương hiệu nếu bị phát hiện công khai.</li>
+            <li>Chính sách ban hành ngay: tạm dừng chiến dịch, yêu cầu Data Science rà soát lại tập huấn luyện (loại bỏ/cân bằng biến giới tính/vùng miền hoặc proxy của chúng); nâng chuẩn ẩn danh hoá lên <strong>k-anonymity/differential privacy</strong> thay vì chỉ mask trường định danh trực tiếp; thiết lập <strong>Fairness Audit bắt buộc</strong> trước khi bất kỳ model nào ảnh hưởng tới quyền lợi khách hàng được go-live.</li>
           </ul>
         </div>
       </details>

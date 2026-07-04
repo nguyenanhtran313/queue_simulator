@@ -87,6 +87,49 @@
     color:#f5faf9;
   }
   .node p{margin:.15rem 0 0; color:var(--muted); font-size:.93rem; max-width:60ch;}
+  .node .plain{
+    margin-top:.55rem;
+    padding-top:.55rem;
+    border-top:1px dashed var(--line);
+    font-size:.88rem;
+    color:var(--muted-dim);
+    max-width:60ch;
+  }
+  .node .plain b{color:var(--muted); font-weight:600;}
+
+  /* node: text bên trái + ví dụ dữ liệu bên phải */
+  .node{
+    display:grid;
+    grid-template-columns:1fr 250px;
+  }
+  .node-content{display:flex; flex-direction:column; gap:.3rem;}
+  .example{
+    background:#0d222b;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.75rem .9rem;
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+    align-self:start;
+  }
+  .example .tag{color:var(--muted-dim); font-size:.65rem;}
+  .example pre{
+    margin:0;
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.74rem;
+    line-height:1.45;
+    color:var(--text);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .example pre b{color:var(--ice); font-weight:600;}
+  .fork .node{grid-template-columns:1fr;}
+  .fork .example{align-self:stretch;}
+  @media (max-width:760px){
+    .node{grid-template-columns:1fr;}
+  }
+
   .flag{
     font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
     font-size:.68rem;
@@ -229,6 +272,34 @@
   td.yes{color:var(--text);}
   td.yes b{color:var(--ice);}
 
+  /* suggest / trend section */
+  .suggest-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  .suggest-grid .item{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1.1rem 1.3rem;
+    display:flex;
+    flex-direction:column;
+    gap:.4rem;
+  }
+  .suggest-grid .item .tag{color:var(--gold);}
+  .suggest-grid .item h4{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.02rem;
+    margin:0;
+    color:#f5faf9;
+  }
+  .suggest-grid .item p{margin:0; color:var(--muted); font-size:.9rem;}
+  .suggest-grid .item p.now{color:var(--muted-dim); font-size:.85rem;}
+  @media (max-width:700px){
+    .suggest-grid{grid-template-columns:1fr;}
+  }
+
   footer{
     border-top:1px solid var(--line);
     padding-top:1.5rem;
@@ -253,70 +324,167 @@
   <section class="pipeline">
 
     <div class="node" style="--accent:var(--muted-dim)">
-      <div class="row"><span class="tag">Nguồn</span></div>
-      <h3>Source Systems</h3>
-      <p>App backend, mobile event, IoT/thiết bị… — nơi phát sinh dữ liệu gốc.</p>
+      <div class="node-content">
+        <div class="row"><span class="tag">Nguồn</span></div>
+        <h3>Source Systems</h3>
+        <p>Database OLTP của các app nghiệp vụ, event tracking từ web/mobile, log hệ thống, API bên thứ ba. Đây là các hệ thống <b>system of record</b> — được thiết kế để phục vụ giao dịch, không phải để phục vụ truy vấn phân tích khối lượng lớn.</p>
+        <p class="plain">Nói đơn giản: đây là nơi dữ liệu <b>được tạo ra lần đầu</b> — app ghi một đơn hàng, người dùng bấm một nút, hệ thống ghi một log.</p>
+      </div>
+      <div class="example">
+        <span class="tag">Ví dụ · bảng orders (PostgreSQL)</span>
+        <pre>id: <b>88213</b>
+customer_id: 5521
+status: confirmed
+amount: 459000
+created_at: 2026-07-04 09:12:03</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--muted-dim)">
-      <div class="row"><span class="tag">Message bus</span></div>
-      <h3>Kafka</h3>
-      <p>Hàng đợi sự kiện, đệm dữ liệu real-time, tách rời tốc độ ghi của nguồn khỏi tốc độ xử lý phía sau.</p>
+      <div class="node-content">
+        <div class="row"><span class="tag">Message bus</span></div>
+        <h3>Kafka</h3>
+        <p>Producer ghi message vào <b>topic</b>, mỗi topic chia thành nhiều <b>partition</b> để scale ghi/đọc song song. Message được giữ lại theo một khoảng <b>retention</b> nhất định (không mất ngay sau khi đọc), và nhiều consumer group có thể đọc cùng một dữ liệu độc lập với nhau.</p>
+        <p class="plain">Nói đơn giản: Kafka là "hàng đợi trung gian". Hệ thống nguồn cứ ghi vào, không cần biết hoặc chờ ai đọc; job xử lý phía sau đọc ra theo tốc độ của riêng nó, không bị dữ liệu dồn ập vào cùng lúc làm quá tải.</p>
+      </div>
+      <div class="example">
+        <span class="tag">Ví dụ · topic orders.created</span>
+        <pre>partitions: <b>12</b>  retention: 7 ngày
+
+offset 184201:
+{"order_id":88213,
+ "customer_id":5521,
+ "amount":459000}</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--ice)">
-      <div class="row"><span class="tag">Streaming compute · trên Kubernetes</span></div>
-      <h3>Spark Structured Streaming</h3>
-      <p>Đọc liên tục từ Kafka theo micro-batch, ghi thẳng xuống Data Lake — chưa xử lý nghiệp vụ, chỉ "hạ cánh" dữ liệu.</p>
+      <div class="node-content">
+        <div class="row"><span class="tag">Streaming compute · trên Kubernetes</span></div>
+        <h3>Spark Structured Streaming</h3>
+        <p>Một consumer group đọc Kafka theo <b>micro-batch</b> (chu kỳ vài chục giây), ghi dữ liệu xuống GCS. Vị trí đã đọc tới đâu (<b>offset</b>) được lưu vào <b>checkpoint</b> trên GCS — nếu job crash và khởi động lại, nó đọc tiếp đúng chỗ, không lặp và không sót dữ liệu. Chạy trên Kubernetes để scale số executor theo tải và cô lập tài nguyên với các job khác.</p>
+        <p class="plain">Nói đơn giản: đây là job chạy nền <b>liên tục 24/7</b>, liên tục lấy dữ liệu từ Kafka đổ vào kho lưu trữ — không phải job chạy một lần rồi dừng.</p>
+      </div>
+      <div class="example">
+        <span class="tag">Ví dụ · checkpoint</span>
+        <pre>offsets/batch-<b>184203</b>
+{"orders.created":
+  {"0":184201,"1":97733,…}}
+
+ghi ra:
+gs://lake/bronze/orders/
+  dt=2026-07-04/part-00042.avro</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--bronze)">
-      <div class="row">
-        <span class="tag">GCS Data Lake · Bronze</span>
-        <a class="flag" href="#dive1">Xem giải thích ↓</a>
+      <div class="node-content">
+        <div class="row">
+          <span class="tag">GCS Data Lake · Bronze</span>
+          <a class="flag" href="#dive1">Xem giải thích ↓</a>
+        </div>
+        <h3>Bronze — Raw Avro / Raw Parquet</h3>
+        <p>Dữ liệu được giữ gần như nguyên bản so với lúc nhận (append-only, không sửa/xoá), thường partition theo ngày/giờ ingest. Đây là nơi có bước "convert sang Parquet" mà bạn đang hỏi — xem phần giải thích bên dưới.</p>
+        <p class="plain">Nói đơn giản: đây là "bản sao y nguyên" của dữ liệu vừa nhận, gần như chưa chỉnh sửa gì — để nếu bước xử lý sau này phát hiện lỗi, vẫn còn bản gốc để chạy lại từ đầu.</p>
       </div>
-      <h3>Bronze — Raw Avro / Raw Parquet</h3>
-      <p>Vùng lưu dữ liệu thô, gần nguyên bản, chưa dọn dẹp. Đây là nơi có bước "convert sang Parquet" mà bạn đang hỏi.</p>
+      <div class="example">
+        <span class="tag">Ví dụ · trước compaction</span>
+        <pre>bronze/orders/dt=2026-07-04/
+├─ part-00001.avro (12 KB)
+├─ part-00002.avro (9 KB)
+├─ … <b>~40.000 file/ngày</b></pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--ice)">
-      <div class="row"><span class="tag">Batch / micro-batch</span></div>
-      <h3>Spark ETL Jobs</h3>
-      <p>Làm sạch, khử trùng lặp, join, áp logic nghiệp vụ — biến Bronze thành dữ liệu có cấu trúc, đáng tin cậy.</p>
+      <div class="node-content">
+        <div class="row"><span class="tag">Batch / micro-batch</span></div>
+        <h3>Spark ETL Jobs</h3>
+        <p>Khử trùng lặp theo business key, join với dữ liệu tham chiếu (danh mục, khách hàng…), kiểm tra chất lượng dữ liệu (null, sai kiểu, sai định dạng), áp business rule, rồi ghi kết quả xuống Silver dưới dạng bảng Iceberg.</p>
+        <p class="plain">Nói đơn giản: đây là bước "làm sạch và ráp nối" — bỏ bản ghi trùng, bổ sung thông tin liên quan, sửa lỗi định dạng, biến dữ liệu thô thành dữ liệu đủ tin cậy để dùng.</p>
+      </div>
+      <div class="example">
+        <span class="tag">Ví dụ · trước / sau</span>
+        <pre>raw: amount="459000" (string)
+     order_id=88213 x<b>2</b> (trùng)
+        ↓ dedup + join + validate
+clean: amount=459000 (int)
+   customer_name="Nguyễn A"
+   status=CONFIRMED</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--gold)">
-      <div class="row">
-        <span class="tag">GCS · Silver / Gold</span>
-        <a class="flag" href="#dive2">Xem giải thích ↓</a>
+      <div class="node-content">
+        <div class="row">
+          <span class="tag">GCS · Silver / Gold</span>
+          <a class="flag" href="#dive2">Xem giải thích ↓</a>
+        </div>
+        <h3>Iceberg Tables trên GCS</h3>
+        <p><b>Silver</b>: dữ liệu chi tiết ở mức bản ghi gốc, đã sạch và chuẩn hoá. <b>Gold</b>: dữ liệu đã tổng hợp theo nhu cầu báo cáo (doanh thu theo ngày, số đơn theo khu vực…), thường theo mô hình star-schema. Cả hai đều là file Parquet vật lý, được Iceberg quản lý version và transaction — xem phần giải thích bên dưới.</p>
+        <p class="plain">Nói đơn giản: Silver là dữ liệu chi tiết đã sạch; Gold là các con số tổng hợp sẵn, để không phải tính lại từ đầu mỗi lần mở báo cáo.</p>
       </div>
-      <h3>Iceberg Tables trên GCS</h3>
-      <p>Silver: dữ liệu sạch, chuẩn hoá. Gold: dữ liệu tổng hợp sẵn cho báo cáo/nghiệp vụ. Cả hai đều là file Parquet, được Iceberg quản lý.</p>
+      <div class="example">
+        <span class="tag">Ví dụ · Silver vs Gold</span>
+        <pre>Silver.orders (1 dòng = 1 đơn)
+88213 | 5521 | 459000 | HN
+
+Gold.revenue_daily (đã gộp)
+dt=07-04 | HN | <b>812.4M</b> | 1.842 đơn</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="node" style="--accent:var(--silver)">
-      <div class="row"><span class="tag">Query engine</span></div>
-      <h3>Dremio</h3>
-      <p>Tầng truy vấn/ngữ nghĩa nằm trên Iceberg — cho phép SQL trực tiếp lên Silver/Gold mà không cần copy dữ liệu.</p>
+      <div class="node-content">
+        <div class="row"><span class="tag">Query engine</span></div>
+        <h3>Dremio</h3>
+        <p>Tầng truy vấn/ngữ nghĩa nằm trên Iceberg: định nghĩa <b>virtual dataset</b>, và dùng <b>reflection</b> (kết quả truy vấn được tính trước và cache lại) để tăng tốc độ trả lời cho các câu hỏi lặp lại, mà không cần copy dữ liệu ra khỏi GCS.</p>
+        <p class="plain">Nói đơn giản: đây là nơi Power BI và Data Scientist "hỏi" dữ liệu bằng SQL, mà không cần biết dữ liệu vật lý đang nằm ở file nào trong GCS.</p>
+      </div>
+      <div class="example">
+        <span class="tag">Ví dụ · truy vấn qua reflection</span>
+        <pre>SELECT dt, region, SUM(revenue)
+FROM gold.revenue_daily
+WHERE dt = '2026-07-04'
+GROUP BY dt, region
+
+-- có reflection: <b>40ms</b>
+-- không có: ~8s (quét lại Parquet)</pre>
+      </div>
     </div>
     <div class="connector"></div>
 
     <div class="fork">
       <div class="node" style="--accent:var(--gold)">
-        <div class="row"><span class="tag">BI</span></div>
-        <h3>Power BI</h3>
-        <p>Dashboard, báo cáo định kỳ cho nghiệp vụ.</p>
+        <div class="node-content">
+          <div class="row"><span class="tag">BI</span></div>
+          <h3>Power BI</h3>
+          <p>Kết nối tới Dremio (DirectQuery hoặc import), phục vụ dashboard và báo cáo định kỳ cho nghiệp vụ.</p>
+        </div>
+        <div class="example">
+          <span class="tag">Ví dụ · thẻ dashboard</span>
+          <pre>Doanh thu hôm nay
+<b>812,4 triệu</b>  ▲ 12% so hôm qua</pre>
+        </div>
       </div>
       <div class="node" style="--accent:var(--ice)">
-        <div class="row"><span class="tag">Phân tích / ML</span></div>
-        <h3>Data Scientist</h3>
-        <p>Truy vấn ad-hoc, feature engineering, huấn luyện mô hình.</p>
+        <div class="node-content">
+          <div class="row"><span class="tag">Phân tích / ML</span></div>
+          <h3>Data Scientist</h3>
+          <p>Truy vấn ad-hoc qua Dremio, hoặc đọc thẳng Iceberg bằng Spark khi cần xử lý khối lượng lớn cho feature engineering, huấn luyện mô hình.</p>
+        </div>
+        <div class="example">
+          <span class="tag">Ví dụ · feature engineering</span>
+          <pre>df = spark.read.iceberg(
+  "silver.orders")
+# tần suất mua / customer_id</pre>
+        </div>
       </div>
     </div>
 
@@ -330,20 +498,25 @@
     </div>
     <div class="card">
       <p class="answer">
-        Spark Structured Streaming ưu tiên <b>ghi nhanh, không chặn</b>: mỗi micro-batch
-        (vài giây một lần) tạo ra một <b>file nhỏ</b>, thường ở dạng
-        <b>Avro/JSON</b> — định dạng theo dòng (<i>row-based</i>), ghi rẻ, hỗ trợ schema evolution
-        tốt, phù hợp cho việc "hứng" dữ liệu liên tục. Nhưng ghi liên tục như vậy
-        tạo ra <b>rất nhiều file nhỏ</b>, mà file nhỏ + định dạng theo dòng thì lại
-        <b>chậm</b> khi các job ETL/BI phía sau cần đọc và quét dữ liệu.
+        <b>Về mặt kỹ thuật:</b> ghi Parquet đòi hỏi buffer cả một khối bản ghi trong bộ nhớ rồi
+        mới encode theo cột (column chunk) và flush xuống đĩa — phù hợp cho ghi theo lô lớn,
+        không phù hợp cho việc ghi liên tục từng dòng tốc độ cao như streaming. Vì vậy
+        Spark Structured Streaming ghi ra <b>Avro</b>: định dạng theo dòng (<i>row-based</i>),
+        ghi từng bản ghi ngay khi nhận được, kèm schema trong chính file nên hỗ trợ schema
+        evolution tốt. Cái giá phải trả là mỗi micro-batch (chu kỳ vài chục giây) tạo ra
+        <b>một file nhỏ</b> — sau vài giờ chạy, Bronze có hàng chục nghìn file nhỏ.
       </p>
       <p class="answer">
-        Vì vậy có một job Spark chạy định kỳ (ví dụ mỗi giờ), làm hai việc cùng lúc:
-        <b>gộp nhiều file nhỏ thành file lớn</b> (compaction) và
-        <b>chuyển từ Avro sang Parquet</b> — định dạng theo cột (<i>columnar</i>), nén tốt hơn,
-        và cho phép đọc chỉ những cột cần dùng thay vì cả dòng. Đây chính là "node convert"
-        mà bên DE nhắc tới: nó là <b>cầu nối giữa vùng hạ cánh thô</b> (tối ưu cho ghi) và
-        <b>Bronze chuẩn hoá</b> (tối ưu cho đọc), để mọi job phía sau chỉ cần biết một định dạng duy nhất.
+        Nhiều file nhỏ là vấn đề thật, không phải lý thuyết suông: trên object storage như GCS,
+        mỗi lần liệt kê (list) hay mở một file là một lần gọi API riêng — hàng chục nghìn file
+        nhỏ nghĩa là hàng chục nghìn lần gọi API chỉ để bắt đầu đọc, trước khi đọc được byte dữ
+        liệu nào. Cộng thêm định dạng row-based không cho phép chỉ đọc riêng cột cần dùng, các
+        job ETL/BI phía sau đọc rất chậm và tốn chi phí I/O. Do đó có một job Spark batch chạy
+        định kỳ (ví dụ mỗi giờ), làm hai việc cùng lúc: <b>gộp nhiều file nhỏ thành file lớn</b>
+        (compaction) và <b>chuyển từ Avro sang Parquet</b> — định dạng theo cột, nén tốt hơn,
+        cho phép chỉ đọc cột cần dùng. Đây chính là "node convert" bên DE nhắc tới: cầu nối
+        giữa vùng hạ cánh tối ưu cho ghi và Bronze chuẩn hoá tối ưu cho đọc, để mọi job phía
+        sau chỉ cần biết một định dạng duy nhất.
       </p>
       <div class="miniflow">
         <div class="box">
@@ -388,11 +561,24 @@
       </div>
       <p class="answer">
         Nhờ lớp metadata này, khi Dremio hay Spark truy vấn, engine <b>không cần liệt kê
-        toàn bộ thư mục trên GCS</b> (vốn chậm và tốn chi phí) — nó đọc thẳng manifest để biết
-        chính xác cần mở file Parquet nào, bỏ qua file nào. Và vì mỗi lần ghi tạo ra một
+        toàn bộ thư mục trên GCS</b> (vốn chậm và tốn chi phí gọi API) — nó đọc thẳng manifest
+        để biết chính xác cần mở file Parquet nào, bỏ qua file nào, dựa trên thống kê min/max
+        đã ghi sẵn (partition pruning, file pruning). Và vì mỗi lần ghi tạo ra một
         <b>snapshot mới</b> thay vì sửa trực tiếp file cũ, Iceberg có được: ghi/đọc không đụng
-        nhau (ACID), đổi schema hoặc partition mà không phải viết lại toàn bộ dữ liệu,
-        và có thể "time travel" — truy vấn lại đúng trạng thái bảng tại một thời điểm trước đó.
+        nhau (ACID), đổi schema hoặc đổi cách partition mà <b>không cần viết lại dữ liệu cũ</b>
+        (partition evolution — dữ liệu cũ giữ nguyên partition cũ, dữ liệu mới theo partition
+        mới, Iceberg tự biết cách đọc cả hai), và có thể "time travel" — truy vấn lại đúng
+        trạng thái bảng tại một thời điểm trước đó, hoặc rollback về snapshot cũ nếu job ETL
+        ghi sai dữ liệu.
+      </p>
+      <p class="answer">
+        Vì dữ liệu vẫn chỉ là file Parquet cộng dồn theo snapshot, việc vận hành thực tế cần
+        thêm vài thao tác bảo trì định kỳ mà DE nên biết: <b><code>rewrite_data_files</code></b>
+        (compaction — gộp file nhỏ tích luỹ qua nhiều lần ghi), <b><code>expire_snapshots</code></b>
+        (xoá các snapshot cũ không còn cần giữ, tránh phình chi phí lưu trữ), và
+        <b><code>remove_orphan_files</code></b> (dọn các file Parquet không còn manifest nào trỏ
+        tới, thường do job ghi bị lỗi giữa chừng). Không chạy các thao tác này, bảng Iceberg vẫn
+        đúng nhưng sẽ ngày càng chậm và tốn storage hơn cần thiết.
       </p>
       <div class="tablewrap">
         <table>
@@ -425,6 +611,56 @@
       </div>
     </div>
 
+  </section>
+
+  <section class="deepdive">
+    <div class="section-head">
+      <div class="eyebrow">Có thể tốt hơn</div>
+      <h2>Gợi ý cải tiến &amp; xu hướng hiện nay</h2>
+      <p class="lede" style="max-width:68ch;">
+        Kiến trúc hiện tại (Kafka → Spark → GCS Bronze → Spark ETL → Iceberg → Dremio) đã đúng
+        mô hình ELT chuẩn và ổn định. Dưới đây là các hướng nhiều team dữ liệu đang áp dụng thêm
+        để giảm độ trễ, giảm chi phí vận hành, hoặc giảm số tầng hệ thống phải duy trì.
+      </p>
+    </div>
+    <div class="suggest-grid">
+      <div class="item">
+        <span class="tag">Kiến trúc</span>
+        <h4>Ghi thẳng streaming vào Iceberg</h4>
+        <p>Spark/Flink hỗ trợ upsert trực tiếp vào bảng Iceberg, bỏ qua tầng Avro trung gian và job convert riêng — giảm một tầng hệ thống phải vận hành, giảm độ trễ từ streaming tới Silver.</p>
+        <p class="now">Đánh đổi: mất lợi thế "ghi row-based nhanh" của Avro nếu tốc độ ghi rất cao.</p>
+      </div>
+      <div class="item">
+        <span class="tag">Catalog</span>
+        <h4>Iceberg REST Catalog</h4>
+        <p>Thay Hive Metastore bằng REST Catalog (Polaris, Nessie, Unity Catalog…) để nhiều engine — Spark, Trino, Dremio, thậm chí BigQuery/Snowflake — cùng đọc một bảng mà không đụng nhau.</p>
+        <p class="now">Xu hướng 2025-2026: catalog interoperability là trọng tâm của cộng đồng Iceberg.</p>
+      </div>
+      <div class="item">
+        <span class="tag">Vận hành</span>
+        <h4>Tự động hoá bảo trì Iceberg</h4>
+        <p>Lên lịch tự động cho <code>rewrite_data_files</code>, <code>expire_snapshots</code>, <code>remove_orphan_files</code> thay vì chạy tay — dùng scheduler (Airflow/Dagster) hoặc dịch vụ managed compaction.</p>
+        <p class="now">Thiếu bước này là nguyên nhân phổ biến nhất khiến bảng Iceberg "chạy đúng nhưng ngày càng chậm".</p>
+      </div>
+      <div class="item">
+        <span class="tag">Transform</span>
+        <h4>dbt / SQLMesh cho tầng Silver → Gold</h4>
+        <p>Định nghĩa transform bằng SQL có version control, test tự động, và lineage tự sinh — thay vì Spark job thủ công khó review và khó biết bảng nào phụ thuộc bảng nào.</p>
+        <p class="now">Giúp business rule minh bạch hơn, dễ audit khi số nghịch số liệu.</p>
+      </div>
+      <div class="item">
+        <span class="tag">Chất lượng dữ liệu</span>
+        <h4>Data contract &amp; schema registry</h4>
+        <p>Ràng buộc schema (Avro/Protobuf) giữa hệ thống nguồn và Kafka ngay từ đầu, kèm kiểm tra chất lượng tự động (Great Expectations/Soda) thay vì chỉ phát hiện lỗi ở bước Spark ETL.</p>
+        <p class="now">Chặn lỗi sớm ở nguồn rẻ hơn rất nhiều so với vá lỗi ở Gold sau khi BI đã dùng số sai.</p>
+      </div>
+      <div class="item">
+        <span class="tag">Truy vấn</span>
+        <h4>Cân nhắc Trino/StarRocks bên cạnh Dremio</h4>
+        <p>Nếu cần dashboard độ trễ thấp hơn (near real-time) hoặc truy vấn ad-hoc khối lượng cực lớn, các engine OLAP như StarRocks/ClickHouse trên cùng Iceberg là hướng nhiều công ty đang thử song song với Dremio.</p>
+        <p class="now">Không nhất thiết thay thế — có thể dùng cho các use case cần latency thấp hơn reflection cache.</p>
+      </div>
+    </div>
   </section>
 
   <footer>

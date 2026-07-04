@@ -1,0 +1,396 @@
+<title>OneMount vs Masterise — so sánh kiến trúc dữ liệu</title>
+<style>
+  :root{
+    --ink:#0f1216;
+    --panel:#171b20;
+    --panel-2:#1b2126;
+    --line:#2a3138;
+    --text:#eef1f2;
+    --muted:#9aa7ac;
+    --muted-dim:#69767b;
+    --om:#6fd0de;
+    --mr:#f2a33d;
+    --good:#8fbf7a;
+    --warn:#d9776b;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1200px 480px at 50% -10%, #1a2530 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+  }
+  ::selection{background:var(--om); color:#06141a;}
+  a{color:var(--om);}
+  .page{
+    max-width:1180px;
+    margin:0 auto;
+    padding:4.5rem 1.75rem 6rem;
+    display:flex;
+    flex-direction:column;
+    gap:3rem;
+  }
+
+  header{display:flex; flex-direction:column; gap:.9rem;}
+  .eyebrow{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+  }
+  h1{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-weight:600;
+    font-size:clamp(1.9rem, 3.6vw, 2.5rem);
+    margin:0;
+    text-wrap:balance;
+    color:#f8fbfa;
+  }
+  header .lede{max-width:78ch; color:var(--muted); font-size:1.02rem;}
+  header .lede b{color:var(--text); font-weight:600;}
+  .disclaimer{
+    display:flex; gap:.7rem; align-items:flex-start;
+    background:var(--panel-2); border:1px solid var(--line);
+    border-left:4px solid var(--mr); border-radius:6px;
+    padding:.85rem 1.1rem; font-size:.88rem; color:var(--muted);
+    max-width:80ch;
+  }
+  .disclaimer .tag{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.66rem; letter-spacing:.08em; text-transform:uppercase;
+    color:var(--mr); white-space:nowrap; padding-top:.15rem;
+  }
+
+  /* ---------- comparison grid ---------- */
+  .compare{display:flex; flex-direction:column; gap:0;}
+  .compare-head{
+    display:grid;
+    grid-template-columns: 1.1fr 1.1fr 1.3fr;
+    gap:1rem;
+    position:sticky; top:0;
+    background:var(--ink);
+    padding:.6rem 0 .9rem;
+    z-index:2;
+    border-bottom:1px solid var(--line);
+    margin-bottom:1.6rem;
+  }
+  .head-cell{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.78rem; letter-spacing:.06em; text-transform:uppercase;
+    display:flex; align-items:center; gap:.5rem;
+  }
+  .head-cell.om{color:var(--om);}
+  .head-cell.mr{color:var(--mr);}
+  .head-cell.note{color:var(--muted);}
+  .head-cell .badge{
+    font-family:"Segoe UI",sans-serif; text-transform:none; letter-spacing:0;
+    font-size:.72rem; color:var(--ink); background:var(--mr);
+    padding:.1rem .5rem; border-radius:999px; font-weight:600;
+  }
+
+  .stage{padding:1.4rem 0; border-top:1px solid var(--line);}
+  .stage:first-child{border-top:none; padding-top:0;}
+  .stage-label{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem; letter-spacing:.1em; text-transform:uppercase;
+    color:var(--muted-dim); margin-bottom:.7rem;
+  }
+  .row3{
+    display:grid;
+    grid-template-columns: 1.1fr 1.1fr 1.3fr;
+    gap:1rem;
+    align-items:stretch;
+  }
+  .cell{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1rem 1.15rem;
+    display:flex; flex-direction:column; gap:.35rem;
+  }
+  .cell.om{border-left:3px solid var(--om);}
+  .cell.mr{border-left:3px solid var(--mr);}
+  .cell.note{background:var(--panel-2); border-left:3px solid var(--muted-dim);}
+  .cell h3{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.03rem; margin:0; color:#f8fbfa; font-weight:600;
+  }
+  .cell .sub{font-size:.76rem; color:var(--muted-dim);}
+  .cell p{margin:0; font-size:.89rem; color:var(--muted);}
+  .cell code{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    background:#0c1014; border:1px solid var(--line);
+    padding:.02rem .3rem; border-radius:4px; font-size:.85em; color:var(--text);
+  }
+
+  .note p.diff{color:var(--text); font-size:.9rem;}
+  .note ul.tradeoff{list-style:none; margin:0; padding:0; display:flex; flex-direction:column; gap:.4rem;}
+  .note ul.tradeoff li{padding-left:1.15rem; position:relative; font-size:.86rem; color:var(--muted);}
+  .note ul.tradeoff li.plus::before{content:"+"; color:var(--good); position:absolute; left:0; font-weight:700;}
+  .note ul.tradeoff li.minus::before{content:"–"; color:var(--warn); position:absolute; left:0; font-weight:700;}
+  .same-badge{
+    align-self:flex-start;
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem; color:var(--good); border:1px solid var(--good);
+    padding:.1rem .55rem; border-radius:999px;
+  }
+
+  @media (max-width:820px){
+    .compare-head{display:none;}
+    .row3{grid-template-columns:1fr;}
+    .cell.om::before{content:"OneMount · GCP"; display:block; font-family:ui-monospace,monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--om); margin-bottom:.2rem;}
+    .cell.mr::before{content:"Masterise · AWS"; display:block; font-family:ui-monospace,monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--mr); margin-bottom:.2rem;}
+    .cell.note::before{content:"Nhận định"; display:block; font-family:ui-monospace,monospace; font-size:.68rem; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); margin-bottom:.2rem;}
+  }
+
+  .summary{
+    background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
+    padding:1.75rem 1.9rem; display:flex; flex-direction:column; gap:.9rem;
+  }
+  .summary h2{
+    font-family:Cambria,Georgia,"Noto Serif",serif; font-size:1.35rem; margin:0;
+    color:#f8fbfa; text-wrap:balance;
+  }
+  .summary p{margin:0; color:var(--muted); font-size:.95rem; max-width:82ch;}
+  .summary p b{color:var(--text);}
+
+  footer{border-top:1px solid var(--line); padding-top:1.5rem; color:var(--muted-dim); font-size:.85rem;}
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Kiến trúc dữ liệu · So sánh</div>
+    <h1>OneMount (GCP) và Masterise (AWS): cùng một mô hình ELT, khác bộ dịch vụ</h1>
+    <p class="lede">
+      Hai kiến trúc xếp song song theo từng bước xử lý, để thấy rõ chỗ nào tương đương,
+      chỗ nào thật sự khác nhau. Cột phải là nhận định: khác biệt cụ thể, cộng với
+      <span style="color:var(--good)">điểm mạnh (+)</span> và
+      <span style="color:var(--warn)">điểm cần đánh đổi (–)</span> của mỗi hướng.
+    </p>
+    <div class="disclaimer">
+      <span class="tag">Lưu ý</span>
+      <span>Đã cập nhật theo xác nhận thực tế: Masterise chỉ dùng AWS làm nơi <b>lưu trữ</b>
+      (S3), còn toàn bộ pipeline — streaming, ETL, quản lý bảng, và query engine — đều nằm
+      trong <b>Databricks</b>. Không dùng Glue/EMR/Athena. Định dạng bảng mặc định của
+      Databricks là <b>Delta Lake</b> (không phải Iceberg) — phần này giữ như một giả định
+      hợp lý, cần xác nhận lại nếu Masterise có cấu hình đọc/ghi qua Iceberg (UniForm).</span>
+    </div>
+  </header>
+
+  <section class="compare">
+    <div class="compare-head">
+      <div class="head-cell om">OneMount · GCP</div>
+      <div class="head-cell mr">Masterise · Databricks trên AWS S3</div>
+      <div class="head-cell note">Nhận định</div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">01 · Nguồn dữ liệu</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Source Systems</span>
+          <h3>App / mobile / IoT</h3>
+          <p>Database OLTP, event tracking, log hệ thống — nơi dữ liệu được tạo ra lần đầu.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Source Systems</span>
+          <h3>App / mobile / log</h3>
+          <p>Vai trò giống hệt bản GCP — tầng nguồn không phụ thuộc hạ tầng cloud phía sau.</p>
+        </div>
+        <div class="cell note">
+          <span class="same-badge">Tương đương</span>
+          <p class="diff">Không có khác biệt đáng kể — đây là lớp độc lập với lựa chọn cloud.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">02 · Message bus</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Streaming ingest</span>
+          <h3>Kafka</h3>
+          <p>Tự vận hành cluster: topic/partition/consumer group, tự quản broker, tự scale.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Streaming ingest</span>
+          <h3>Amazon MSK <span style="color:var(--muted-dim); font-weight:400;">/ Kinesis Data Streams</span></h3>
+          <p>Vẫn cần một message bus đứng trước Databricks — MSK (Kafka do AWS vận hành hộ) hoặc Kinesis Data Streams — để đệm sự kiện trước khi Databricks đọc vào.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác biệt: ai vận hành cluster, và mô hình scale (partition vs shard nếu chọn Kinesis). Bước này độc lập với việc chọn Databricks hay tự host Spark — cả hai kiến trúc đều cần một message bus riêng phía trước.</p>
+          <ul class="tradeoff">
+            <li class="plus">MSK/Kinesis: không tự vá bản, patch, scale broker; tích hợp IAM sẵn.</li>
+            <li class="minus">Mất một phần tuỳ biến cấu hình broker; Kinesis không tương thích Kafka API.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">03 · Ingest &amp; streaming compute</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Trên Kubernetes</span>
+          <h3>Spark Structured Streaming</h3>
+          <p>Tự viết job, tự quản checkpoint/offset, tự scale executor theo tải, độ trễ ở mức giây.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Databricks-managed cluster</span>
+          <h3>Spark Structured Streaming trên Databricks</h3>
+          <p>Cùng một công nghệ Spark Structured Streaming như OneMount — chỉ khác ai điều phối cluster: Databricks tự dựng/scale cluster (chạy trên EC2 phía sau) thay vì tự vận hành trên Kubernetes.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác biệt nằm ở <b>control plane</b>, không phải ở công nghệ xử lý: cùng là Spark Structured Streaming, chỉ khác ai lo việc dựng/scale/patch cluster.</p>
+          <ul class="tradeoff">
+            <li class="plus">Databricks: tự động scale cluster, tự quản version Spark/runtime, tích hợp sẵn job scheduling — không cần tự vận hành K8s.</li>
+            <li class="minus">Databricks: chi phí tính theo DBU (Databricks Unit) cộng thêm phí compute AWS bên dưới — hai lớp chi phí chồng lên nhau; ít quyền kiểm soát hạ tầng cluster hơn tự host trên K8s.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">04 · Raw landing zone</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">GCS Bronze</span>
+          <h3>Raw Avro → convert Parquet</h3>
+          <p>Ghi thô dạng Avro (row-based); cần job batch riêng để gộp file nhỏ và convert sang Parquet.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">S3 Bronze</span>
+          <h3>Auto Loader → Delta table</h3>
+          <p><code>Databricks Auto Loader</code> đọc file mới hạ cánh trên S3 (qua S3 event notification, không phải liệt kê cả bucket), tự suy ra schema và ghi thẳng thành bảng Delta — gộp luôn bước "convert" vào ngay lúc ingest thay vì làm ở một job riêng.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác biệt: OneMount cần một job convert/compaction tách riêng; Auto Loader gộp việc đó vào chính bước ingest. Nhưng vấn đề gốc — object storage phạt nặng việc liệt kê hàng loạt file nhỏ — là giống hệt nhau, Auto Loader chỉ là một cách xử lý khác cho cùng một vấn đề (dùng event notification thay vì list bucket).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">05 · Transform theo lô</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Batch / micro-batch</span>
+          <h3>Spark ETL Jobs</h3>
+          <p>Tự host trên K8s: toàn quyền chọn version Spark, thư viện, cấu hình resource.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Batch / micro-batch</span>
+          <h3>Databricks Jobs / Workflows <span style="color:var(--muted-dim); font-weight:400;">(Delta Live Tables)</span></h3>
+          <p>Vẫn là Spark, chạy trong cùng workspace Databricks đã dùng để ingest — không phải chuyển sang một dịch vụ khác như Glue/EMR. Delta Live Tables (nếu dùng) khai báo pipeline Bronze→Silver→Gold theo kiểu declarative, Databricks tự lo việc chạy lại và xử lý lỗi.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác biệt lớn: ở OneMount, ingest (Spark Streaming) và ETL (Spark batch) là hai việc tách rời có thể chạy trên hạ tầng khác nhau; ở Masterise, cả hai nằm trong cùng một nền tảng Databricks — ít điểm nối phải tự ghép.</p>
+          <ul class="tradeoff">
+            <li class="plus">Một workspace, một nơi quản lý job/lineage/quyền truy cập cho cả ingest lẫn ETL — giảm số hệ thống phải vận hành riêng lẻ.</li>
+            <li class="minus">Gắn chặt vào một nền tảng (vendor lock-in) nhiều hơn: chuyển pipeline ra khỏi Databricks sau này tốn công hơn so với kiến trúc ghép từ nhiều mảnh mở như OneMount.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">06 · Silver / Gold — định dạng bảng</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">GCS</span>
+          <h3>Iceberg Tables</h3>
+          <p>Catalog linh hoạt: Dremio Arctic, Nessie (hỗ trợ version kiểu Git cho dữ liệu), hoặc Hive Metastore.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">S3</span>
+          <h3>Delta Lake Tables <span style="color:var(--muted-dim); font-weight:400;">(qua Unity Catalog)</span></h3>
+          <p>Định dạng bảng mặc định của Databricks là <b>Delta Lake</b>, không phải Iceberg — cùng nguyên lý (transaction log ghi lại file nào thuộc version nào, thay vì sửa trực tiếp file cũ) nhưng khác cách triển khai cụ thể. Catalog là <code>Unity Catalog</code> — quản lý schema, quyền truy cập, lineage cho toàn bộ workspace.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác biệt thật sự: <b>Delta Lake ≠ Iceberg</b>, dù cùng giải một bài toán (ACID, schema evolution, time travel trên Parquet). Delta dùng file log JSON tuần tự (<code>_delta_log</code>) liệt kê file đã thêm/xoá mỗi lần commit; Iceberg dùng cây snapshot/manifest có thống kê min-max để pruning tinh hơn. Delta sinh ra từ Databricks/Linux Foundation, Iceberg từ Netflix/Apache — hai chuẩn mở cạnh tranh nhau, không tương thích thẳng với nhau (Databricks có UniForm để "giả lập" đọc Delta như Iceberg nếu cần công cụ ngoài đọc vào).</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">07 · Query engine</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Trên Iceberg</span>
+          <h3>Dremio</h3>
+          <p>Có <code>reflection</code> (cache kết quả truy vấn trước); trả phí theo compute chạy (self-host hoặc Dremio Cloud).</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Trên Delta Lake</span>
+          <h3>Databricks SQL <span style="color:var(--muted-dim); font-weight:400;">(SQL Warehouses)</span></h3>
+          <p>Cùng nằm trong Databricks: SQL Warehouse (classic hoặc serverless) chạy engine Photon, có disk cache + result cache riêng — tương tự tinh thần reflection của Dremio. Trả phí theo DBU-giờ chạy warehouse, không phải theo dữ liệu quét.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Khác với hình dung ban đầu (Athena trả theo dữ liệu quét): Databricks SQL quay lại mô hình chi phí theo <b>compute-giờ chạy</b>, giống Dremio hơn là giống Athena. Cả Dremio lẫn Databricks SQL đều có lớp cache riêng để tăng tốc truy vấn lặp lại — đây là điểm cả hai kiến trúc thực ra giống nhau, khác với giả định AWS-thuần trước đó.</p>
+          <ul class="tradeoff">
+            <li class="plus">Databricks SQL: cùng nền tảng với ETL/streaming phía trên — không cần đồng bộ catalog giữa hai hệ thống khác nhau như Iceberg-catalog↔Dremio.</li>
+            <li class="minus">Trả theo compute-giờ (DBU) nghĩa là có phí ngay cả khi warehouse rảnh (trừ khi bật auto-suspend) — không rẻ tự nhiên khi ít truy vấn như mô hình pay-per-scan.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <div class="stage-label">08 · BI &amp; phân tích</div>
+      <div class="row3">
+        <div class="cell om">
+          <span class="sub">Serving</span>
+          <h3>Power BI · Data Scientist</h3>
+          <p>Power BI qua Dremio connector; Data Scientist qua Dremio hoặc Spark trực tiếp lên Iceberg.</p>
+        </div>
+        <div class="cell mr">
+          <span class="sub">Serving</span>
+          <h3>Power BI · Data Scientist</h3>
+          <p>Giống hệt OneMount ở điểm cuối này: Power BI kết nối qua connector Databricks SQL (ODBC/JDBC/Partner Connect); Data Scientist làm việc trực tiếp trong Databricks Notebook, dùng chung cluster/Unity Catalog với pipeline, có MLflow tích hợp sẵn để track experiment.</p>
+        </div>
+        <div class="cell note">
+          <p class="diff">Đây là chỗ hai kiến trúc <b>hội tụ</b> — người dùng cuối (Power BI, Data Scientist) không thấy khác biệt gì giữa hai bên; toàn bộ khác biệt nằm ở các lớp phía sau lưng họ.</p>
+          <ul class="tradeoff">
+            <li class="plus">Masterise: Data Scientist dùng chung workspace với pipeline (notebook, cluster, quyền truy cập qua Unity Catalog) — không cần nhảy giữa Dremio và một công cụ Spark riêng như OneMount.</li>
+            <li class="minus">Ràng buộc nhiều hơn vào hệ sinh thái Databricks cho cả phần phân tích/ML, không chỉ phần pipeline.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="summary">
+    <h2>Nhận định chung: AWS chỉ là nơi lưu trữ, Databricks mới là nền tảng xử lý</h2>
+    <p>
+      Khác với giả định ban đầu (ghép nhiều dịch vụ AWS-native rời nhau), kiến trúc thật của
+      Masterise gọn hơn: <b>S3 chỉ đóng vai trò lưu trữ</b>, còn <b>Databricks đảm nhiệm toàn
+      bộ phần còn lại</b> — streaming, ETL, quản lý bảng (Delta Lake + Unity Catalog), và cả
+      query engine (Databricks SQL) — trong cùng một nền tảng, một workspace. Ở OneMount, năm
+      việc này nằm ở năm hệ thống tách rời (Kafka, Spark/K8s, GCS, Iceberg-catalog, Dremio)
+      phải tự ghép nối; ở Masterise, phần lớn nằm gọn trong một nền tảng duy nhất.
+    </p>
+    <p>
+      Đánh đổi vì vậy không còn là "quản dịch vụ serverless hay tự host" như giả định trước,
+      mà là: <b>OneMount</b> giữ toàn quyền kiểm soát từng lớp, ghép được đúng công cụ tốt nhất
+      cho từng việc, nhưng phải tự tích hợp và vận hành nhiều hệ thống. <b>Masterise</b> có ít
+      điểm nối phải tự quản, một nơi duy nhất cho quyền truy cập/lineage, nhưng đổi lại gắn
+      chặt vào một nền tảng — và định dạng bảng (Delta Lake) không tương thích thẳng với hệ
+      sinh thái Iceberg mà OneMount đang dùng.
+    </p>
+  </section>
+
+  <footer>
+    Gộp từ hai sơ đồ: OneMount (Kafka → Spark Structured Streaming trên Kubernetes → GCS Bronze
+    → Spark ETL → Iceberg Silver/Gold → Dremio → Power BI/Data Scientist) và Masterise (message
+    bus MSK/Kinesis → Databricks Structured Streaming + Auto Loader → S3 Bronze → Databricks
+    Jobs/Delta Live Tables → Delta Lake Silver/Gold qua Unity Catalog → Databricks SQL → Power
+    BI/Data Scientist). Định dạng bảng Delta Lake và các chi tiết Databricks cụ thể vẫn là giả
+    định hợp lý theo cấu hình mặc định — cần xác nhận lại nếu Masterise tuỳ biến khác.
+  </footer>
+
+</div>

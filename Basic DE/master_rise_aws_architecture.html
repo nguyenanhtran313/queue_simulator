@@ -1,0 +1,320 @@
+<title>Kiến trúc dữ liệu Master Rise Group — AWS (tham khảo)</title>
+<style>
+  :root{
+    --ink:#171008;
+    --panel:#241a10;
+    --panel-2:#2b2013;
+    --line:#453421;
+    --text:#f3ece1;
+    --muted:#b9a488;
+    --muted-dim:#8a765c;
+    --bronze:#c17a45;
+    --silver:#b7ac98;
+    --gold:#dcac33;
+    --amber:#f2a33d;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 500px at 50% -10%, #302013 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+  }
+  ::selection{background:var(--amber); color:#221604;}
+  a{color:var(--amber);}
+  .page{
+    max-width:880px;
+    margin:0 auto;
+    padding:4.5rem 1.75rem 6rem;
+    display:flex;
+    flex-direction:column;
+    gap:4rem;
+  }
+
+  /* ---------- header ---------- */
+  header{display:flex; flex-direction:column; gap:.9rem;}
+  .eyebrow{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--amber);
+  }
+  h1{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-weight:600;
+    font-size:clamp(1.9rem, 4vw, 2.6rem);
+    margin:0;
+    text-wrap:balance;
+    color:#fbf5ea;
+  }
+  header .lede{max-width:64ch; color:var(--muted); font-size:1.02rem;}
+  header .lede b{color:var(--text); font-weight:600;}
+  .disclaimer{
+    display:flex;
+    gap:.7rem;
+    align-items:flex-start;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-left:4px solid var(--gold);
+    border-radius:6px;
+    padding:.9rem 1.1rem;
+    font-size:.9rem;
+    color:var(--muted);
+    max-width:68ch;
+  }
+  .disclaimer .tag{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.68rem;
+    letter-spacing:.08em;
+    text-transform:uppercase;
+    color:var(--gold);
+    white-space:nowrap;
+    padding-top:.15rem;
+  }
+
+  /* ---------- pipeline ---------- */
+  .pipeline{display:flex; flex-direction:column;}
+  .node{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent, var(--amber));
+    border-radius:6px;
+    padding:1.15rem 1.4rem;
+    display:flex;
+    flex-direction:column;
+    gap:.3rem;
+    position:relative;
+  }
+  .node .row{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap;}
+  .tag{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+  }
+  .node h3{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.12rem;
+    font-weight:600;
+    margin:0;
+    color:#fbf5ea;
+  }
+  .node p{margin:.15rem 0 0; color:var(--muted); font-size:.93rem; max-width:62ch;}
+  .node .plain{
+    margin-top:.55rem;
+    padding-top:.55rem;
+    border-top:1px dashed var(--line);
+    font-size:.88rem;
+    color:var(--muted-dim);
+    max-width:62ch;
+  }
+  .node .plain b{color:var(--muted); font-weight:600;}
+  .connector{
+    align-self:center;
+    width:1px;
+    height:26px;
+    background:linear-gradient(var(--line), var(--muted-dim));
+    position:relative;
+  }
+  .connector::after{
+    content:"";
+    position:absolute;
+    left:50%; bottom:-1px;
+    transform:translateX(-50%);
+    border:5px solid transparent;
+    border-top-color:var(--muted-dim);
+  }
+  .fork{display:grid; grid-template-columns:1fr 1fr; gap:1rem;}
+  @media (max-width:560px){ .fork{grid-template-columns:1fr;} }
+
+  /* ---------- notes section ---------- */
+  .notes{display:flex; flex-direction:column; gap:1.5rem;}
+  .section-head{display:flex; flex-direction:column; gap:.3rem;}
+  .section-head .eyebrow{color:var(--gold);}
+  .section-head h2{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.5rem;
+    margin:0;
+    color:#fbf5ea;
+    text-wrap:balance;
+  }
+  .card{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1.75rem 1.9rem;
+    display:flex;
+    flex-direction:column;
+    gap:1.1rem;
+  }
+  .card .answer{font-size:1rem; max-width:70ch; color:var(--muted);}
+  .card .answer b{color:#fbf5ea;}
+  .card .answer code{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    background:#1c1409;
+    border:1px solid var(--line);
+    padding:.05rem .35rem;
+    border-radius:4px;
+    font-size:.88em;
+    color:var(--amber);
+  }
+
+  .tablewrap{overflow-x:auto;}
+  table{border-collapse:collapse; width:100%; font-size:.92rem;}
+  th,td{text-align:left; padding:.6rem .85rem; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+    font-weight:600;
+  }
+  td{color:var(--muted);}
+  td b{color:var(--text);}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding-top:1.5rem;
+    color:var(--muted-dim);
+    font-size:.85rem;
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Kiến trúc dữ liệu · Master Rise Group (AWS)</div>
+    <h1>Data Platform trên AWS: kiến trúc lakehouse điển hình</h1>
+    <p class="lede">
+      Cũng là mô hình <b>ELT</b> giống OneMount, nhưng dựng bằng bộ dịch vụ managed của AWS
+      thay vì tự vận hành trên Kubernetes/GCS. Cấu trúc 3 lớp <b>Bronze → Silver → Gold</b>
+      và vai trò của Iceberg giữ nguyên như bản GCP.
+    </p>
+    <div class="disclaimer">
+      <span class="tag">Lưu ý</span>
+      <span>Đây là kiến trúc <b>tham khảo</b> — dựng theo một pattern lakehouse phổ biến trên
+      AWS (S3 + Iceberg + Glue + Athena), chưa xác nhận với hệ thống thật của Master Rise
+      Group. Cần đối chiếu lại tên service cụ thể trước khi dùng làm tài liệu chính thức.</span>
+    </div>
+  </header>
+
+  <section class="pipeline">
+
+    <div class="node" style="--accent:var(--muted-dim)">
+      <div class="row"><span class="tag">Nguồn</span></div>
+      <h3>Source Systems</h3>
+      <p>Database OLTP của các app nghiệp vụ, event tracking web/mobile, log hệ thống — giống vai trò như ở kiến trúc GCP.</p>
+      <p class="plain">Nói đơn giản: nơi dữ liệu được tạo ra lần đầu.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--muted-dim)">
+      <div class="row"><span class="tag">Message bus</span></div>
+      <h3>Amazon MSK <span style="font-weight:400; color:var(--muted-dim);">(hoặc Kinesis Data Streams)</span></h3>
+      <p>MSK là Kafka được AWS vận hành hộ (managed) — cùng khái niệm topic/partition/consumer group như Kafka tự triển khai. Kinesis Data Streams là lựa chọn thay thế "AWS-native", cùng vai trò nhưng API và mô hình scaling khác (shard thay vì partition).</p>
+      <p class="plain">Nói đơn giản: vẫn là "hàng đợi trung gian" giữa nguồn và job xử lý — chỉ khác ai là người vận hành cụm Kafka.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--amber)">
+      <div class="row"><span class="tag">Ingest &amp; land · managed</span></div>
+      <h3>Kinesis Data Firehose <span style="font-weight:400; color:var(--muted-dim);">(hoặc EMR/Glue Streaming job)</span></h3>
+      <p>Firehose là dịch vụ managed, không cần tự viết job Spark: nó tự buffer dữ liệu theo thời gian/kích thước, và có thể <b>tự convert JSON sang Parquet</b> ngay khi ghi xuống S3 nếu khai báo schema trước trong Glue Data Catalog. Nếu cần logic biến đổi phức tạp hơn khi đang ingest, dùng EMR hoặc Glue Streaming job (tương đương vai trò Spark Structured Streaming ở bản GCP).</p>
+      <p class="plain">Nói đơn giản: đây là "máy bơm" liên tục đổ dữ liệu từ hàng đợi vào kho lưu trữ — Firehose là bản không cần tự vận hành server, EMR/Glue là bản tự kiểm soát logic nhiều hơn.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--bronze)">
+      <div class="row"><span class="tag">S3 Data Lake · Bronze</span></div>
+      <h3>Bronze — Raw JSON / Raw Parquet</h3>
+      <p>Vùng lưu dữ liệu gần nguyên bản, append-only, partition theo ngày/giờ ingest. Nếu Firehose không convert Parquet ngay từ bước trước, vẫn cần một job Glue/EMR batch chạy định kỳ để gộp file nhỏ và chuẩn hoá sang Parquet — cùng lý do như bản GCP (chi phí liệt kê file trên S3, tốc độ đọc row-based vs columnar).</p>
+      <p class="plain">Nói đơn giản: "bản sao y nguyên" dữ liệu vừa nhận, giữ lại để có thể chạy lại nếu bước sau lỗi.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--amber)">
+      <div class="row"><span class="tag">Batch / micro-batch</span></div>
+      <h3>AWS Glue ETL Jobs <span style="font-weight:400; color:var(--muted-dim);">(hoặc EMR Spark)</span></h3>
+      <p>Glue ETL job (Spark chạy serverless, AWS tự quản lý cluster) hoặc EMR (cluster Spark tự cấu hình): khử trùng lặp, join dữ liệu tham chiếu, kiểm tra chất lượng, áp business rule, ghi kết quả xuống Silver dưới dạng bảng Iceberg.</p>
+      <p class="plain">Nói đơn giản: bước "làm sạch và ráp nối" — giống hệt vai trò Spark ETL Jobs ở bản GCP, chỉ khác ai host cụm Spark.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--gold)">
+      <div class="row"><span class="tag">S3 · Silver / Gold</span></div>
+      <h3>Iceberg Tables trên S3</h3>
+      <p><b>Silver</b>: dữ liệu chi tiết đã sạch. <b>Gold</b>: bảng tổng hợp sẵn cho báo cáo. Catalog của Iceberg ở đây là <b>AWS Glue Data Catalog</b> — đóng đúng vai trò catalog đã nhắc ở bản GCP (biết bảng nào đang trỏ tới metadata.json nào), và tương thích Hive Metastore API nên hầu hết engine trong hệ AWS đều đọc được.</p>
+      <p class="plain">Nói đơn giản: Silver là dữ liệu chi tiết đã sạch, Gold là số liệu tổng hợp sẵn — vẫn là file Parquet, chỉ khác nơi lưu catalog.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--silver)">
+      <div class="row"><span class="tag">Query engine</span></div>
+      <h3>Amazon Athena <span style="font-weight:400; color:var(--muted-dim);">(hoặc Redshift Spectrum)</span></h3>
+      <p>Athena là engine SQL serverless, trả phí theo dữ liệu quét — không cần dựng cluster, đọc thẳng bảng Iceberg qua Glue Data Catalog. Redshift Spectrum là lựa chọn thay thế khi cần join dữ liệu lake với data warehouse Redshift đã có sẵn. Khác với Dremio, Athena không có tầng "reflection" cache riêng — muốn tăng tốc truy vấn lặp lại thường dựng thêm bảng Gold tổng hợp sẵn hoặc dùng Redshift làm lớp serving phía sau.</p>
+      <p class="plain">Nói đơn giản: đây là nơi Power BI/Data Scientist "hỏi" dữ liệu bằng SQL — trả tiền theo lượng dữ liệu quét, không phải theo giờ chạy máy chủ.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="fork">
+      <div class="node" style="--accent:var(--gold)">
+        <div class="row"><span class="tag">BI</span></div>
+        <h3>Amazon QuickSight</h3>
+        <p>Dashboard, báo cáo định kỳ, kết nối trực tiếp tới Athena hoặc Redshift.</p>
+      </div>
+      <div class="node" style="--accent:var(--amber)">
+        <div class="row"><span class="tag">Phân tích / ML</span></div>
+        <h3>Data Scientist <span style="font-weight:400; color:var(--muted-dim);">(SageMaker)</span></h3>
+        <p>Truy vấn ad-hoc qua Athena, hoặc đọc thẳng Iceberg bằng Spark (EMR) khi cần xử lý khối lượng lớn cho feature engineering, huấn luyện mô hình trong SageMaker.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="notes">
+    <div class="section-head">
+      <div class="eyebrow">Khác biệt đáng chú ý so với bản GCP</div>
+      <h2>Không phải đổi tên service — có vài chỗ đổi cả cách vận hành</h2>
+    </div>
+    <div class="card">
+      <p class="answer">
+        Phần lớn các bước tương ứng 1-1 với bản OneMount (Kafka↔MSK, GCS↔S3, Spark ETL↔Glue/EMR,
+        Iceberg vẫn là Iceberg). Nhưng có ba điểm khác đáng lưu ý khi làm việc với bản AWS:
+      </p>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Điểm khác</th><th>Ý nghĩa vận hành</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><b>Firehose có thể tự convert Parquet</b></td>
+              <td>Nếu dùng Firehose thay vì tự viết Spark Streaming, bước "node convert" ở Bronze có thể nằm ngay trong Firehose (khai schema trước trong Glue Catalog), không cần job batch riêng — nhưng đổi lại ít linh hoạt hơn khi cần logic transform phức tạp lúc ingest.</td>
+            </tr>
+            <tr>
+              <td><b>Glue Data Catalog là catalog bắt buộc trên AWS</b></td>
+              <td>Không có lựa chọn "Nessie" như thường thấy ở triển khai tự quản — Glue Data Catalog gần như mặc định vì mọi service AWS (Athena, EMR, Redshift Spectrum, Glue ETL) đều đọc được nó.</td>
+            </tr>
+            <tr>
+              <td><b>Athena tính phí theo dữ liệu quét, không có reflection</b></td>
+              <td>Không tối ưu partition/compaction tốt ở lớp Gold thì chi phí Athena tăng trực tiếp theo lượng dữ liệu quét — khác với Dremio, nơi reflection có thể che bớt phần này.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    Kiến trúc tham khảo cho Master Rise Group, dựng theo pattern lakehouse phổ biến trên AWS
+    (Kinesis/MSK → S3 Bronze → Glue/EMR → S3 Iceberg Silver/Gold → Athena → QuickSight/SageMaker).
+    Cần xác nhận lại với hệ thống thật trước khi dùng làm tài liệu chính thức.
+  </footer>
+
+</div>
