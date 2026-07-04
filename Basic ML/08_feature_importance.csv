@@ -1,0 +1,17 @@
+model,feature,importance
+XGBoost,remainder__Last_Active_Days,0.2059578150510788
+XGBoost,cat__Segment_Standard,0.19156232476234436
+XGBoost,remainder__Promo_Txn_Count_3M,0.13998785614967346
+XGBoost,cat__Segment_Priority,0.10136653482913971
+XGBoost,remainder__Txn_Count_3M,0.07538612931966782
+XGBoost,remainder__Avg_Monthly_Balance_VND,0.06399407982826233
+XGBoost,remainder__App_Logins_3M,0.06221465766429901
+XGBoost,remainder__Age,0.056613046675920486
+LightGBM,remainder__Avg_Monthly_Balance_VND,1502.0
+LightGBM,remainder__Last_Active_Days,1462.0
+LightGBM,remainder__Txn_Amount_3M_VND,1409.0
+LightGBM,remainder__App_Logins_3M,1185.0
+LightGBM,remainder__Age,1103.0
+LightGBM,remainder__Txn_Count_3M,1100.0
+LightGBM,remainder__Promo_Txn_Count_3M,805.0
+LightGBM,cat__Segment_Standard,165.0

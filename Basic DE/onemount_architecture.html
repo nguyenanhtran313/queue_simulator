@@ -1,0 +1,435 @@
+<title>Kiến trúc dữ liệu OneMount — ELT trên GCS</title>
+<style>
+  :root{
+    --ink:#0a1820;
+    --panel:#10242e;
+    --panel-2:#12303b;
+    --line:#234450;
+    --text:#e9f1ef;
+    --muted:#87a3a9;
+    --muted-dim:#5f7d83;
+    --bronze:#c17a45;
+    --silver:#a9b4b8;
+    --gold:#dcac33;
+    --ice:#6fd0de;
+  }
+  *{box-sizing:border-box;}
+  body{
+    margin:0;
+    background:
+      radial-gradient(1100px 500px at 50% -10%, #123241 0%, var(--ink) 55%),
+      var(--ink);
+    color:var(--text);
+    font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,sans-serif;
+    line-height:1.55;
+  }
+  ::selection{background:var(--ice); color:#06141a;}
+  a{color:var(--ice);}
+  .page{
+    max-width:880px;
+    margin:0 auto;
+    padding:4.5rem 1.75rem 6rem;
+    display:flex;
+    flex-direction:column;
+    gap:4rem;
+  }
+
+  /* ---------- header ---------- */
+  header{display:flex; flex-direction:column; gap:.9rem;}
+  .eyebrow{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.16em;
+    text-transform:uppercase;
+    color:var(--ice);
+  }
+  h1{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-weight:600;
+    font-size:clamp(1.9rem, 4vw, 2.6rem);
+    margin:0;
+    text-wrap:balance;
+    color:#f5faf9;
+  }
+  header .lede{
+    max-width:62ch;
+    color:var(--muted);
+    font-size:1.02rem;
+  }
+  header .lede b{color:var(--text); font-weight:600;}
+
+  /* ---------- pipeline ---------- */
+  .pipeline{display:flex; flex-direction:column;}
+  .node{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-left:4px solid var(--accent, var(--ice));
+    border-radius:6px;
+    padding:1.15rem 1.4rem;
+    display:flex;
+    flex-direction:column;
+    gap:.3rem;
+    position:relative;
+  }
+  .node .row{display:flex; align-items:baseline; justify-content:space-between; gap:1rem; flex-wrap:wrap;}
+  .tag{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.68rem;
+    letter-spacing:.1em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+  }
+  .node h3{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.12rem;
+    font-weight:600;
+    margin:0;
+    color:#f5faf9;
+  }
+  .node p{margin:.15rem 0 0; color:var(--muted); font-size:.93rem; max-width:60ch;}
+  .flag{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.68rem;
+    letter-spacing:.03em;
+    color:#06141a;
+    background:var(--ice);
+    padding:.15rem .55rem;
+    border-radius:999px;
+    white-space:nowrap;
+    text-decoration:none;
+    font-weight:600;
+  }
+  .connector{
+    align-self:center;
+    width:1px;
+    height:26px;
+    background:linear-gradient(var(--line), var(--muted-dim));
+    position:relative;
+  }
+  .connector::after{
+    content:"";
+    position:absolute;
+    left:50%; bottom:-1px;
+    transform:translateX(-50%);
+    border:5px solid transparent;
+    border-top-color:var(--muted-dim);
+  }
+  .fork{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:1rem;
+  }
+  .fork-connectors{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    height:26px;
+  }
+  .fork-connectors .line{border-left:1px solid var(--line); margin:0 auto;}
+  .fork-connectors .line.l{ transform:translateX(-40%) rotate(18deg); transform-origin:top; height:32px;}
+  .fork-connectors .line.r{ transform:translateX(40%) rotate(-18deg); transform-origin:top; height:32px;}
+
+  @media (max-width:560px){
+    .fork{grid-template-columns:1fr;}
+    .fork-connectors{display:none;}
+  }
+
+  /* ---------- deep dive ---------- */
+  .deepdive{display:flex; flex-direction:column; gap:1.5rem;}
+  .section-head{display:flex; flex-direction:column; gap:.3rem;}
+  .section-head .eyebrow{color:var(--gold);}
+  .section-head h2{
+    font-family:Cambria,Georgia,"Noto Serif",serif;
+    font-size:1.5rem;
+    margin:0;
+    color:#f5faf9;
+    text-wrap:balance;
+  }
+
+  .card{
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    border-radius:8px;
+    padding:1.75rem 1.9rem;
+    display:flex;
+    flex-direction:column;
+    gap:1.25rem;
+  }
+  .card .answer{font-size:1rem; max-width:68ch;}
+  .card .answer b{color:#f5faf9;}
+  .card .answer code{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    background:#0d222b;
+    border:1px solid var(--line);
+    padding:.05rem .35rem;
+    border-radius:4px;
+    font-size:.88em;
+    color:var(--ice);
+  }
+
+  /* mini flow (deep dive 1) */
+  .miniflow{
+    display:flex;
+    align-items:stretch;
+    gap:.6rem;
+    flex-wrap:wrap;
+  }
+  .miniflow .box{
+    flex:1 1 180px;
+    background:#0d222b;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:.9rem 1rem;
+    display:flex;
+    flex-direction:column;
+    gap:.3rem;
+  }
+  .miniflow .box.highlight{border-color:var(--ice); box-shadow:0 0 0 1px var(--ice) inset;}
+  .miniflow .box .tag{color:var(--muted-dim);}
+  .miniflow .box strong{font-size:.95rem; color:var(--text);}
+  .miniflow .box span{font-size:.82rem; color:var(--muted);}
+  .miniflow .arrow{
+    align-self:center;
+    color:var(--muted-dim);
+    font-size:1.3rem;
+    flex:0 0 auto;
+  }
+  @media (max-width:640px){
+    .miniflow{flex-direction:column;}
+    .miniflow .arrow{transform:rotate(90deg); align-self:flex-start; margin-left:1.4rem;}
+  }
+
+  /* file tree (deep dive 2) */
+  .filetree{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.88rem;
+    background:#0d222b;
+    border:1px solid var(--line);
+    border-radius:6px;
+    padding:1.1rem 1.3rem;
+    overflow-x:auto;
+  }
+  .filetree .row{white-space:pre; color:var(--muted);}
+  .filetree .row b{color:var(--ice); font-weight:600;}
+  .filetree .row.gold b{color:var(--gold);}
+  .filetree .note{color:var(--muted-dim); font-style:normal;}
+
+  /* comparison table */
+  .tablewrap{overflow-x:auto;}
+  table{border-collapse:collapse; width:100%; font-size:.92rem;}
+  th,td{text-align:left; padding:.6rem .85rem; border-bottom:1px solid var(--line); vertical-align:top;}
+  th{
+    font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
+    font-size:.72rem;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    color:var(--muted-dim);
+    font-weight:600;
+  }
+  td.no{color:var(--muted);}
+  td.yes{color:var(--text);}
+  td.yes b{color:var(--ice);}
+
+  footer{
+    border-top:1px solid var(--line);
+    padding-top:1.5rem;
+    color:var(--muted-dim);
+    font-size:.85rem;
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Kiến trúc dữ liệu · OneMount</div>
+    <h1>Từ sự kiện thô đến báo cáo: đường đi của dữ liệu qua mô hình ELT</h1>
+    <p class="lede">
+      OneMount dùng mô hình <b>ELT</b> (Extract–Load–Transform): dữ liệu được
+      <b>nạp thô vào GCS trước</b>, biến đổi <b>sau</b> bằng Spark và Iceberg — khác với ETL
+      truyền thống là biến đổi trước khi nạp. Sơ đồ dưới đây theo đúng luồng bạn mô tả,
+      cùng hai phần giải thích sâu cho hai chỗ đang chưa rõ.
+    </p>
+  </header>
+
+  <section class="pipeline">
+
+    <div class="node" style="--accent:var(--muted-dim)">
+      <div class="row"><span class="tag">Nguồn</span></div>
+      <h3>Source Systems</h3>
+      <p>App backend, mobile event, IoT/thiết bị… — nơi phát sinh dữ liệu gốc.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--muted-dim)">
+      <div class="row"><span class="tag">Message bus</span></div>
+      <h3>Kafka</h3>
+      <p>Hàng đợi sự kiện, đệm dữ liệu real-time, tách rời tốc độ ghi của nguồn khỏi tốc độ xử lý phía sau.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--ice)">
+      <div class="row"><span class="tag">Streaming compute · trên Kubernetes</span></div>
+      <h3>Spark Structured Streaming</h3>
+      <p>Đọc liên tục từ Kafka theo micro-batch, ghi thẳng xuống Data Lake — chưa xử lý nghiệp vụ, chỉ "hạ cánh" dữ liệu.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--bronze)">
+      <div class="row">
+        <span class="tag">GCS Data Lake · Bronze</span>
+        <a class="flag" href="#dive1">Xem giải thích ↓</a>
+      </div>
+      <h3>Bronze — Raw Avro / Raw Parquet</h3>
+      <p>Vùng lưu dữ liệu thô, gần nguyên bản, chưa dọn dẹp. Đây là nơi có bước "convert sang Parquet" mà bạn đang hỏi.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--ice)">
+      <div class="row"><span class="tag">Batch / micro-batch</span></div>
+      <h3>Spark ETL Jobs</h3>
+      <p>Làm sạch, khử trùng lặp, join, áp logic nghiệp vụ — biến Bronze thành dữ liệu có cấu trúc, đáng tin cậy.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--gold)">
+      <div class="row">
+        <span class="tag">GCS · Silver / Gold</span>
+        <a class="flag" href="#dive2">Xem giải thích ↓</a>
+      </div>
+      <h3>Iceberg Tables trên GCS</h3>
+      <p>Silver: dữ liệu sạch, chuẩn hoá. Gold: dữ liệu tổng hợp sẵn cho báo cáo/nghiệp vụ. Cả hai đều là file Parquet, được Iceberg quản lý.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="node" style="--accent:var(--silver)">
+      <div class="row"><span class="tag">Query engine</span></div>
+      <h3>Dremio</h3>
+      <p>Tầng truy vấn/ngữ nghĩa nằm trên Iceberg — cho phép SQL trực tiếp lên Silver/Gold mà không cần copy dữ liệu.</p>
+    </div>
+    <div class="connector"></div>
+
+    <div class="fork">
+      <div class="node" style="--accent:var(--gold)">
+        <div class="row"><span class="tag">BI</span></div>
+        <h3>Power BI</h3>
+        <p>Dashboard, báo cáo định kỳ cho nghiệp vụ.</p>
+      </div>
+      <div class="node" style="--accent:var(--ice)">
+        <div class="row"><span class="tag">Phân tích / ML</span></div>
+        <h3>Data Scientist</h3>
+        <p>Truy vấn ad-hoc, feature engineering, huấn luyện mô hình.</p>
+      </div>
+    </div>
+
+  </section>
+
+  <section class="deepdive">
+
+    <div class="section-head" id="dive1">
+      <div class="eyebrow">Chỗ chưa rõ #1</div>
+      <h2>Vì sao lại có node "convert raw → Parquet" ở Bronze?</h2>
+    </div>
+    <div class="card">
+      <p class="answer">
+        Spark Structured Streaming ưu tiên <b>ghi nhanh, không chặn</b>: mỗi micro-batch
+        (vài giây một lần) tạo ra một <b>file nhỏ</b>, thường ở dạng
+        <b>Avro/JSON</b> — định dạng theo dòng (<i>row-based</i>), ghi rẻ, hỗ trợ schema evolution
+        tốt, phù hợp cho việc "hứng" dữ liệu liên tục. Nhưng ghi liên tục như vậy
+        tạo ra <b>rất nhiều file nhỏ</b>, mà file nhỏ + định dạng theo dòng thì lại
+        <b>chậm</b> khi các job ETL/BI phía sau cần đọc và quét dữ liệu.
+      </p>
+      <p class="answer">
+        Vì vậy có một job Spark chạy định kỳ (ví dụ mỗi giờ), làm hai việc cùng lúc:
+        <b>gộp nhiều file nhỏ thành file lớn</b> (compaction) và
+        <b>chuyển từ Avro sang Parquet</b> — định dạng theo cột (<i>columnar</i>), nén tốt hơn,
+        và cho phép đọc chỉ những cột cần dùng thay vì cả dòng. Đây chính là "node convert"
+        mà bên DE nhắc tới: nó là <b>cầu nối giữa vùng hạ cánh thô</b> (tối ưu cho ghi) và
+        <b>Bronze chuẩn hoá</b> (tối ưu cho đọc), để mọi job phía sau chỉ cần biết một định dạng duy nhất.
+      </p>
+      <div class="miniflow">
+        <div class="box">
+          <span class="tag">Streaming ghi ra</span>
+          <strong>Nhiều file nhỏ .avro</strong>
+          <span>Row-based, ghi mỗi vài giây, tối ưu cho tốc độ &amp; schema evolution</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box highlight">
+          <span class="tag">Job convert + compaction</span>
+          <strong>Spark batch job</strong>
+          <span>Gộp file nhỏ lại, đọc Avro, ghi lại thành Parquet</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="box">
+          <span class="tag">Bronze chuẩn hoá</span>
+          <strong>Ít file lớn .parquet</strong>
+          <span>Columnar, nén tốt, sẵn sàng cho Spark ETL đọc nhanh</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section-head" id="dive2">
+      <div class="eyebrow">Chỗ chưa rõ #2</div>
+      <h2>Iceberg "quản" các file Parquet như thế nào?</h2>
+    </div>
+    <div class="card">
+      <p class="answer">
+        Điểm mấu chốt: <b>Iceberg không thay thế Parquet, cũng không phải nơi lưu dữ liệu</b>.
+        File dữ liệu thật sự vẫn là các file <code>.parquet</code> bình thường nằm trong GCS —
+        y hệt như trước. Iceberg chỉ là một <b>lớp metadata</b> ngồi phía trên, ghi nhớ:
+        "table này gồm đúng những file Parquet nào, ở version nào". Nó biến một
+        <i>đống thư mục Parquet rời rạc</i> thành một <i>bảng dữ liệu có version, có transaction</i>.
+      </p>
+      <div class="filetree">
+        <div class="row">catalog  <span class="note">(Dremio / Hive Metastore / Nessie — biết bảng đang trỏ tới đâu)</span></div>
+        <div class="row">└─ <b>metadata.json</b>  <span class="note">— schema hiện tại, danh sách snapshot, snapshot nào là "current"</span></div>
+        <div class="row">   └─ <b>snapshot</b> (mỗi lần ghi/commit mới = 1 snapshot mới)</div>
+        <div class="row">      └─ <b>manifest list</b>  <span class="note">— danh sách các manifest file thuộc snapshot này</span></div>
+        <div class="row gold">         └─ <b>manifest file</b>  <span class="note">— danh sách data file + thống kê (min/max, số dòng…)</span></div>
+        <div class="row">            └─ data-001.parquet, data-002.parquet, …  <span class="note">← file thật, nằm trên GCS</span></div>
+      </div>
+      <p class="answer">
+        Nhờ lớp metadata này, khi Dremio hay Spark truy vấn, engine <b>không cần liệt kê
+        toàn bộ thư mục trên GCS</b> (vốn chậm và tốn chi phí) — nó đọc thẳng manifest để biết
+        chính xác cần mở file Parquet nào, bỏ qua file nào. Và vì mỗi lần ghi tạo ra một
+        <b>snapshot mới</b> thay vì sửa trực tiếp file cũ, Iceberg có được: ghi/đọc không đụng
+        nhau (ACID), đổi schema hoặc partition mà không phải viết lại toàn bộ dữ liệu,
+        và có thể "time travel" — truy vấn lại đúng trạng thái bảng tại một thời điểm trước đó.
+      </p>
+      <div class="tablewrap">
+        <table>
+          <thead>
+            <tr><th>Tình huống</th><th>Thư mục Parquet thường (kiểu Hive)</th><th>Parquet + Iceberg</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Đổi schema (thêm cột)</td>
+              <td class="no">Phải viết lại toàn bộ file, dễ vỡ query đang chạy</td>
+              <td class="yes">Cập nhật <b>metadata.json</b>, không đụng vào file Parquet cũ</td>
+            </tr>
+            <tr>
+              <td>Đang ghi giữa chừng thì có người đọc</td>
+              <td class="no">Có thể đọc phải dữ liệu ghi dở, không nhất quán</td>
+              <td class="yes">Đọc theo <b>snapshot</b> đã commit xong — luôn nhất quán</td>
+            </tr>
+            <tr>
+              <td>Cần biết file nào cần quét</td>
+              <td class="no">Phải liệt kê (list) cả thư mục trên GCS</td>
+              <td class="yes">Đọc <b>manifest</b> — biết ngay file nào, bỏ qua file thừa</td>
+            </tr>
+            <tr>
+              <td>Muốn xem dữ liệu "hôm qua trước khi sửa"</td>
+              <td class="no">Không có, trừ khi tự backup thủ công</td>
+              <td class="yes">Query thẳng <b>snapshot cũ</b> (time travel)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Sơ đồ dựng theo mô tả kiến trúc bạn cung cấp cho OneMount (Kafka → Spark Structured
+    Streaming trên Kubernetes → GCS Bronze → Spark ETL → Iceberg Silver/Gold → Dremio → Power BI / Data Scientist).
+  </footer>
+
+</div>

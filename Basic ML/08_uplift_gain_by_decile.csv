@@ -1,0 +1,11 @@
+decile,model,cum_customers_pct,cum_profit_vnd
+1,Logistic Regression (Uplift),10.0,1870000
+2,Logistic Regression (Uplift),20.0,3610000
+3,Logistic Regression (Uplift),30.0,5480000
+4,Logistic Regression (Uplift),40.0,7470000
+5,Logistic Regression (Uplift),50.0,9420000
+6,Logistic Regression (Uplift),60.0,10920000
+7,Logistic Regression (Uplift),70.0,12470000
+8,Logistic Regression (Uplift),80.0,13500000
+9,Logistic Regression (Uplift),90.0,13860000
+10,Logistic Regression (Uplift),100.0,13750000

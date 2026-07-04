@@ -15,7 +15,24 @@ Một ngân hàng (dữ liệu mẫu có mã khách hàng tiền tố `TCB...`, 
 
 ## 2. Dữ liệu đầu vào
 
-File: `customer_promo_data.csv` — **10,000 khách hàng**, sinh bởi `00_generate_data.py` (`numpy.random.default_rng(42)`, deterministic — chạy lại luôn ra cùng 1 bộ dữ liệu). Các cột:
+> **Cập nhật (2026-07-03):** dữ liệu đã được scale lên **100,000 khách hàng** bằng
+> `00_generate_data.py` (bản gốc 1,000 dòng lưu backup ở `customer_promo_data_1k_backup.csv`;
+> ban đầu thử 1,000,000 dòng nhưng đã giảm xuống 100,000 theo yêu cầu — nhẹ hơn, chạy toàn bộ
+> pipeline 00→09 chỉ mất khoảng 1 phút thay vì vài phút, vẫn đủ lớn để minh hoạ rõ lợi ích của
+> targeting bằng ML so với gửi đại trà).
+> Đây KHÔNG phải random thuần — script sinh dữ liệu được hiệu chỉnh để tái lập đúng các quan
+> hệ thống kê mà `01_EDA_and_Stats.py` đã phát hiện trên bộ gốc, CỘNG THÊM một hiệu ứng nhân
+> quả dị biệt (heterogeneous treatment effect) giả lập 4 nhóm Persuadables/Sure things/Lost
+> causes/Sleeping dogs để bài Uplift Modeling (Bước 7-8) có tín hiệu thật để học, thay vì suy
+> biến thành "gửi cho tất cả" (xem docstring của script để biết chi tiết công thức). Response
+> rate đã CHỦ ĐỘNG hạ từ 37.3% (bộ gốc) xuống ~12% — với business constants mới (cost 500đ /
+> reward 10.000đ → break-even 5%), baseline 37% khiến hầu như ai cũng vượt ngưỡng hoà vốn, làm
+> mất hết giá trị minh hoạ của việc target chọn lọc. `Promo_Txn_Count_3M` vẫn là tín hiệu mạnh
+> nhất, `Last_Active_Days` tương quan âm, `Avg_Monthly_Balance_VND` tương quan dương yếu,
+> `Age`/`Gender`/`Txn_Count_3M`/`Txn_Amount_3M_VND`/`App_Logins_3M` vẫn là nhiễu, và bẫy đa
+> cộng tuyến `Estimated_CLV_VND` ~ `Avg_Monthly_Balance_VND` vẫn còn nguyên.
+
+File: `customer_promo_data.csv` — 100,000 khách hàng, các cột:
 
 | Cột | Ý nghĩa |
 |---|---|
@@ -42,6 +59,11 @@ File: `customer_promo_data.csv` — **10,000 khách hàng**, sinh bởi `00_gene
 - ⚠️ **Ràng buộc quan trọng:** response rate của DGP (Bước 0) và tỷ lệ convert giả định ở Bước 6 (`06_Expected_Profit_Calculation.py`) **phải khớp nhau** — nếu đổi 1 trong 2 mà quên đổi cái còn lại, breakeven sẽ lệch pha với response rate thực tế và toàn bộ câu chuyện "model tạo khác biệt" có thể biến mất trở lại (như đã xảy ra giữa v1 và v2).
 - **Deliverable:** ghi đè `customer_promo_data.csv`.
 - **Mục đích cho bước sau:** nền tảng dữ liệu cho toàn bộ pipeline — mọi bước 01→07b đều đọc file này. Đổi DGP bắt buộc phải chạy lại **toàn bộ** pipeline từ Bước 0 (data mới → model mới → mọi artifact sau đó đều lỗi thời).
+
+### Bước 0 — Sinh dữ liệu quy mô lớn (`00_generate_data.py`)
+- Sinh 100,000 dòng mock thay cho bộ 1,000 dòng gốc, hiệu chỉnh để tái lập đúng các quan hệ thống kê mà Bước 1 đã phát hiện + hiệu ứng nhân quả dị biệt cho Uplift Modeling (xem mục 2 ở trên).
+- **Deliverable:** ghi đè `customer_promo_data.csv`; bộ gốc 1,000 dòng lưu ở `customer_promo_data_1k_backup.csv`.
+- **Mục đích cho bước sau:** nền tảng dữ liệu cho toàn bộ pipeline 01→08 — chạy trước tiên.
 
 ### Bước 1 — EDA & Statistical Tests (`01_EDA_and_Stats.py`)
 - Kiểm tra chất lượng dữ liệu (missing values, outlier) và baseline response rate.
@@ -82,13 +104,12 @@ File: `customer_promo_data.csv` — **10,000 khách hàng**, sinh bởi `00_gene
 - **Mục đích cho bước sau:** thuần diễn giải, `build_presentation.py` nhúng cả 8 ảnh để so sánh 2 model có đồng thuận về yếu tố quan trọng hay không — bằng chứng thuyết phục hơn 1 model đơn lẻ.
 
 ### Bước 6 — Expected Profit Calculation (`06_Expected_Profit_Calculation.py`)
-- Load **cả 3** model `.pkl` (Bước 3 + 4 + 4b — bao gồm cả Logistic Regression benchmark, không chỉ 2 model tree-based) để lấy xác suất phản hồi từng khách hàng theo từng model.
-- Gắn giả định kinh doanh — kênh gửi khuyến mãi: **Zalo ZNS**, tính phí theo tin gửi **thành công**. `cost_per_email = 500 VND`. Tỷ lệ convert trung bình (khách nhận tin → ra đơn) = **5%** (khớp response rate của `00_generate_data.py`, xem bên dưới). Lợi nhuận gộp SAU CÙNG (đã trừ chi phí tin) trung bình = **100 VND/khách hàng được gửi** → suy ra `reward_per_response = (100 + 500) / 5% = 12,000 VND` (lợi nhuận gộp NẾU khách convert, trước khi trừ chi phí tin — kiểm tra: `5% × 12,000 − 500 = 100`, khớp đúng giả định). Breakeven = cost/reward = **4.17%** — xấp xỉ tỷ lệ convert nền nên model phân loại **thực sự tạo khác biệt lớn** về số khách hàng nên liên hệ (LogReg loại ~22%, XGBoost ~63%, LightGBM ~68%) và lợi nhuận (Mass Marketing → LightGBM-optimized gấp ~3.8 lần).
-- Con số chi phí/lợi nhuận này do người dùng cung cấp trong quá trình review (không tự sinh từ `customer_promo_data.csv`), và tỷ lệ convert 5% quyết định trực tiếp cách canh intercept của DGP ở Bước 0 — **đổi 1 trong 2 (giả định kinh doanh hoặc DGP) đều phải đổi cả 2 cho khớp nhau**, nếu không breakeven và response rate thực tế sẽ lệch pha.
-- **Tiêu chí chọn model (theo yêu cầu người dùng):** không chỉ argmax lợi nhuận — ưu tiên model "vừa lời tốt, vừa Accuracy/Recall tốt để còn kế thừa sau này", vì gửi sai (false positive) mất phí mà không thu lợi nhuận. `build_presentation.py` implement quy tắc: nếu chênh lệch lợi nhuận giữa XGBoost/LightGBM < 10%, ưu tiên model có Recall cao hơn (`recommended_classifier_key` trong code) thay vì model lời nhất thuần tuý — trên dữ liệu hiện tại, XGBoost được chọn (Recall 81.6% vs LightGBM 77.7%, lợi nhuận chỉ kém 5.9%).
-- Tính lợi nhuận kỳ vọng từng khách hàng theo từng model = `P(phản hồi) × reward − cost`; chỉ gửi nếu > 0. So 4 kịch bản: Mass Marketing / Logistic Regression-optimized / XGBoost-optimized / LightGBM-optimized — `best_scenario` = kịch bản lợi nhuận **"sổ sách"** cao nhất trong 3 model (chênh lệch thực tế nhỏ ở mức chi phí này).
-- **Deliverable:** `06_campaign_decisions.csv` (cột riêng cho từng model), `06_profit_comparison.json`, `06_profit_comparison.png`.
-- **Mục đích cho bước sau:** `06_profit_comparison.json` được `build_presentation.py` đọc trực tiếp cho tab "Business Impact" và cho card "Chọn Model Nào?" ở tab "So sánh Model".
+- Load lại model `.pkl` từ Bước 4 để lấy xác suất phản hồi từng khách hàng.
+- Gắn giả định kinh doanh (cập nhật 2026-07-03): chi phí gửi 1 tin ZNS = 500 VND, lợi nhuận nếu khách phản hồi = 10,000 VND.
+- Tính lợi nhuận kỳ vọng từng khách hàng = `P(phản hồi) × reward − cost`; chỉ gửi khuyến mãi nếu > 0.
+- So sánh 2 kịch bản: gửi đại trà (mass marketing) vs gửi chọn lọc theo ML, ra con số **chênh lệch lợi nhuận (ROI improvement)**.
+- **Deliverable:** `06_campaign_decisions.csv` (danh sách khách hàng nên gửi + xác suất + lợi nhuận kỳ vọng).
+- **Mục đích cho bước sau:** đặt ra **mốc lợi nhuận cần vượt qua** để Bước 7 so sánh — Uplift Modeling (Bước 7) chỉ thực sự có ý nghĩa nếu nó cho ROI **cao hơn** cách tính lợi nhuận kỳ vọng đơn giản ở đây. Tương tự Bước 3, đây là so sánh thủ công (đọc 2 con số ROI ở console/csv), không có code nào tự động đối chiếu 2 file.
 
   ⚠️ **Giới hạn của cách tính này (chỉ lộ ra ở Bước 7/7b):** `P(phản hồi)` là xác suất **tương quan** (correlational) — nó không phân biệt được khách hàng phản hồi *vì* được liên hệ, hay đằng nào cũng phản hồi dù không ai gọi (Sure Things). Khi kiểm tra lại bằng Uplift Score, lợi nhuận nhân quả thực của cả 4 kịch bản Bước 6 tuy vẫn dương (vì chi phí liên hệ quá rẻ so với lợi nhuận), nhưng **thấp hơn** lợi nhuận đạt được nếu target đúng bằng Uplift — Bước 7/7b tồn tại để chứng minh và tận dụng khoảng cách đó, không phải "kỹ thuật nâng cao cho vui".
 
@@ -96,22 +117,27 @@ File: `customer_promo_data.csv` — **10,000 khách hàng**, sinh bởi `00_gene
 - Đi xa hơn dự đoán thông thường: phân biệt 4 nhóm khách hàng theo lý thuyết Uplift (Sure things / Lost causes / Sleeping dogs / **Persuadables** — nhóm mục tiêu chính).
 - Dùng S-Learner (đưa biến `Treatment` = từng dùng khuyến mãi hay chưa vào làm feature, **tự train một model mới** — không tái dùng `.pkl` của Bước 4/4b) để tính Uplift Score = P(mua | có KM) − P(mua | không KM). Chạy **song song 2 base learner độc lập** (XGBoost và LightGBM) để kiểm chứng chéo, giống cách 04/04b đã làm với bài toán phân loại. Dùng cùng giả định chi phí/lợi nhuận với Bước 6 (Zalo ZNS, 500đ / 12.000đ).
 - Tính lợi nhuận gia tăng (Incremental Profit) từ Uplift Score, quyết định gửi khuyến mãi theo tiêu chí này thay vì chỉ theo xác suất mua thô ở Bước 6.
-- **Deliverable:** `07_uplift_decisions.csv` / `07b_uplift_decisions.csv` — danh sách khách hàng target theo từng base learner, sắp xếp theo Uplift Score giảm dần.
-- **Mục đích cho bước sau:** `build_presentation.py` merge `06_campaign_decisions.csv` với cả 2 file uplift theo `Customer_ID` để: (1) tính lại lợi nhuận **nhân quả thực** cho các kịch bản của Bước 6 (card "Kiểm Tra Nhân Quả"), và (2) so sánh trực tiếp 2 base learner Uplift với nhau (card "So sánh 2 Base Learner") — base learner nào cho lợi nhuận nhân quả cao hơn sẽ là **khuyến nghị targeting cuối cùng của toàn bộ pipeline**.
+- **Deliverable:** `07_uplift_decisions.csv` — danh sách khách hàng target theo Uplift, sắp xếp theo Uplift Score giảm dần.
+- **Mục đích cho bước sau:** trước đây là bước cuối; nay là input lý luận cho Bước 8 (so sánh công bằng cả 6 model, gồm cả 3 biến thể Uplift).
 
-  ⚠️ **2 tầng giới hạn cần biết:** (1) `Treatment` được suy ra từ hành vi quá khứ (`Promo_Txn_Count_3M > 0`), **không phải** một cờ ngẫu nhiên hoá từ thử nghiệm A/B thật — đây là uplift modeling kiểu quan sát (observational), kết luận nhân quả vẫn có thể lẫn confounding bias. (2) Tỷ lệ đồng thuận giữa 2 base learner Uplift (~84%) thấp hơn hẳn so với bài toán phân loại thường (~95%) — ước lượng Uplift Score (hiệu số 2 xác suất) vốn nhạy/nhiễu hơn ước lượng 1 xác suất đơn, đây là giới hạn cố hữu của kỹ thuật, không phải lỗi triển khai. Nếu deploy thật, nên chạy 1 A/B test nhỏ để kiểm chứng lại Uplift Score trước khi rollout toàn bộ (đã ghi trong khuyến nghị "Bước tiếp theo" của `presentation.html`).
+### Bước 8 — So sánh 6 mô hình (`08_Model_Comparison_ROI.py`)
+- **Bổ sung mới (2026-07-03)** để trả lời câu hỏi phỏng vấn: so sánh công bằng Accuracy/Precision/Recall/Profit giữa **3 model Propensity** (Logistic Regression, XGBoost, LightGBM — dự đoán P(phản hồi)) và **3 model Uplift S-Learner** cùng thuật toán (dự đoán mức tăng thêm xác suất phản hồi nhờ khuyến mãi).
+- Khác biệt quan trọng so với 03/04/04b/06/07: chỉ **chia train/test một lần duy nhất** (80/20, stratify) dùng chung cho cả 6 model, và đánh giá **chỉ trên tập test** — tránh lạc quan giả do data leakage mà các script trước đó có thể mắc phải khi đánh giá lại trên toàn bộ dữ liệu (vd Bước 6 dùng `df` đầy đủ, không tách test).
+- Quy ước "gửi ZNS": Propensity gửi nếu `P(phản hồi) > 5%` (break-even = cost/reward); Uplift gửi nếu `Uplift Score > 5%`.
+- **Deliverable:** `08_model_comparison_results.csv` (6 dòng: model, family, accuracy, precision, recall, roc_auc, profit_vnd), `08_uplift_gain_by_decile.csv`, `08_feature_importance.csv`, `08_baselines.json`.
+- **Mục đích cho bước sau:** nguồn số liệu chính thức cho Bước 9 (presentation) — không dùng lại số liệu in-sample của các bước 03-07.
 
-### Bước cuối — Presentation (`build_presentation.py`)
-- Đọc **toàn bộ artifact** (không train lại gì) do Bước 00→07b sinh ra — JSON metrics, CSV quyết định, PNG biểu đồ/SHAP — nhúng ảnh dạng base64 để ra 1 file `presentation.html` tự chứa.
-- Thiết kế phong cách Google Analytics: top-tab navigation, KPI stat-tile, bảng/biểu đồ tối giản, Chart.js cho phần dữ liệu động (ROC/PR curve, so sánh metric, so sánh lợi nhuận), ảnh PNG cho phần matplotlib-only (SHAP, correlation heatmap, KMeans elbow).
-- Báo lỗi tiếng Việt rõ ràng nếu thiếu artifact đầu vào (giống cách skill `run-ml-lesson` kiểm tra dependency).
+### Bước 9 — Xây Presentation (`09_Build_Presentation.py`)
+- Đọc toàn bộ output của Bước 8 (+ ảnh EDA/SHAP nếu có), dựng `presentation.html` tự chứa (self-contained) theo từng bước trình bày cho buổi phỏng vấn, mỗi biểu đồ kèm nhận định (insight) rút ra từ số liệu thật.
+- Kết luận cuối bài trả lời 2 kịch bản kinh doanh: ưu tiên ROI ngắn hạn vs ưu tiên Accuracy để scale ổn định dài hạn.
+- **Deliverable:** `presentation.html`.
 
 ## 4. Ràng buộc & quy ước kỹ thuật
 
-- Nên chạy **tuần tự 00→07 rồi `build_presentation.py`** — thứ tự này vừa phản ánh **mạch lý luận trình bày cho business** (data → EDA → phân khúc → benchmark → model mạnh hơn → so sánh → giải thích → định lượng lợi nhuận → tối ưu lợi nhuận → trình bày), vừa là ràng buộc kỹ thuật thật sự ở một số cặp bước (00→tất cả; 04/04b→4c/5/5b/6; 01-07→build_presentation.py). Xem chi tiết dependency ở từng bước tại Mục 3.
+- Về mặt **file/code**, chỉ Bước 5 và Bước 6 thực sự bắt buộc phải chạy Bước 4 trước (để có `04_xgboost_model.pkl`/bản LightGBM) — các bước còn lại tự đọc `customer_promo_data.csv` gốc và không phụ thuộc file của nhau. Tuy vậy vẫn nên chạy **tuần tự 00→09** vì thứ tự này phản ánh đúng **mạch lý luận trình bày cho business** (sinh data → EDA → phân khúc → benchmark → model mạnh hơn → giải thích → định lượng lợi nhuận → tối ưu lợi nhuận → so sánh công bằng → trình bày), dù không phải lúc nào cũng là ràng buộc kỹ thuật.
 - Luôn loại `Customer_ID` và `Estimated_CLV_VND` khỏi feature set khi train (tránh học nhiễu / đa cộng tuyến).
-- Metric đánh giá chính: ROC-AUC (so sánh model) và Expected Profit/ROI (so sánh giá trị kinh doanh) — không chỉ dừng ở accuracy vì dữ liệu mất cân bằng lớp (~15-23% response).
-- `class_weight='balanced'`/`scale_pos_weight` cải thiện quyết định ở threshold nhưng làm lệch xác suất thô (probability calibration) — Bước 6/7 dùng trực tiếp xác suất này để tính tiền, đây là một giới hạn đã biết (xem "Bước tiếp theo" ở tab Kết luận của `presentation.html`), không phải bug.
+- Metric đánh giá chính: ROC-AUC (so sánh model) và Expected Profit/ROI (so sánh giá trị kinh doanh) — không chỉ dừng ở accuracy vì dữ liệu mất cân bằng lớp. Bước 8 bổ sung Accuracy/Precision/Recall thống nhất trên tập test để so sánh trực tiếp cả 6 model.
+- Business constants hiện hành (từ 2026-07-03): chi phí gửi ZNS = 500 VND/tin/khách hàng; lợi nhuận trung bình/khách hàng phản hồi = 10,000 VND (break-even threshold = 5%).
 
 ## 5. Tiêu chí thành công suy luận được (Success Criteria)
 

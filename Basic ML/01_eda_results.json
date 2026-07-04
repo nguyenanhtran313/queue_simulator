@@ -1,0 +1,144 @@
+{
+  "n_rows": 100000,
+  "n_cols": 12,
+  "total_missing_values": 0,
+  "response_rate": 0.11876,
+  "describe": {
+    "Age": {
+      "count": 100000.0,
+      "mean": 43.38482,
+      "std": 14.109338903791453,
+      "min": 18.0,
+      "25%": 33.0,
+      "50%": 43.0,
+      "75%": 54.0,
+      "max": 70.0
+    },
+    "Avg_Monthly_Balance_VND": {
+      "count": 100000.0,
+      "mean": 119195481.19643,
+      "std": 525472508.24657303,
+      "min": 33.0,
+      "25%": 8670776.5,
+      "50%": 23231514.5,
+      "75%": 71652440.0,
+      "max": 53440570572.0
+    },
+    "Txn_Count_3M": {
+      "count": 100000.0,
+      "mean": 20.00848,
+      "std": 10.946441720278939,
+      "min": 0.0,
+      "25%": 12.0,
+      "50%": 18.0,
+      "75%": 26.0,
+      "max": 110.0
+    },
+    "Txn_Amount_3M_VND": {
+      "count": 100000.0,
+      "mean": 60139210.73169,
+      "std": 40958223.54974823,
+      "min": 786637.0,
+      "25%": 31818073.0,
+      "50%": 50221104.5,
+      "75%": 77175009.25,
+      "max": 576857559.0
+    },
+    "App_Logins_3M": {
+      "count": 100000.0,
+      "mean": 35.01522,
+      "std": 18.471875932173337,
+      "min": 1.0,
+      "25%": 21.0,
+      "50%": 32.0,
+      "75%": 45.0,
+      "max": 175.0
+    },
+    "Promo_Txn_Count_3M": {
+      "count": 100000.0,
+      "mean": 1.4956,
+      "std": 1.9243954045301424,
+      "min": 0.0,
+      "25%": 0.0,
+      "50%": 1.0,
+      "75%": 2.0,
+      "max": 21.0
+    },
+    "Last_Active_Days": {
+      "count": 100000.0,
+      "mean": 45.06408,
+      "std": 26.22708470938628,
+      "min": 0.0,
+      "25%": 22.0,
+      "50%": 45.0,
+      "75%": 68.0,
+      "max": 90.0
+    }
+  },
+  "significance_tests": [
+    {
+      "variable": "Age",
+      "test": "T-test",
+      "p_value": 8.690949142698703e-35,
+      "significant": true,
+      "corr_with_target": -0.03877399082842421
+    },
+    {
+      "variable": "Avg_Monthly_Balance_VND",
+      "test": "T-test",
+      "p_value": 5.77446218476152e-23,
+      "significant": true,
+      "corr_with_target": 0.043736677247966795
+    },
+    {
+      "variable": "Txn_Count_3M",
+      "test": "T-test",
+      "p_value": 8.091933033655712e-232,
+      "significant": true,
+      "corr_with_target": 0.11731630177141854
+    },
+    {
+      "variable": "Txn_Amount_3M_VND",
+      "test": "T-test",
+      "p_value": 1.7583537662765998e-120,
+      "significant": true,
+      "corr_with_target": 0.08362468987100836
+    },
+    {
+      "variable": "App_Logins_3M",
+      "test": "T-test",
+      "p_value": 1.1926687582298963e-228,
+      "significant": true,
+      "corr_with_target": 0.11617030497847207
+    },
+    {
+      "variable": "Promo_Txn_Count_3M",
+      "test": "T-test",
+      "p_value": 1.282650074407143e-265,
+      "significant": true,
+      "corr_with_target": 0.14135816276846738
+    },
+    {
+      "variable": "Last_Active_Days",
+      "test": "T-test",
+      "p_value": 0.0,
+      "significant": true,
+      "corr_with_target": -0.2542473123222574
+    },
+    {
+      "variable": "Gender",
+      "test": "Chi-square",
+      "p_value": 0.07988097288931095,
+      "significant": false,
+      "corr_with_target": null
+    },
+    {
+      "variable": "Segment",
+      "test": "Chi-square",
+      "p_value": 7.353038008329781e-238,
+      "significant": true,
+      "corr_with_target": null
+    }
+  ],
+  "clv_balance_correlation": 0.9254711521067245
+}

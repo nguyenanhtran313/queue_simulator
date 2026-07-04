@@ -1,0 +1,9 @@
+{
+  "mass_marketing_profit_vnd": 13750000,
+  "do_nothing_profit_vnd": 0,
+  "mass_marketing_total_cost_vnd": 10000000,
+  "mass_marketing_roi": 1.375,
+  "break_even_threshold": 0.05,
+  "n_test": 20000,
+  "test_response_rate": 0.11875
+}

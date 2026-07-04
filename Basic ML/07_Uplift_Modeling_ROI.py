@@ -55,12 +55,9 @@ def main():
     df['Uplift_Score'] = prob_treat_1 - prob_treat_0
     
     # Tính Incremental ROI (ROI gia tăng do Uplift)
-    # Dùng cùng giả định kinh doanh với 06_Expected_Profit_Calculation.py — kênh Zalo ZNS, cost=500đ/tin
-    # gửi thành công, reward=12.000đ = lợi nhuận gộp nếu khách convert (suy từ tỷ lệ convert TB 5% và
-    # lợi nhuận gộp sau cùng TB 100đ/khách hàng) — để 2 bước có thể so sánh trực tiếp với nhau. Breakeven
-    # = 4.17%, xấp xỉ tỷ lệ convert nền nên Uplift Score lọc được 1 phần đáng kể khách hàng dưới trung bình.
+    # Chi phí gửi ZNS 500đ, lợi nhuận trung bình/khách hàng phản hồi 10.000đ
     cost_per_email = 500
-    reward_per_response = 12000
+    reward_per_response = 10000
     
     # Quyết định: Chỉ gửi mail cho người có Lợi nhuận gia tăng > 0
     # Expected_Incremental_Profit = (Xác suất mua TĂNG THÊM do KM) * Lợi nhuận - Chi phí KM

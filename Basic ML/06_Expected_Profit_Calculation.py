@@ -8,16 +8,13 @@ sys.stdout.reconfigure(encoding='utf-8')
 
 
 def main():
-    print("--- STEP 6: Expected Profit Calculation (Logistic Regression vs XGBoost vs LightGBM) ---")
-    # Biến số kinh doanh (Business Constraints/Assumptions) — kênh gửi khuyến mãi: Zalo ZNS.
-    # cost=500đ/tin nhắn gửi THÀNH CÔNG. Tỷ lệ convert trung bình (khách nhận tin -> ra đơn) = 5%
-    # (khớp response rate của 00_generate_data.py). Lợi nhuận gộp SAU CÙNG (đã trừ chi phí tin nhắn)
-    # trung bình = 100đ/khách hàng được gửi -> suy ra reward (lợi nhuận gộp NẾU khách convert, trước
-    # khi trừ chi phí tin) = (100 + cost) / ty_le_convert = (100 + 500) / 5% = 12.000đ.
-    # Kiem tra: 5% * 12.000 - 500 = 100 (khop dung gia dinh). Breakeven = cost/reward = 4.17%.
-    cost_per_email = 500  # VND — chi phí gửi 1 tin nhắn Zalo ZNS thành công
-    reward_per_response = 12000  # VND — lợi nhuận gộp nếu khách phản hồi/convert (trước khi trừ chi phí tin)
-
+    print("--- STEP 6: Expected Profit Calculation ---")
+    # Biến số kinh doanh (Business Constraints/Assumptions) — cập nhật theo context mới:
+    # Chi phí gửi 1 tin ZNS promotion là 500 VND/tin/khách hàng.
+    # Nếu KH phản hồi, lợi nhuận trung bình mang lại là 10.000 VND/khách hàng.
+    cost_per_email = 500  # VND — chi phí gửi ZNS
+    reward_per_response = 10000  # VND — lợi nhuận trung bình/khách hàng phản hồi
+    
     df = pd.read_csv('customer_promo_data.csv')
     X = df.drop(columns=['Customer_ID', 'Historical_Promo_Response', 'Estimated_CLV_VND'])
 
@@ -28,18 +25,25 @@ def main():
     except FileNotFoundError:
         print("Model not found. Please run 03_Logistic_Regression_Benchmark.py, 04_XGBoost_Production.py va 04b_LightGBM_Production.py first.")
         return
-
-    # Tính xác suất phản hồi + lợi nhuận kỳ vọng riêng cho từng model, trên TOÀN BỘ khách hàng.
-    # Bao gồm CẢ Logistic Regression benchmark — để trả lời thẳng câu hỏi kinh doanh: ROC-AUC nhỉnh
-    # hơn của XGBoost/LightGBM có thực sự đổi ra lợi nhuận cao hơn benchmark rẻ tiền/dễ giải thích hay không?
-    for prefix, model in [('LOGREG', logreg_model), ('XGB', xgb_model), ('LGBM', lgbm_model)]:
-        df[f'{prefix}_Prob'] = model.predict_proba(X)[:, 1]
-        df[f'{prefix}_Expected_Profit'] = (df[f'{prefix}_Prob'] * reward_per_response) - cost_per_email
-        df[f'{prefix}_Send_Email'] = df[f'{prefix}_Expected_Profit'] > 0
-
-    # --- 4 kịch bản lợi nhuận ---
-    total_cost_if_all = int(len(df) * cost_per_email)
-    revenue_if_all = int(df['Historical_Promo_Response'].sum() * reward_per_response)
+        
+    # Tính xác suất khách hàng sẽ phản hồi dựa vào model (Predict Proba)
+    # P(Response): Khả năng mà model nghĩ KH này sẽ bấm vào Promo.
+    df['Predicted_Prob'] = model.predict_proba(X)[:, 1]
+    
+    # Tính Lợi Nhuận Kỳ Vọng (Expected Profit) cho từng KH
+    # Công thức toán kỳ vọng: Expected Value = P(Win)*Reward - P(Lose)*Cost. Ở đây ta đơn giản hóa: 
+    # Profit = P(Mua)*Lợi nhuận - Chi phí tiếp cận
+    df['Expected_Profit'] = (df['Predicted_Prob'] * reward_per_response) - cost_per_email
+    
+    # Quyết định: Gửi email KH này nếu Lợi nhuận kỳ vọng > 0 (Tức là khoản đầu tư sinh lời).
+    # Equivalent to: P(Response) > Cost/Reward = 500/10000 = 5%
+    # Nếu model đoán xác suất mua > 5% ta sẽ gửi ZNS, ngược lại thì không.
+    df['Send_Email'] = df['Expected_Profit'] > 0
+    
+    # --- Tính toán ROI Simulation (Đánh giá hiệu quả kinh doanh) ---
+    # Kịch bản 1: Gửi toàn bộ (Mass Marketing)
+    total_cost_if_all = len(df) * cost_per_email
+    revenue_if_all = df['Historical_Promo_Response'].sum() * reward_per_response
     profit_all = revenue_if_all - total_cost_if_all
 
     scenarios = {'Mass Marketing (gửi toàn bộ)': {
