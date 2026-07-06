@@ -355,6 +355,7 @@
     <a href="#tier9">9·Nhân quả</a>
     <a href="#risk">Rủi ro</a>
     <a href="#leadership">Lãnh đạo</a>
+    <a href="#update0706">Cập nhật 6/7</a>
     <a href="#bonus">Bẫy PV</a>
     <a href="#capstone">Tổng kết</a>
   </div>
@@ -1214,6 +1215,60 @@ shap.dependence_plot(top_feature_1, sv, X_transformed_df)     <span class="c1">#
       <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Nếu tôi giao cho bạn toàn quyền định hình lại chiến lược của Data Team trong năm tới: chuyển dịch từ "Descriptive Analytics" (Báo cáo thống kê mô tả) sang "Prescriptive Analytics" (Dự đoán và khuyến nghị hành động giảm thiểu rủi ro). Bạn hãy phác thảo Roadmap 12 tháng, bao gồm cách cấu trúc lại nhân sự, đánh giá ROI, và thay đổi văn hoá làm việc với dữ liệu của công ty?</p>
       <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Roadmap chia 3 giai đoạn, đi từ nền tảng lên đúng tinh thần bài giảng này (dễ→khó): <b>Q1 — Nền tảng:</b> củng cố Data Governance/Feature Store, đảm bảo Descriptive Analytics hiện tại đáng tin cậy trước khi xây thêm — không thể xây Prescriptive trên nền dữ liệu còn lẫn lộn. <b>Q2 — Predictive:</b> triển khai model dự đoán (propensity, Uplift — như case study trong tài liệu) cho 1–2 use-case ưu tiên cao nhất, đo ROI thực tế (Tier 8) trước khi mở rộng. <b>Q3–Q4 — Prescriptive:</b> từ dự đoán "sẽ xảy ra gì" lên khuyến nghị "nên làm gì" — tích hợp Expected Value/Uplift Framework thẳng vào vận hành (tự động đề xuất threshold/action, không chỉ báo cáo số), thí điểm Optimization cho 1 quyết định kinh doanh cụ thể.</p>
       <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span><b>Nhân sự:</b> chuyển dần từ "Analyst báo cáo theo yêu cầu" sang mô hình lai — giữ 1 nhóm nhỏ Descriptive/BI phục vụ nhu cầu hàng ngày, xây thêm 1 nhóm chuyên trách Predictive/Prescriptive (kỹ năng ML + causal inference sâu — Tier 6-9), ưu tiên đào tạo nội bộ (cơ chế Mentorship câu trên) trước khi tuyển ngoài. <b>ROI:</b> không đo bằng số report xuất ra (metric Descriptive cũ), mà đo bằng giá trị quyết định đã thay đổi nhờ khuyến nghị của team (khung Tier 8: lợi nhuận tăng/rủi ro giảm quy ra tiền) — đây cũng là thay đổi văn hoá quan trọng nhất: từ "Data team làm báo cáo" sang "Data team chịu trách nhiệm 1 phần kết quả kinh doanh".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UPDATE 06/07 ============ -->
+<section class="tier" id="update0706">
+  <div class="tier-eyebrow"><span class="tier-num mono">🆕</span><span class="diff-pill diff-hard">Cập nhật 06/07/2026</span></div>
+  <h2 class="tier-title">Bổ sung: Đọc biểu đồ, Bias dữ liệu & Kiến trúc Quản trị Dữ liệu</h2>
+  <p class="tier-intro">5 câu hỏi tự đúc kết thêm sau khi ôn xong toàn bộ bài giảng — đào sâu 1 lần nữa vào việc <i>đọc</i> biểu đồ cho tinh, phân biệt các loại "dữ liệu xấu" hay bị gộp chung, và cách tổ chức dữ liệu ở quy mô Tập đoàn (RACI, Data Mesh) — phần Data Governance ở đây chỉ tra cứu nhanh xem áp dụng gì vào đâu, lý thuyết đầy đủ xem ở <span class="mono">Data Governance/Bai_Giang_Data_Governance.html</span>.</p>
+
+  <div class="qa-block">
+    <span class="qa-block-label">Tự hỏi — tự đáp</span>
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Trong tất cả biểu đồ đã dùng xuyên suốt bài giảng (histogram, boxplot, Q-Q plot, SHAP bar/dot, ROC/PR curve, correlation heatmap...), biểu đồ nào insightful nhất với 1 Data Analyst? Boxplot có phải lựa chọn hay nhất không?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Nhận định boxplot "hay" là đúng, nhưng cần nói rõ đúng ở khía cạnh nào. Boxplot vô địch ở <b>mật độ thông tin trên diện tích</b>: 1 hình chữ nhật gói gọn cả 5-number summary (Tier 1) LẪN gắn nhãn outlier tự động (rule 1.5·IQR) — và quan trọng nhất, nó là biểu đồ DUY NHẤT cho phép xếp <b>hàng chục nhóm cạnh nhau</b> (vd. Balance theo từng Segment/tỉnh thành) trong cùng 1 khung nhìn mà vẫn so sánh được ngay bằng mắt — không chart nào khác làm được việc này ở quy mô lớn.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Nhưng boxplot có 1 điểm mù: nó <b>giấu mất hình dạng multimodal</b> — 2 đỉnh phân phối tách biệt (vd. trộn 2 phân khúc khách hàng) vẫn hiện ra như 1 hộp rộng bình thường, đúng bẫy "Đa đỉnh" đã nói ở Tier 1. Nếu phải chọn 1 biểu đồ insightful nhất cho toàn bộ pipeline (không chỉ EDA), <b>SHAP summary dot (beeswarm)</b> mới là ứng viên nặng ký nhất — vì nó là chart <i>duy nhất</i> trả lời cùng lúc 4 câu hỏi trong 1 hình: biến nào quan trọng (thứ tự), tác động chiều nào (màu), mức độ (vị trí ngang), và trải đều trên từng khách hàng cụ thể (từng chấm) — thứ mà bar chart + correlation + 1 bảng riêng cộng lại mới làm được. Quy tắc thực dùng: <b>boxplot để so sánh nhiều nhóm khi làm EDA/báo cáo</b>, <b>SHAP dot để giải thích 1 model</b> — 2 việc khác nhau, không có "biểu đồ toàn năng" duy nhất.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Skewness, Feature Bias và Outlier hay bị gộp chung là "dữ liệu xấu", nhưng bản chất khác nhau hoàn toàn. Phân biệt rõ 3 khái niệm này và cách nhận diện từng loại trong case study?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span><b>Skewness</b> (Tier 1) và <b>Outlier</b> (Tier 1 Q&amp;A) là vấn đề của <i>hình dạng phân phối 1 biến</i> — sửa được bằng công thức toán thuần tuý (log-transform, IQR rule), không liên quan tới việc dữ liệu được THU THẬP như thế nào. <b>Feature Bias</b> là chuyện hoàn toàn khác: đây là <i>lệch lạc hệ thống trong cách 1 biến/nhãn được TẠO RA</i>, không sửa được bằng công thức toán — phải sửa tận gốc quy trình thu thập hoặc bù trừ bằng causal inference.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Ví dụ Feature Bias thật trong chính case study: <span class="mono">Historical_Promo_Response</span> chỉ được ghi nhận cho khách hàng ĐÃ từng được liên hệ khuyến mãi trước đó — target này vì vậy học từ 1 tập con khách hàng không đại diện cho toàn bộ tệp khách (label bias/survivorship bias). Đây chính là gốc rễ của vấn đề "Sure Things" đã lật lại ở Tier 9 — model Tier 6/8 tưởng đang học "ai sẽ mua" nhưng thực ra 1 phần đang học "ai đã từng được ưu ái liên hệ trước đây", 2 điều không giống nhau. Cách phân biệt nhanh khi phỏng vấn: hỏi "sửa bằng 1 dòng code toán học được không?" — Skew/Outlier: được; Feature Bias: không, phải sửa lại thiết kế thu thập dữ liệu hoặc dùng Uplift Modeling để bóc tách.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>"Regression to the Mean" (hồi quy về trung bình) đã nhắc sơ ở phần Bẫy PV — phân tích sâu hơn hiện tượng này với 1 ví dụ cụ thể trong bối cảnh ngân hàng/marketing, và nó khác gì với Selection Bias hay Confounding?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Cơ chế: khi 1 biến có giá trị CỰC ĐOAN ở lần đo đầu (rất cao/rất thấp), lần đo sau có xu hướng "kéo về gần trung bình" hơn — không phải vì có can thiệp gì, mà vì phần đóng góp NGẪU NHIÊN (may rủi) trong lần đo đầu khó lặp lại y hệt lần sau. Ví dụ cụ thể: chọn ra 100 khách hàng có Response cao nhất trong 1 campaign (trúng đúng thời điểm/tâm trạng mua sắm), rồi target riêng đúng 100 người này ở campaign kế tiếp — nhiều khả năng Response rate của CHÍNH nhóm này ở lần 2 sẽ thấp hơn lần 1, không phải vì campaign 2 dở hơn, mà vì 1 phần "đỉnh cao" ở lần 1 chỉ là may mắn thống kê, không phải tín hiệu bền vững.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Phân biệt: <b>Selection Bias</b> là chọn MẪU không đại diện ngay từ đầu (vd. chỉ khảo sát khách dùng app); <b>Confounding</b> là có 1 biến thứ 3 ảnh hưởng cả Treatment lẫn Outcome (Tier 9); còn <b>Regression to the Mean</b> là hiện tượng THỜI GIAN — chọn mẫu theo giá trị cực đoan tại 1 THỜI ĐIỂM rồi đo lại. Bẫy hay gặp: dễ nhầm "nhóm tự nhiên tăng/giảm trở lại" với "hiệu ứng thật của can thiệp mới" — business dễ kết luận sai "khách đã chán campaign 2" hoặc ngược lại "chiến dịch mới có tác dụng" khi thực ra chỉ là hồi quy tự nhiên. Cách phòng tránh: luôn có nhóm Control không can thiệp khi đánh giá lại đúng 1 nhóm đã chọn theo giá trị cực đoan — về bản chất, đây là lý do RCT/A/B test (Tier 3, Tier 9) không thể thay bằng "so sánh trước-sau" đơn thuần.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Không cần học lại lý thuyết Data Governance — chỉ cần ví dụ cụ thể: ở từng bước của pipeline Basic ML (00→09), cần áp dụng nguyên tắc DG nào?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Bảng tra nhanh — DG áp dụng đúng bước nào, không lý thuyết dài dòng:</p>
+      <div class="data-sample-wrap" style="margin-top:8px">
+        <table class="data-sample" style="min-width:0">
+          <tr><th>Bước pipeline</th><th>Nguyên tắc DG cần áp dụng</th></tr>
+          <tr><td>00 — Generate Data</td><td><b>Data Lineage</b>: mọi lần đổi DGP (v1→v2→v3) phải ghi vào metadata/changelog — <span class="mono">_REQUIREMENT.md</span> hiện đang làm đúng việc này thủ công.</td></tr>
+          <tr><td>01 — EDA</td><td><b>Data Quality Scorecard</b>: kết quả missing/skew/p-value nên lưu định kỳ (không chỉ chạy 1 lần), làm bằng chứng chất lượng theo thời gian.</td></tr>
+          <tr><td>02 — KMeans</td><td><b>Data Classification &amp; Ownership</b>: tên gọi persona/cụm ("khách VIP ngủ đông") cần 1 Owner duyệt, tránh mỗi phòng ban tự đặt tên khác nhau cho cùng 1 cụm.</td></tr>
+          <tr><td>03–04 — Model benchmark</td><td><b>Model Registry</b>: version hoá từng <span class="mono">.pkl</span>, ghi rõ ai train, ngày nào, trên data version nào.</td></tr>
+          <tr><td>04c — So sánh model</td><td><b>Business Glossary</b>: định nghĩa <span class="mono">best_model_by_auc</span> vs <span class="mono">best_model_by_profit</span> phải ghi rõ ràng, tránh hiểu nhầm khi đọc báo cáo (đúng insight đã có ở Tier 6).</td></tr>
+          <tr><td>05 — SHAP</td><td><b>PII Governance</b>: loại feature nhạy cảm khỏi bản diễn giải trước khi đưa cho Front-office (đã nói ở phần Rủi ro).</td></tr>
+          <tr><td>06 — Expected Profit</td><td><b>Data Ownership + Audit Trail</b>: business constants (cost 500đ/reward 10.000đ) phải có người duyệt chính thức và ghi ngày cập nhật — không phải hằng số "ai đó gõ vào code".</td></tr>
+          <tr><td>07–08 — Uplift/So sánh 6 model</td><td><b>Data Steward xác nhận định nghĩa</b>: <span class="mono">Treatment = Promo_Txn_Count_3M &gt; 0</span> là 1 quyết định nghiệp vụ quan trọng (Tier 9), không phải chỉ 1 dòng code — cần Steward duyệt trước khi dùng làm căn cứ nhân quả.</td></tr>
+          <tr><td>09 — Presentation</td><td><b>Access Management</b>: ai được xem presentation.html chứa chiến lược/lợi nhuận nhạy cảm cần kiểm soát quyền truy cập, không public tràn lan.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>RACI, Data Dictionary, mô hình Centralized vs Data Mesh (mỗi phòng ban tự quản data riêng) — ưu nhược từng cái? Tập đoàn lớn dùng Data Mesh cho linh hoạt thì có còn cần Governance không?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span><b>RACI cho dữ liệu</b> (Responsible/Accountable/Consulted/Informed) áp vào chính file <span class="mono">customer_promo_data.csv</span>: R = Data Engineer sinh data, A = Data Owner domain Khách hàng (chịu trách nhiệm cuối), C = Business Marketing (phải hỏi ý kiến khi đổi định nghĩa "Response"), I = toàn bộ Analyst đang dùng file. <b>Data Dictionary</b> — pipeline này thực ra đã có "tiền thân" của nó: bảng liệt kê cột/ý nghĩa trong <span class="mono">_REQUIREMENT.md</span> — chỉ cần chuẩn hoá thành Business Glossary dùng chung thay vì nằm rải rác trong file Markdown của riêng 1 dự án.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span><b>Centralized</b>: 1 team Data trung tâm sở hữu toàn bộ. Ưu: nhất quán tuyệt đối, dễ ép chuẩn chất lượng vì ít đầu mối. Nhược: thành bottleneck ở tổ chức lớn — team trung tâm không đủ hiểu sâu nghiệp vụ TỪNG phòng ban, tốc độ ra sản phẩm dữ liệu chậm vì mọi yêu cầu xếp hàng qua 1 cửa. <b>Data Mesh</b>: mỗi domain tự sở hữu và "sản xuất" dữ liệu của mình như 1 sản phẩm hoàn chỉnh (data as a product). Ưu: linh hoạt, scale tốt cho Tập đoàn đa ngành, mỗi team hiểu sâu nghiệp vụ mình nhất nên chất lượng tại nguồn tốt hơn. Nhược: rủi ro fragmentation nếu thiếu tầng liên kết chung — tái diễn đúng vấn đề "Active User mỗi phòng định nghĩa 1 kiểu" đã nói trong <span class="mono">Data Governance/</span>.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span><b>Có, bắt buộc</b> — và đây là điểm hay bị hiểu lầm nhất về Data Mesh: nó không phải "bỏ Governance cho tự do" mà là đổi <i>cách</i> Governance được thực thi — từ tập trung 1 team áp đặt, sang <b>Federated Computational Governance</b> (đúng mô hình Federated đã có trong <span class="mono">Data Governance/</span>): các chuẩn TOÀN CỤC (định dạng liên thông, chuẩn mask PII, Business Glossary cho khái niệm dùng toàn Tập đoàn) vẫn do 1 hội đồng liên bang quyết định và <b>tự động hoá thực thi</b> (schema validation, tagging tự động) — chỉ phần vận hành chi tiết hàng ngày mới phân quyền cho từng domain. Thiếu tầng Governance liên bang này, Data Mesh vỡ vụn thành N "cát cứ địa phương" chỉ sau vài tháng — đúng rủi ro đã cảnh báo ở câu hỏi Federated Operating Model.</p>
     </div>
   </div>
 </section>
