@@ -1,3 +1,4 @@
+import sys
 import json
 import os
 import pandas as pd
@@ -8,6 +9,8 @@ from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import classification_report, roc_auc_score
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 def main():
     print("--- STEP 3: Logistic Regression Benchmark ---")

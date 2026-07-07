@@ -1,3 +1,4 @@
+import sys
 import json
 import os
 import pandas as pd
@@ -8,6 +9,8 @@ from sklearn.pipeline import Pipeline
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report, roc_auc_score
 import joblib
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 
 def main():

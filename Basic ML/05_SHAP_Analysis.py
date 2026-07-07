@@ -5,6 +5,8 @@ import shap
 import joblib
 import matplotlib.pyplot as plt
 
+sys.stdout.reconfigure(encoding='utf-8')
+
 SHAP_SAMPLE_SIZE = 5000  # SHAP TreeExplainer chính xác nhưng vẫn tốn O(n) thời gian/bộ nhớ
 # theo số dòng -> lấy mẫu ngẫu nhiên là thực hành chuẩn khi vẽ biểu đồ diễn giải
 # (summary/dependence plot), không cần chạy trên toàn bộ dữ liệu dù data lớn cỡ nào.

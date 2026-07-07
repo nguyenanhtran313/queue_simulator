@@ -1,8 +1,11 @@
+import sys
 import pandas as pd
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import silhouette_score
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 SAMPLE_SIZE = 8_000  # silhouette_score mặc định tính khoảng cách từng cặp điểm (O(n^2))
 # và dựng ma trận n x n trong bộ nhớ -> chỉ cần data vượt vài chục nghìn dòng là đã tốn hàng

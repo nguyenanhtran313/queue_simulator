@@ -2,53 +2,53 @@
   "metrics": {
     "logistic_regression": {
       "display_name": "Logistic Regression (Benchmark)",
-      "roc_auc": 0.864681587176482,
-      "accuracy": 0.795,
-      "precision": 0.17547568710359407,
-      "recall": 0.8058252427184466,
-      "f1": 0.2881944444444444
+      "roc_auc": 0.7798696946621874,
+      "accuracy": 0.7011,
+      "precision": 0.24223780226069538,
+      "recall": 0.7128421052631579,
+      "f1": 0.3615976078598889
     },
     "xgboost": {
       "display_name": "XGBoost",
-      "roc_auc": 0.9194794028384111,
-      "accuracy": 0.8915,
-      "precision": 0.2978723404255319,
-      "recall": 0.8155339805825242,
-      "f1": 0.43636363636363634,
-      "scale_pos_weight": 18.37046004842615
+      "roc_auc": 0.7820539604329974,
+      "accuracy": 0.6972,
+      "precision": 0.24219078302283234,
+      "recall": 0.728,
+      "f1": 0.3634643682993483,
+      "scale_pos_weight": 7.420166298284391
     },
     "lightgbm": {
       "display_name": "LightGBM",
-      "roc_auc": 0.917857014908568,
-      "accuracy": 0.9085,
-      "precision": 0.3333333333333333,
-      "recall": 0.7766990291262136,
-      "f1": 0.46647230320699706
+      "roc_auc": 0.7815271967151922,
+      "accuracy": 0.7027,
+      "precision": 0.2423892656182369,
+      "recall": 0.7073684210526315,
+      "f1": 0.3610573823339781
     }
   },
   "best_model_by_auc_key": "xgboost",
   "best_model_by_auc_name": "XGBoost",
-  "test_set_size": 2000,
-  "agree_rate_at_0.5": 0.969,
-  "proba_correlation": 0.9687133510791144,
+  "test_set_size": 20000,
+  "agree_rate_at_0.5": 0.9628,
+  "proba_correlation": 0.9879130339396442,
   "xgb_top_features": {
-    "remainder__Promo_Txn_Count_3M": 0.34119999408721924,
-    "remainder__Last_Active_Days": 0.24410000443458557,
-    "cat__Segment_Standard": 0.09749999642372131,
-    "cat__Segment_Priority": 0.04800000041723251,
-    "remainder__Avg_Monthly_Balance_VND": 0.0478999987244606,
-    "remainder__Txn_Amount_3M_VND": 0.046300001442432404,
-    "cat__Gender_Male": 0.04540000110864639,
-    "remainder__App_Logins_3M": 0.04490000009536743
+    "remainder__Last_Active_Days": 0.3384999930858612,
+    "cat__Segment_Standard": 0.17499999701976776,
+    "remainder__Promo_Txn_Count_3M": 0.1331000030040741,
+    "cat__Segment_Priority": 0.12030000239610672,
+    "remainder__Txn_Count_3M": 0.065700002014637,
+    "remainder__App_Logins_3M": 0.05389999970793724,
+    "remainder__Avg_Monthly_Balance_VND": 0.04879999905824661,
+    "remainder__Age": 0.02710000053048134
   },
   "lgbm_top_features": {
-    "remainder__Last_Active_Days": 0.4173,
-    "remainder__Promo_Txn_Count_3M": 0.2758,
-    "remainder__Avg_Monthly_Balance_VND": 0.079,
-    "remainder__Txn_Amount_3M_VND": 0.0579,
-    "remainder__App_Logins_3M": 0.0456,
-    "remainder__Age": 0.043,
-    "remainder__Txn_Count_3M": 0.0391,
-    "cat__Segment_Standard": 0.0276
+    "remainder__Avg_Monthly_Balance_VND": 0.1669,
+    "remainder__Last_Active_Days": 0.1624,
+    "remainder__Txn_Amount_3M_VND": 0.1566,
+    "remainder__App_Logins_3M": 0.1317,
+    "remainder__Age": 0.1226,
+    "remainder__Txn_Count_3M": 0.1222,
+    "remainder__Promo_Txn_Count_3M": 0.0894,
+    "cat__Segment_Standard": 0.0183
   }
 }

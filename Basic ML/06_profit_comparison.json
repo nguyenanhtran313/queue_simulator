@@ -9,16 +9,16 @@
       "profit": 68760000
     },
     "Logistic Regression-optimized": {
-      "n_send": 75219,
-      "cost": 37609500,
-      "revenue": 113530000,
-      "profit": 75920500
+      "n_send": 99078,
+      "cost": 49539000,
+      "revenue": 118710000,
+      "profit": 69171000
     },
     "XGBoost-optimized": {
-      "n_send": 58285,
-      "cost": 29142500,
-      "revenue": 113010000,
-      "profit": 83867500
+      "n_send": 94904,
+      "cost": 47452000,
+      "revenue": 118620000,
+      "profit": 71168000
     },
     "LightGBM-optimized": {
       "n_send": 93014,
@@ -27,6 +27,6 @@
       "profit": 72133000
     }
   },
-  "best_scenario": "XGBoost-optimized",
-  "best_scenario_uplift_vs_mass": 15107500
+  "best_scenario": "LightGBM-optimized",
+  "best_scenario_uplift_vs_mass": 3373000
 }

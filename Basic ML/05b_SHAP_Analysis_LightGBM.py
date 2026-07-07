@@ -1,7 +1,10 @@
+import sys
 import pandas as pd
 import shap
 import joblib
 import matplotlib.pyplot as plt
+
+sys.stdout.reconfigure(encoding='utf-8')
 
 # FIX (review 2026-07-03): file này trước đây là bản copy y hệt 05_SHAP_Analysis.py — vẫn
 # load '04_xgboost_model.pkl' và ghi đè lên đúng 4 file PNG của bản XGBoost, nên chưa từng
