@@ -1,82 +1,29 @@
 <title>Cẩm Nang Data Analyst — Từ EDA đến Causal Inference</title>
 <style>
-  @font-face {
-    font-family: "ui-mono-fallback";
-    src: local("Cascadia Code");
-  }
-
   :root {
-    --paper: #eceef1;
+    /* Analytics Design System (ADS) — Google Analytics-style tokens */
+    --paper: #f3f4f6;
     --paper-raised: #ffffff;
-    --paper-sunk: #e2e5e9;
-    --ink: #14171c;
-    --ink-soft: #494f5c;
-    --ink-faint: #767d8b;
-    --rule: rgba(20, 23, 28, 0.13);
-    --signal: #4a4fc4;
-    --signal-strong: #3538a0;
-    --signal-soft: rgba(74, 79, 196, 0.09);
-    --signal-soft-border: rgba(74, 79, 196, 0.25);
-    --tier-easy: #1f7a5c;
-    --tier-easy-soft: rgba(31, 122, 92, 0.12);
-    --tier-mid: #a2660f;
-    --tier-mid-soft: rgba(162, 102, 15, 0.12);
-    --tier-hard: #a83b32;
-    --tier-hard-soft: rgba(168, 59, 50, 0.12);
-    --code-bg: #10131a;
-    --code-ink: #d8dbe6;
-    --code-accent: #8b93ff;
-    --code-noise: #7d8394;
-    --shadow: 0 1px 2px rgba(20, 23, 28, 0.06), 0 4px 16px rgba(20, 23, 28, 0.05);
-  }
-
-  @media (prefers-color-scheme: dark) {
-    :root {
-      --paper: #14161b;
-      --paper-raised: #1b1e25;
-      --paper-sunk: #101216;
-      --ink: #e9eaee;
-      --ink-soft: #b2b6c2;
-      --ink-faint: #7d8391;
-      --rule: rgba(233, 234, 238, 0.13);
-      --signal: #9aa1ff;
-      --signal-strong: #b7bcff;
-      --signal-soft: rgba(154, 161, 255, 0.13);
-      --signal-soft-border: rgba(154, 161, 255, 0.3);
-      --tier-easy: #55c79b;
-      --tier-easy-soft: rgba(85, 199, 155, 0.14);
-      --tier-mid: #e0a94a;
-      --tier-mid-soft: rgba(224, 169, 74, 0.14);
-      --tier-hard: #e2867b;
-      --tier-hard-soft: rgba(226, 134, 123, 0.14);
-      --code-bg: #0b0d12;
-      --code-ink: #d8dbe6;
-      --code-accent: #a7adff;
-      --code-noise: #8a90a0;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.35);
-    }
-  }
-  :root[data-theme="dark"] {
-    --paper: #14161b; --paper-raised: #1b1e25; --paper-sunk: #101216;
-    --ink: #e9eaee; --ink-soft: #b2b6c2; --ink-faint: #7d8391;
-    --rule: rgba(233, 234, 238, 0.13);
-    --signal: #9aa1ff; --signal-strong: #b7bcff;
-    --signal-soft: rgba(154, 161, 255, 0.13); --signal-soft-border: rgba(154, 161, 255, 0.3);
-    --tier-easy: #55c79b; --tier-easy-soft: rgba(85, 199, 155, 0.14);
-    --tier-mid: #e0a94a; --tier-mid-soft: rgba(224, 169, 74, 0.14);
-    --tier-hard: #e2867b; --tier-hard-soft: rgba(226, 134, 123, 0.14);
-    --code-bg: #0b0d12; --code-ink: #d8dbe6; --code-accent: #a7adff; --code-noise: #8a90a0;
-  }
-  :root[data-theme="light"] {
-    --paper: #eceef1; --paper-raised: #ffffff; --paper-sunk: #e2e5e9;
-    --ink: #14171c; --ink-soft: #494f5c; --ink-faint: #767d8b;
-    --rule: rgba(20, 23, 28, 0.13);
-    --signal: #4a4fc4; --signal-strong: #3538a0;
-    --signal-soft: rgba(74, 79, 196, 0.09); --signal-soft-border: rgba(74, 79, 196, 0.25);
-    --tier-easy: #1f7a5c; --tier-easy-soft: rgba(31, 122, 92, 0.12);
-    --tier-mid: #a2660f; --tier-mid-soft: rgba(162, 102, 15, 0.12);
-    --tier-hard: #a83b32; --tier-hard-soft: rgba(168, 59, 50, 0.12);
-    --code-bg: #10131a; --code-ink: #d8dbe6; --code-accent: #8b93ff; --code-noise: #7d8394;
+    --paper-sunk: #e8eaed;
+    --ink: #202124;
+    --ink-soft: #5f6368;
+    --ink-faint: #5f6368;
+    --rule: #e8eaed;
+    --signal: #1a73e8;
+    --signal-strong: #174ea6;
+    --signal-soft: #e8f0fe;
+    --signal-soft-border: #d2e3fc;
+    --tier-easy: #1e8e3e;
+    --tier-easy-soft: rgba(30, 142, 62, 0.12);
+    --tier-mid: #f29900;
+    --tier-mid-soft: rgba(242, 153, 0, 0.12);
+    --tier-hard: #d93025;
+    --tier-hard-soft: rgba(217, 48, 37, 0.12);
+    --code-bg: #202124;
+    --code-ink: #f3f4f6;
+    --code-accent: #d2e3fc;
+    --code-noise: #bdc1c6;
+    --shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 1px 2px rgba(0, 0, 0, 0.24);
   }
 
   * { box-sizing: border-box; }
@@ -85,7 +32,7 @@
     margin: 0;
     background: var(--paper);
     color: var(--ink);
-    font-family: "Segoe UI", "Calibri", "Noto Sans", Arial, sans-serif;
+    font-family: Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
     font-size: 17px;
     line-height: 1.62;
     -webkit-font-smoothing: antialiased;
@@ -97,9 +44,7 @@
      keep prose in the Segoe UI-safe stack and reserve monospace for ASCII-only
      code/formula/number content. */
   .mono { font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, "Liberation Mono", Menlo, monospace; }
-  .ui   { font-family: "Segoe UI", "Calibri", "Noto Sans", Arial, sans-serif; }
   .num  { font-variant-numeric: tabular-nums; }
-  .display { font-family: "Segoe UI Semibold", "Segoe UI", "Calibri", Arial, sans-serif; font-weight: 700; }
 
   a { color: var(--signal); }
   a:focus-visible, button:focus-visible, summary:focus-visible {
@@ -115,7 +60,7 @@
     padding: 10px 0;
   }
   .topnav-inner {
-    max-width: 1640px; margin: 0 auto; padding: 0 28px;
+    max-width: 1640px; margin: 0 auto; padding: 0 clamp(1.25rem, 3vw, 1.75rem);
     display: flex; gap: 4px; overflow-x: auto; scrollbar-width: thin;
   }
   .topnav a {
@@ -130,10 +75,10 @@
   .topnav a.active { color: var(--signal); background: var(--signal-soft); border-color: var(--signal-soft-border); font-weight: 700; }
 
   /* ---------- Shell ---------- */
-  .shell { max-width: 1640px; margin: 0 auto; padding: 0 28px 100px; }
+  .shell { max-width: 1640px; margin: 0 auto; padding: 0 clamp(1.25rem, 3vw, 1.75rem) 100px; }
   .prose { max-width: 720px; }
 
-  header.hero { max-width: 1640px; margin: 0 auto; padding: 44px 28px 32px; }
+  header.hero { max-width: 1640px; margin: 0 auto; padding: 44px clamp(1.25rem, 3vw, 1.75rem) 32px; }
   .kicker {
     font-family: ui-monospace, "Cascadia Code", "SF Mono", Consolas, monospace;
     font-size: 12.5px; letter-spacing: 0.14em; text-transform: uppercase;
@@ -141,9 +86,8 @@
   }
   .kicker::before { content: "// "; color: var(--code-noise); }
   h1.title {
-    font-family: "Segoe UI Semibold", "Segoe UI", "Calibri", Arial, sans-serif;
     font-size: clamp(28px, 4.6vw, 42px); line-height: 1.16; margin: 0 0 16px;
-    letter-spacing: -0.01em; text-wrap: balance; font-weight: 700;
+    letter-spacing: -0.01em; text-wrap: balance; font-weight: 600;
   }
   .lede { color: var(--ink-soft); font-size: 18px; max-width: 62ch; margin: 0 0 20px; }
   .hero-meta {
@@ -174,14 +118,13 @@
   .diff-hard { color: var(--tier-hard); background: var(--tier-hard-soft); }
 
   h2.tier-title {
-    font-family: "Segoe UI Semibold", "Segoe UI", "Calibri", Arial, sans-serif;
-    font-size: clamp(21px, 3vw, 26px); margin: 0 0 10px; text-wrap: balance; font-weight: 700;
+    font-size: clamp(21px, 3vw, 26px); margin: 0 0 10px; text-wrap: balance; font-weight: 600;
   }
   .tier-intro { color: var(--ink-soft); margin: 0 0 30px; max-width: 64ch; }
 
   /* ---------- Technique card ---------- */
   .tech {
-    background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 12px;
+    background: var(--paper-raised); border-radius: 8px;
     padding: 22px 24px; margin-bottom: 18px; box-shadow: var(--shadow);
   }
   .tech h3 {
@@ -201,8 +144,8 @@
 
   /* ---------- Chart figures (real pipeline output, embedded) ---------- */
   figure.chart {
-    margin: 4px 0 22px; background: var(--paper-raised); border: 1px solid var(--rule);
-    border-radius: 12px; padding: 16px 16px 14px; box-shadow: var(--shadow);
+    margin: 4px 0 22px; background: var(--paper-raised);
+    border-radius: 8px; padding: 16px 16px 14px; box-shadow: var(--shadow);
   }
   figure.chart img { display: block; width: 100%; height: auto; border-radius: 6px; }
   figure.chart figcaption {
@@ -269,7 +212,7 @@
 
   /* ---------- Compare callout ---------- */
   .compare {
-    border: 1px dashed var(--signal-soft-border); border-radius: 12px;
+    border: 1px dashed var(--signal-soft-border); border-radius: 8px;
     padding: 18px 22px; margin: 24px 0; background: var(--paper-raised);
   }
   .compare .lbl {
@@ -293,7 +236,7 @@
     font-size: 11.5px; font-weight: 700; letter-spacing: 0.05em; color: var(--ink-faint);
   }
   .qa-item {
-    background: var(--paper-sunk); border-radius: 10px; padding: 16px 18px 15px; margin: 0;
+    background: var(--paper-sunk); border-radius: 8px; padding: 16px 18px 15px; margin: 0;
   }
   .qa-q, .qa-a { margin: 0; font-size: 15.5px; line-height: 1.55; }
   .qa-q { color: var(--ink); margin-bottom: 9px; }
@@ -307,14 +250,14 @@
   .qa-tag-a { background: var(--tier-easy-soft); color: var(--tier-easy); }
 
   /* Head of Data variant — same shape, dùng tông màu tier-hard để phân biệt cấp độ câu hỏi */
-  .qa-item-exec { background: var(--paper-raised); border: 1px solid var(--rule); border-left: 3px solid var(--tier-hard); }
+  .qa-item-exec { background: var(--paper-raised); border-left: 3px solid var(--tier-hard); border-radius: 8px; box-shadow: var(--shadow); }
   .qa-tag-q-exec { background: var(--tier-hard-soft); color: var(--tier-hard); }
   .qa-tag-a-exec { background: var(--paper-sunk); color: var(--ink-soft); }
 
   /* ---------- Bonus rapid fire ---------- */
   .trap-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 14px; }
   .trap {
-    background: var(--paper-raised); border: 1px solid var(--rule); border-radius: 10px;
+    background: var(--paper-raised); border-radius: 8px;
     padding: 16px 18px; box-shadow: var(--shadow);
   }
   .trap h4 { font-family: ui-monospace, monospace; font-size: 14.5px; margin: 0 0 6px; color: var(--signal); }

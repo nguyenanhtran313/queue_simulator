@@ -1,0 +1,759 @@
+<title>Checklist Data Governance — DE &amp; DA</title>
+<style>
+  :root {
+    --primary900: #174ea6;
+    --primary500: #1a73e8;
+    --primary100: #d2e3fc;
+    --primary50: #e8f0fe;
+    --gray900: #202124;
+    --gray700: #5f6368;
+    --gray400: #bdc1c6;
+    --gray200: #e8eaed;
+    --gray50: #f3f4f6;
+    --white: #ffffff;
+    --success: #1e8e3e;
+    --warning: #f29900;
+    --danger: #d93025;
+    --pink: #d81b60;
+
+    --de: var(--primary500);
+    --da: var(--warning);
+    --card-shadow: 0 1px 3px rgba(0, 0, 0, .12), 0 1px 2px rgba(0, 0, 0, .24);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    background: var(--gray50);
+    color: var(--gray900);
+    font-family: Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--primary100);
+    color: var(--primary900);
+  }
+
+  a {
+    color: var(--primary500);
+  }
+
+  .page {
+    max-width: 1800px;
+    margin: 0 auto;
+    padding: 2.5rem clamp(1.5rem, 4vw, 3rem) 5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  /* ---------- header ---------- */
+  header {
+    display: flex;
+    flex-direction: column;
+    gap: .75rem;
+  }
+
+  .eyebrow {
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gray700);
+    font-weight: 700;
+  }
+
+  h1 {
+    font-weight: 500;
+    font-size: clamp(1.5rem, 2.6vw, 1.9rem);
+    margin: 0;
+    text-wrap: balance;
+    color: var(--gray900);
+  }
+
+  header .lede {
+    max-width: 82ch;
+    color: var(--gray700);
+    font-size: .94rem;
+  }
+
+  header .lede b {
+    color: var(--gray900);
+    font-weight: 600;
+  }
+
+  /* ---------- hero KPI cards ---------- */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .kpi-card {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+
+  .kpi-card .label {
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gray700);
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+
+  .kpi-card .label .dot {
+    width: .5rem;
+    height: .5rem;
+    border-radius: 50%;
+  }
+
+  .kpi-card.de .label .dot {
+    background: var(--de);
+  }
+
+  .kpi-card.da .label .dot {
+    background: var(--da);
+  }
+
+  .kpi-card .hero {
+    font-size: 2.25rem;
+    font-weight: 300;
+    color: var(--gray900);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .kpi-card .hero small {
+    font-size: 1.1rem;
+    color: var(--gray400);
+    font-weight: 400;
+  }
+
+  .kpi-bar {
+    height: 6px;
+    background: var(--gray200);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: .3rem;
+  }
+
+  .kpi-bar>span {
+    display: block;
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+  }
+
+  .kpi-card.de .kpi-bar>span {
+    background: var(--de);
+  }
+
+  .kpi-card.da .kpi-bar>span {
+    background: var(--da);
+  }
+
+  .kpi-card.action {
+    justify-content: center;
+  }
+
+  .reset-link {
+    font-size: .82rem;
+    font-weight: 600;
+    color: var(--gray700);
+    background: var(--gray50);
+    border: none;
+    border-radius: 6px;
+    padding: .55rem .9rem;
+    cursor: pointer;
+    align-self: flex-start;
+  }
+
+  .reset-link:hover {
+    color: var(--danger);
+    background: #fce8e6;
+  }
+
+  /* ---------- columns ---------- */
+  .tracks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.75rem;
+    align-items: start;
+  }
+
+  @media (max-width:900px) {
+    .tracks {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .track-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0 .2rem .8rem;
+  }
+
+  .track-head h2 {
+    font-size: 1.05rem;
+    font-weight: 700;
+    margin: 0;
+    color: var(--gray900);
+  }
+
+  .track-head .role {
+    font-size: .78rem;
+    color: var(--gray700);
+    max-width: 30ch;
+    text-align: right;
+  }
+
+  .tracks>.col.de .track-head {
+    border-bottom: 3px solid var(--de);
+  }
+
+  .tracks>.col.da .track-head {
+    border-bottom: 3px solid var(--da);
+  }
+
+  .col {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .stage {
+    background: var(--white);
+    border-radius: 8px;
+    box-shadow: var(--card-shadow);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .col.de .stage {
+    border-left: 4px solid var(--de);
+  }
+
+  .col.da .stage {
+    border-left: 4px solid var(--da);
+  }
+
+  .stage-head {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .stage-head h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: .15rem 0 0;
+    color: var(--gray900);
+  }
+
+  .stage-head .stage-sub {
+    font-size: .7rem;
+    color: var(--gray700);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+
+  .stage-progress-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: .3rem;
+    flex: 0 0 auto;
+  }
+
+  .stage-progress {
+    font-size: .78rem;
+    color: var(--gray700);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .stage-progress b {
+    color: var(--success);
+    font-weight: 700;
+  }
+
+  .stage-bar {
+    width: 88px;
+    height: 4px;
+    background: var(--gray200);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .col.de .stage-bar>span {
+    background: var(--de);
+  }
+
+  .col.da .stage-bar>span {
+    background: var(--da);
+  }
+
+  .stage-bar>span {
+    display: block;
+    height: 100%;
+    width: 0%;
+    border-radius: 2px;
+  }
+
+  ul.checklist {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  ul.checklist li {
+    display: flex;
+    gap: .7rem;
+    align-items: flex-start;
+    padding: .55rem 0;
+    border-top: 1px solid var(--gray200);
+  }
+
+  ul.checklist li:first-child {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  ul.checklist input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 1.05rem;
+    height: 1.05rem;
+    flex: 0 0 auto;
+    margin-top: .15rem;
+    border: 1.5px solid var(--gray400);
+    border-radius: 4px;
+    background: var(--white);
+    cursor: pointer;
+    position: relative;
+  }
+
+  ul.checklist input[type="checkbox"]:checked {
+    background: var(--success);
+    border-color: var(--success);
+  }
+
+  ul.checklist input[type="checkbox"]:checked::after {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 0px;
+    width: 5px;
+    height: 9px;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+  }
+
+  ul.checklist input[type="checkbox"]:focus-visible {
+    outline: 2px solid var(--primary500);
+    outline-offset: 2px;
+  }
+
+  ul.checklist label {
+    font-size: .88rem;
+    color: var(--gray700);
+    cursor: pointer;
+    max-width: 66ch;
+  }
+
+  ul.checklist .item-text b {
+    color: var(--gray900);
+    font-weight: 600;
+  }
+
+  ul.checklist li.checked label .item-text {
+    color: var(--gray400);
+    text-decoration: line-through;
+    text-decoration-color: var(--gray400);
+  }
+
+  ul.checklist li.checked label .item-text b {
+    color: var(--gray400);
+  }
+
+  ul.checklist code {
+    font-family: ui-monospace, Consolas, monospace;
+    background: var(--gray50);
+    border: 1px solid var(--gray200);
+    padding: .02rem .3rem;
+    border-radius: 4px;
+    font-size: .85em;
+    color: var(--primary900);
+  }
+
+  .gate {
+    display: flex;
+    gap: .65rem;
+    align-items: flex-start;
+    background: var(--gray50);
+    border-radius: 6px;
+    padding: .85rem 1rem;
+    font-size: .82rem;
+    color: var(--gray700);
+  }
+
+  .gate .tag {
+    font-size: .68rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gray900);
+    white-space: nowrap;
+    padding-top: .1rem;
+  }
+
+  footer {
+    border-top: 1px solid var(--gray200);
+    padding-top: 1.25rem;
+    color: var(--gray400);
+    font-size: .8rem;
+  }
+
+  footer a {
+    color: var(--gray700);
+  }
+
+  @media (prefers-reduced-motion:no-preference) {
+    ul.checklist input[type="checkbox"] {
+      transition: background .12s ease, border-color .12s ease;
+    }
+
+    .stage-bar>span,
+    .kpi-bar>span {
+      transition: width .2s ease;
+    }
+  }
+</style>
+
+<div class="page">
+
+  <header>
+    <div class="eyebrow">Data Governance · Checklist vận hành</div>
+    <h1>Data Governance tại từng khâu — DE &amp; DA</h1>
+    <p class="lede">
+      Không phải chính sách trên giấy, mà là các bước Data Governance gắn thẳng vào công việc
+      hằng ngày: DE gắn checkpoint tại <b>Airflow DAG</b> (ingest) và <b>dbt</b> (transform),
+      rồi giữ tầng semantic gọn; DA gắn checkpoint từ lúc <b>nhận đầu bài từ business</b> đến
+      lúc build <b>Power BI model</b>. Thuật ngữ dùng thống nhất với
+      <a href="Introduction%20to%20DG.md">Business Glossary / Data Steward</a> đã có trong
+      thư mục này. Tick vào từng mục khi đã áp dụng — trạng thái được lưu lại trên trình duyệt này.
+    </p>
+  </header>
+
+  <section class="kpis">
+    <div class="kpi-card de">
+      <span class="label"><span class="dot"></span>Data Engineer hoàn thành</span>
+      <span class="hero" id="sum-de">0<small>/0</small></span>
+      <div class="kpi-bar"><span id="bar-de"></span></div>
+    </div>
+    <div class="kpi-card da">
+      <span class="label"><span class="dot"></span>Data Analyst hoàn thành</span>
+      <span class="hero" id="sum-da">0<small>/0</small></span>
+      <div class="kpi-bar"><span id="bar-da"></span></div>
+    </div>
+    <div class="kpi-card action">
+      <button class="reset-link" id="reset-btn" type="button">Xoá tiến trình đã lưu</button>
+    </div>
+  </section>
+
+  <section class="tracks">
+
+    <!-- ============ DE TRACK ============ -->
+    <div class="col de">
+      <div class="track-head">
+        <h2>Data Engineer</h2>
+        <span class="role">Ingest → dbt transform → semantic</span>
+      </div>
+
+      <div class="stage" data-track="de">
+        <div class="stage-head">
+          <div>
+            <div class="stage-sub">Giai đoạn 1</div>
+            <h3>Ingest — trong Airflow DAG</h3>
+          </div>
+          <div class="stage-progress-wrap">
+            <span class="stage-progress"></span>
+            <div class="stage-bar"><span></span></div>
+          </div>
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="de-1-1"><label for="de-1-1"><span class="item-text">Task <b>schema
+                  validation</b> chạy trước task load — fail-fast nếu source đổi schema ngoài kế hoạch, không để lỗi
+                trôi xuống downstream.</span></label></li>
+          <li><input type="checkbox" id="de-1-2"><label for="de-1-2"><span class="item-text">Gắn nhãn phân loại dữ liệu
+                nhạy cảm (PII/tài chính) <b>ngay tại bước ingest</b> — không để việc classify trôi xuống tầng
+                sau.</span></label></li>
+          <li><input type="checkbox" id="de-1-3"><label for="de-1-3"><span class="item-text">Task kiểm tra chất lượng cơ
+                bản sau khi load: null-rate bất thường, row count so với kỳ trước, freshness so với SLA
+                nguồn.</span></label></li>
+          <li><input type="checkbox" id="de-1-4"><label for="de-1-4"><span class="item-text">Bản ghi lỗi/sai schema đưa
+                vào <b>quarantine table</b> riêng — không silently drop, không để lẫn vào bảng chính.</span></label>
+          </li>
+          <li><input type="checkbox" id="de-1-5"><label for="de-1-5"><span class="item-text">Mọi task ingest log đủ:
+                nguồn, thời điểm chạy, số dòng, version schema — phục vụ lineage &amp; audit về sau.</span></label></li>
+          <li><input type="checkbox" id="de-1-6"><label for="de-1-6"><span class="item-text">Đặt tên dataset/table/task
+                đúng naming convention đã thống nhất trong Data Catalog — không tự đặt tên tuỳ hứng.</span></label></li>
+          <li><input type="checkbox" id="de-1-7"><label for="de-1-7"><span class="item-text">Raw layer giới hạn quyền
+                đọc/ghi — chỉ DE và service account; <b>DA/BI không được query thẳng raw</b>.</span></label></li>
+          <li><input type="checkbox" id="de-1-8"><label for="de-1-8"><span class="item-text">Retention/archival policy
+                khai báo ngay khi tạo dataset mới — không để "tính sau".</span></label></li>
+        </ul>
+        <div class="gate"><span class="tag">Gate</span><span>Toàn bộ mục trên PASS + schema đã đăng ký vào Data Catalog,
+            mới cho phép dbt đọc dữ liệu.</span></div>
+      </div>
+
+      <div class="stage" data-track="de">
+        <div class="stage-head">
+          <div>
+            <div class="stage-sub">Giai đoạn 2</div>
+            <h3>Transform — dbt</h3>
+          </div>
+          <div class="stage-progress-wrap">
+            <span class="stage-progress"></span>
+            <div class="stage-bar"><span></span></div>
+          </div>
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="de-2-1"><label for="de-2-1"><span class="item-text">Mọi model có test
+                <code>not_null</code> + <code>unique</code> trên khoá chính, <code>relationships</code> cho khoá ngoại
+                quan trọng.</span></label></li>
+          <li><input type="checkbox" id="de-2-2"><label for="de-2-2"><span class="item-text">Model tầng <b>staging</b>
+                chỉ rename/cast/chuẩn hoá kiểu — business logic tách riêng ở intermediate/marts.</span></label></li>
+          <li><input type="checkbox" id="de-2-3"><label for="de-2-3"><span class="item-text">Mọi model có description
+                trong <code>.yml</code>; cột nhạy cảm gắn <code>meta: pii: true</code> để tự lộ ra khi generate
+                docs/catalog.</span></label></li>
+          <li><input type="checkbox" id="de-2-4"><label for="de-2-4"><span
+                class="item-text"><code>dbt source freshness</code> cấu hình cho source quan trọng, cảnh báo khi source
+                trễ hơn SLA.</span></label></li>
+          <li><input type="checkbox" id="de-2-5"><label for="de-2-5"><span class="item-text">Model đã "certified" áp
+                <code>dbt contracts</code>/enforce schema — tránh đổi cột ngầm làm vỡ báo cáo phía sau.</span></label>
+          </li>
+          <li><input type="checkbox" id="de-2-6"><label for="de-2-6"><span class="item-text">Che/pseudonymize dữ liệu
+                nhạy cảm ngay trong transform — không để PII sống nguyên tới tầng semantic.</span></label></li>
+          <li><input type="checkbox" id="de-2-7"><label for="de-2-7"><span class="item-text">Mọi model có
+                <code>meta: owner</code> — biết ai chịu trách nhiệm khi model lỗi hoặc cần đổi.</span></label></li>
+          <li><input type="checkbox" id="de-2-8"><label for="de-2-8"><span class="item-text">CI chạy
+                <code>dbt build</code> (kèm test) trên pull request — không merge code transform chưa qua
+                test.</span></label></li>
+          <li><input type="checkbox" id="de-2-9"><label for="de-2-9"><span class="item-text">Naming convention rõ theo
+                lớp: <code>stg_</code>, <code>int_</code>, <code>fct_</code>/<code>dim_</code> — tránh tên tuỳ ý gây khó
+                truy vết.</span></label></li>
+        </ul>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ model đã pass test + có description + có owner mới được
+            promote lên schema "marts" cho tầng semantic đọc.</span></div>
+      </div>
+
+      <div class="stage" data-track="de">
+        <div class="stage-head">
+          <div>
+            <div class="stage-sub">Giai đoạn 3</div>
+            <h3>Semantic layer — giữ gọn</h3>
+          </div>
+          <div class="stage-progress-wrap">
+            <span class="stage-progress"></span>
+            <div class="stage-bar"><span></span></div>
+          </div>
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="de-3-1"><label for="de-3-1"><span class="item-text">Chỉ số nghiệp vụ cốt lõi
+                (doanh thu, active user…) định nghĩa <b>một lần duy nhất</b> trong semantic layer — không định nghĩa lại
+                rải rác từng model/báo cáo.</span></label></li>
+          <li><input type="checkbox" id="de-3-2"><label for="de-3-2"><span class="item-text">Định nghĩa chỉ số khớp với
+                Business Glossary do Data Governance Council duy trì — không tự sáng tác định nghĩa
+                riêng.</span></label></li>
+          <li><input type="checkbox" id="de-3-3"><label for="de-3-3"><span class="item-text">Danh sách model/exposure lộ
+                ra ngoài được review định kỳ — không ai dùng quá một khoảng thời gian quy định thì
+                deprecate.</span></label></li>
+          <li><input type="checkbox" id="de-3-4"><label for="de-3-4"><span class="item-text">Mỗi metric/exposure ghi rõ
+                model gốc + tần suất refresh — DA dùng được ngay, không cần hỏi lại DE.</span></label></li>
+          <li><input type="checkbox" id="de-3-5"><label for="de-3-5"><span class="item-text">Chỉ "certified" marts được
+                cấp quyền cho BI kết nối trực tiếp — dataset thử nghiệm không lộ ra ngoài môi trường dev.</span></label>
+          </li>
+        </ul>
+        <div class="gate"><span class="tag">Gate</span><span>Metric/exposure mới phải qua Data Steward duyệt trước khi
+            thêm vào semantic layer chính thức.</span></div>
+      </div>
+    </div>
+
+    <!-- ============ DA TRACK ============ -->
+    <div class="col da">
+      <div class="track-head">
+        <h2>Data Analyst</h2>
+        <span class="role">Nhận đầu bài → Power BI modeling</span>
+      </div>
+
+      <div class="stage" data-track="da">
+        <div class="stage-head">
+          <div>
+            <div class="stage-sub">Giai đoạn 1</div>
+            <h3>Nhận đầu bài từ Business</h3>
+          </div>
+          <div class="stage-progress-wrap">
+            <span class="stage-progress"></span>
+            <div class="stage-bar"><span></span></div>
+          </div>
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="da-1-1"><label for="da-1-1"><span class="item-text">Ghi lại yêu cầu bằng văn
+                bản: <b>câu hỏi nghiệp vụ</b> cần trả lời, không chỉ "làm dashboard X" — xác định rõ quyết định mà báo
+                cáo phục vụ.</span></label></li>
+          <li><input type="checkbox" id="da-1-2"><label for="da-1-2"><span class="item-text">Đối chiếu định nghĩa chỉ số
+                được yêu cầu với Business Glossary — nếu business dùng khái niệm khác, escalate lên Data Steward để
+                thống nhất trước khi build, không tự quyết.</span></label></li>
+          <li><input type="checkbox" id="da-1-3"><label for="da-1-3"><span class="item-text">Kiểm tra đã có báo
+                cáo/metric tương tự chưa — tránh xây trùng, tránh nhiều phiên bản "sự thật" khác nhau.</span></label>
+          </li>
+          <li><input type="checkbox" id="da-1-4"><label for="da-1-4"><span class="item-text">Xác nhận nguồn dữ liệu nằm
+                trong danh sách marts đã "certified"; nếu phải dùng dữ liệu chưa qua semantic layer, xin duyệt riêng và
+                ghi rõ rủi ro.</span></label></li>
+          <li><input type="checkbox" id="da-1-5"><label for="da-1-5"><span class="item-text">Phân loại độ nhạy cảm của
+                dữ liệu sẽ hiển thị (PII, tài chính, lương…) và xác nhận người yêu cầu có quyền xem — không mặc định "ai
+                hỏi cũng cho".</span></label></li>
+          <li><input type="checkbox" id="da-1-6"><label for="da-1-6"><span class="item-text">Thống nhất SLA: tần suất
+                cập nhật dữ liệu, deadline bàn giao, người ký duyệt (sign-off) khi hoàn thành.</span></label></li>
+          <li><input type="checkbox" id="da-1-7"><label for="da-1-7"><span class="item-text">Xác định đối tượng xem báo
+                cáo cuối cùng để quyết định có cần Row-Level Security hay không.</span></label></li>
+        </ul>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ đưa vào backlog xây dựng khi đã có: định nghĩa chỉ số
+            rõ ràng + nguồn dữ liệu xác nhận + người sign-off.</span></div>
+      </div>
+
+      <div class="stage" data-track="da">
+        <div class="stage-head">
+          <div>
+            <div class="stage-sub">Giai đoạn 2</div>
+            <h3>Power BI modeling — giữ gọn</h3>
+          </div>
+          <div class="stage-progress-wrap">
+            <span class="stage-progress"></span>
+            <div class="stage-bar"><span></span></div>
+          </div>
+        </div>
+        <ul class="checklist">
+          <li><input type="checkbox" id="da-2-1"><label for="da-2-1"><span class="item-text">Model theo
+                <b>star-schema</b> (fact/dimension rõ ràng) — tránh kéo thẳng bảng phẳng nhiều cột từ nguồn vào Power
+                BI.</span></label></li>
+          <li><input type="checkbox" id="da-2-2"><label for="da-2-2"><span class="item-text">Business logic dùng chung
+                nên đã nằm sẵn ở tầng semantic (dbt); DAX chỉ làm phép tính hiển thị — tránh viết lại business logic lần
+                hai.</span></label></li>
+          <li><input type="checkbox" id="da-2-3"><label for="da-2-3"><span class="item-text">Một dataset (semantic
+                model) dùng chung cho nhiều report thay vì mỗi report tự import/DirectQuery riêng — tránh mỗi báo cáo ra
+                một con số khác nhau cho cùng chỉ số.</span></label></li>
+          <li><input type="checkbox" id="da-2-4"><label for="da-2-4"><span class="item-text">Đặt tên bảng/measure khớp
+                thuật ngữ trong Business Glossary — người xem không phải đoán "Active Users" ở đây có giống báo cáo khác
+                không.</span></label></li>
+          <li><input type="checkbox" id="da-2-5"><label for="da-2-5"><span class="item-text">Bật <b>Row-Level
+                  Security</b> nếu dữ liệu phân quyền theo phòng ban/khu vực; test RLS với tài khoản thật trước khi
+                publish.</span></label></li>
+          <li><input type="checkbox" id="da-2-6"><label for="da-2-6"><span class="item-text">Gắn sensitivity label theo
+                chính sách bảo mật của tổ chức trước khi publish lên workspace production.</span></label></li>
+          <li><input type="checkbox" id="da-2-7"><label for="da-2-7"><span class="item-text">Certify/Promote dataset
+                trong Power BI Service sau khi Data Steward review — ưu tiên tin tưởng hơn dataset nháp.</span></label>
+          </li>
+          <li><input type="checkbox" id="da-2-8"><label for="da-2-8"><span class="item-text">Version control report định
+                kỳ (hoặc dùng deployment pipeline dev→test→prod) — không sửa thẳng trên production
+                workspace.</span></label></li>
+          <li><input type="checkbox" id="da-2-9"><label for="da-2-9"><span class="item-text">Review định kỳ danh sách
+                report đang publish — report không ai xem trong thời gian dài thì nghỉ, tránh workspace phình to không
+                kiểm soát.</span></label></li>
+        </ul>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ publish lên Production khi: RLS đã test + sensitivity
+            label đã gắn + Data Steward đã certify dataset.</span></div>
+      </div>
+    </div>
+
+  </section>
+
+  <footer>
+    Checklist vận hành, không thay thế chính sách chính thức của Data Governance Council. Thuật
+    ngữ Data Steward / Business Glossary / Policy-Standard-Procedure tham chiếu
+    <a href="DG%20DAMA%20DMBOK2.md">DG DAMA DMBOK2.md</a> trong cùng thư mục. Tick chọn được lưu
+    lại bằng localStorage của trình duyệt này — xoá cache trình duyệt sẽ mất tiến trình đã lưu.
+  </footer>
+
+</div>
+
+<script>
+  (function () {
+    var boxes = Array.prototype.slice.call(document.querySelectorAll('ul.checklist input[type="checkbox"]'));
+
+    function updateStage(stageEl) {
+      var cbs = stageEl.querySelectorAll('input[type="checkbox"]');
+      var done = 0;
+      cbs.forEach(function (cb) {
+        var li = cb.closest('li');
+        if (cb.checked) { done++; li.classList.add('checked'); }
+        else { li.classList.remove('checked'); }
+      });
+      var prog = stageEl.querySelector('.stage-progress');
+      var pct = cbs.length ? Math.round(done / cbs.length * 100) : 0;
+      if (prog) { prog.innerHTML = '<b>' + done + '</b>/' + cbs.length; }
+      var bar = stageEl.querySelector('.stage-bar > span');
+      if (bar) { bar.style.width = pct + '%'; }
+    }
+
+    function updateTrackSummary(track) {
+      var cbs = document.querySelectorAll('.stage[data-track="' + track + '"] input[type="checkbox"]');
+      var done = 0;
+      cbs.forEach(function (cb) { if (cb.checked) done++; });
+      var el = document.getElementById('sum-' + track);
+      var pct = cbs.length ? Math.round(done / cbs.length * 100) : 0;
+      if (el) { el.innerHTML = done + '<small>/' + cbs.length + '</small>'; }
+      var bar = document.getElementById('bar-' + track);
+      if (bar) { bar.style.width = pct + '%'; }
+    }
+
+    function updateAll() {
+      document.querySelectorAll('.stage').forEach(updateStage);
+      updateTrackSummary('de');
+      updateTrackSummary('da');
+    }
+
+    boxes.forEach(function (cb) {
+      var saved = window.localStorage.getItem('dg-checklist:' + cb.id);
+      if (saved === '1') { cb.checked = true; }
+      cb.addEventListener('change', function () {
+        window.localStorage.setItem('dg-checklist:' + cb.id, cb.checked ? '1' : '0');
+        updateAll();
+      });
+    });
+
+    document.getElementById('reset-btn').addEventListener('click', function () {
+      boxes.forEach(function (cb) {
+        cb.checked = false;
+        window.localStorage.removeItem('dg-checklist:' + cb.id);
+      });
+      updateAll();
+    });
+
+    updateAll();
+  })();
+</script>

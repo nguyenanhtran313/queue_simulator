@@ -1,34 +1,36 @@
 <title>OneMount vs Masterise — so sánh kiến trúc dữ liệu</title>
 <style>
   :root{
-    --ink:#0f1216;
-    --panel:#171b20;
-    --panel-2:#1b2126;
-    --line:#2a3138;
-    --text:#eef1f2;
-    --muted:#9aa7ac;
-    --muted-dim:#69767b;
-    --om:#6fd0de;
-    --mr:#f2a33d;
-    --good:#8fbf7a;
-    --warn:#d9776b;
+    /* Analytics Design System (ADS) — Google Analytics-style tokens.
+       OneMount = Segment 1 (primary500), Masterise = Segment 2 (warning),
+       theo đúng quy tắc màu segment của ADS. */
+    --ink:#f3f4f6;
+    --panel:#ffffff;
+    --panel-2:#f3f4f6;
+    --line:#e8eaed;
+    --text:#202124;
+    --muted:#5f6368;
+    --muted-dim:#5f6368;
+    --om:#1a73e8;
+    --mr:#f29900;
+    --good:#1e8e3e;
+    --warn:#d93025;
+    --shadow:0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
   }
   *{box-sizing:border-box;}
   body{
     margin:0;
-    background:
-      radial-gradient(1200px 480px at 50% -10%, #1a2530 0%, var(--ink) 55%),
-      var(--ink);
+    background:var(--ink);
     color:var(--text);
-    font-family:"Segoe UI","Noto Sans",system-ui,-apple-system,sans-serif;
+    font-family:Roboto,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
     line-height:1.55;
   }
-  ::selection{background:var(--om); color:#06141a;}
+  ::selection{background:#d2e3fc; color:#174ea6;}
   a{color:var(--om);}
   .page{
-    max-width:1180px;
+    max-width:1760px;
     margin:0 auto;
-    padding:4.5rem 1.75rem 6rem;
+    padding:4.5rem clamp(1.25rem, 3vw, 2rem) 6rem;
     display:flex;
     flex-direction:column;
     gap:3rem;
@@ -43,21 +45,21 @@
     color:var(--muted-dim);
   }
   h1{
-    font-family:Cambria,Georgia,"Noto Serif",serif;
     font-weight:600;
     font-size:clamp(1.9rem, 3.6vw, 2.5rem);
     margin:0;
     text-wrap:balance;
-    color:#f8fbfa;
+    color:var(--text);
   }
   header .lede{max-width:78ch; color:var(--muted); font-size:1.02rem;}
   header .lede b{color:var(--text); font-weight:600;}
   .disclaimer{
     display:flex; gap:.7rem; align-items:flex-start;
-    background:var(--panel-2); border:1px solid var(--line);
+    background:var(--panel-2);
     border-left:4px solid var(--mr); border-radius:6px;
     padding:.85rem 1.1rem; font-size:.88rem; color:var(--muted);
     max-width:80ch;
+    box-shadow:var(--shadow);
   }
   .disclaimer .tag{
     font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
@@ -88,7 +90,7 @@
   .head-cell.note{color:var(--muted);}
   .head-cell .badge{
     font-family:"Segoe UI",sans-serif; text-transform:none; letter-spacing:0;
-    font-size:.72rem; color:var(--ink); background:var(--mr);
+    font-size:.72rem; color:#ffffff; background:var(--mr);
     padding:.1rem .5rem; border-radius:999px; font-weight:600;
   }
 
@@ -107,24 +109,23 @@
   }
   .cell{
     background:var(--panel);
-    border:1px solid var(--line);
-    border-radius:6px;
+    border-radius:8px;
     padding:1rem 1.15rem;
     display:flex; flex-direction:column; gap:.35rem;
+    box-shadow:var(--shadow);
   }
   .cell.om{border-left:3px solid var(--om);}
   .cell.mr{border-left:3px solid var(--mr);}
-  .cell.note{background:var(--panel-2); border-left:3px solid var(--muted-dim);}
+  .cell.note{background:var(--panel-2); border-left:3px solid var(--muted-dim); box-shadow:none;}
   .cell h3{
-    font-family:Cambria,Georgia,"Noto Serif",serif;
-    font-size:1.03rem; margin:0; color:#f8fbfa; font-weight:600;
+    font-size:1.03rem; margin:0; color:var(--text); font-weight:600;
   }
   .cell .sub{font-size:.76rem; color:var(--muted-dim);}
   .cell p{margin:0; font-size:.89rem; color:var(--muted);}
   .cell code{
     font-family:ui-monospace,"Cascadia Code",Consolas,monospace;
-    background:#0c1014; border:1px solid var(--line);
-    padding:.02rem .3rem; border-radius:4px; font-size:.85em; color:var(--text);
+    background:var(--ink); border:1px solid var(--line);
+    padding:.02rem .3rem; border-radius:4px; font-size:.85em; color:#174ea6;
   }
 
   .note p.diff{color:var(--text); font-size:.9rem;}
@@ -148,12 +149,13 @@
   }
 
   .summary{
-    background:var(--panel-2); border:1px solid var(--line); border-radius:8px;
+    background:var(--panel); border-radius:8px;
     padding:1.75rem 1.9rem; display:flex; flex-direction:column; gap:.9rem;
+    box-shadow:var(--shadow);
   }
   .summary h2{
-    font-family:Cambria,Georgia,"Noto Serif",serif; font-size:1.35rem; margin:0;
-    color:#f8fbfa; text-wrap:balance;
+    font-size:1.35rem; margin:0;
+    color:var(--text); text-wrap:balance;
   }
   .summary p{margin:0; color:var(--muted); font-size:.95rem; max-width:82ch;}
   .summary p b{color:var(--text);}

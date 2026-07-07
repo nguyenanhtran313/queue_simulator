@@ -541,32 +541,33 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
 <style>
   :root {{
-    --surface-1: #fcfcfb;
-    --page-plane: #f9f9f7;
-    --text-primary: #0b0b0b;
-    --text-secondary: #52514e;
-    --text-muted: #898781;
-    --grid: #e1e0d9;
-    --border: rgba(11,11,11,0.10);
+    /* Analytics Design System (ADS) — Google Analytics-style tokens */
+    --surface-1: #ffffff;
+    --page-plane: #f3f4f6;
+    --text-primary: #202124;
+    --text-secondary: #5f6368;
+    --text-muted: #bdc1c6;
+    --grid: #e8eaed;
+    --border: #e8eaed;
     --ga-blue: #1a73e8;
     --ga-blue-dark: #174ea6;
-    --series-xgb: #2a78d6;
-    --series-lgbm: #1baf7a;
-    --series-lr: #eda100;
-    --series-mass: #898781;
-    --good: #0ca30c;
-    --critical: #d03b3b;
+    --series-xgb: #1a73e8;
+    --series-lgbm: #f29900;
+    --series-lr: #d81b60;
+    --series-mass: #5f6368;
+    --good: #1e8e3e;
+    --critical: #d93025;
   }}
   * {{ box-sizing: border-box; }}
   body {{
     margin: 0; background: var(--page-plane); color: var(--text-primary);
-    font-family: 'Google Sans', Roboto, system-ui, -apple-system, "Segoe UI", sans-serif;
+    font-family: Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
   }}
   header.topbar {{
-    background: #fff; border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20;
+    background: var(--surface-1); border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 20;
   }}
   .topbar-inner {{
-    max-width: 1240px; margin: 0 auto; padding: 14px 24px 0 24px;
+    max-width: 1760px; margin: 0 auto; padding: 14px clamp(1.25rem, 3vw, 2rem) 0;
   }}
   .brand {{ display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }}
   .brand .logo {{
@@ -584,7 +585,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   nav.tabs button:hover {{ color: var(--text-primary); }}
   nav.tabs button.active {{ color: var(--ga-blue); border-bottom-color: var(--ga-blue); }}
 
-  main {{ max-width: 1240px; margin: 0 auto; padding: 24px; }}
+  main {{ max-width: 1760px; margin: 0 auto; padding: 24px clamp(1.25rem, 3vw, 2rem); }}
   section.tabpanel {{ display: none; }}
   section.tabpanel.active {{ display: block; animation: fade .15s ease-in; }}
   @keyframes fade {{ from {{ opacity: 0; }} to {{ opacity: 1; }} }}
@@ -594,8 +595,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   .kpi-row {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }}
   .kpi-tile {{
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
-    padding: 16px 18px; box-shadow: 0 1px 2px rgba(11,11,11,0.04);
+    background: var(--surface-1); border-radius: 8px;
+    padding: 16px 18px; box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
   }}
   .kpi-tile .kpi-label {{ font-size: 12px; color: var(--text-secondary); margin-bottom: 6px; }}
   .kpi-tile .kpi-value {{ font-size: 26px; font-weight: 700; color: var(--text-primary); }}
@@ -603,8 +604,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
 
   .grid-2 {{ display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }}
   .card {{
-    background: var(--surface-1); border: 1px solid var(--border); border-radius: 10px;
-    padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 2px rgba(11,11,11,0.04);
+    background: var(--surface-1); border-radius: 8px;
+    padding: 18px 20px; margin-bottom: 16px; box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
   }}
   .card h3 {{ font-size: 14.5px; margin: 0 0 12px 0; font-weight: 700; }}
   .card p.hint {{ font-size: 12.5px; color: var(--text-secondary); margin: 8px 0 0 0; line-height: 1.5; }}
@@ -620,8 +621,8 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   tr:last-child td {{ border-bottom: none; }}
 
   .pill {{ display: inline-block; padding: 2px 8px; border-radius: 10px; font-size: 11px; font-weight: 600; }}
-  .pill-good {{ background: rgba(12,163,12,0.12); color: #0a6e0a; }}
-  .pill-muted {{ background: rgba(137,135,129,0.15); color: var(--text-secondary); }}
+  .pill-good {{ background: rgba(30,142,62,0.12); color: var(--good); }}
+  .pill-muted {{ background: var(--grid); color: var(--text-secondary); }}
 
   .chart-img {{ width: 100%; height: auto; border-radius: 6px; display: block; }}
   .img-missing {{ padding: 40px; text-align: center; color: var(--text-muted); font-size: 12px; border: 1px dashed var(--grid); border-radius: 6px; }}
@@ -630,7 +631,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
   .legend-row {{ display: flex; gap: 16px; margin-bottom: 10px; font-size: 12px; color: var(--text-secondary); }}
   .legend-row .dot {{ display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; }}
 
-  footer {{ max-width: 1240px; margin: 0 auto; padding: 20px 24px 40px 24px; color: var(--text-muted); font-size: 12px; }}
+  footer {{ max-width: 1760px; margin: 0 auto; padding: 20px clamp(1.25rem, 3vw, 2rem) 40px; color: var(--text-muted); font-size: 12px; }}
 
   @media (max-width: 900px) {{
     .kpi-row {{ grid-template-columns: repeat(2, 1fr); }}
@@ -815,7 +816,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
         ({recommended_classifier_profit} VND lợi nhuận, {xgb_accuracy} Accuracy, {xgb_recall} Recall, {xgb_precision}
         Precision) — cân bằng tốt nhất giữa cả 3 tiêu chí, đồng thời có ROC-AUC cao nhất ({xgb_auc}) nên khái quát
         tốt hơn nếu giả định chi phí/lợi nhuận thay đổi trong tương lai.</p>
-      <p class="hint" style="background:rgba(208,59,59,0.06); padding:8px 10px; border-radius:6px;">
+      <p class="hint" style="background:rgba(217,48,37,0.06); padding:8px 10px; border-radius:6px;">
         ⚠️ <b>Nhưng đây vẫn chưa phải câu trả lời cuối cùng.</b> Con số lợi nhuận ở trên chưa net trừ nhân quả (đếm cả
         khách hàng "đằng nào cũng mua"). Kiểm tra lại bằng <b>Uplift Score</b> — và giữa 2 base learner của Uplift
         (XGBoost vs LightGBM), lựa chọn <b>vẫn tạo khác biệt lớn</b> ({pct_persuadables_xgb} vs {pct_persuadables_lgbm}
@@ -941,7 +942,7 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     <p class="section-sub">Giả định: chi phí 1 lượt tư vấn/gọi điện = {cost_per_email} VND, lợi nhuận nếu khách
       phản hồi = {reward_per_response} VND. Chỉ gửi/gọi nếu Lợi nhuận kỳ vọng &gt; 0.</p>
 
-    <div class="card" style="border-left: 4px solid var(--critical); background: rgba(208,59,59,0.045);">
+    <div class="card" style="border-left: 4px solid var(--critical); background: rgba(217,48,37,0.045);">
       <h3>⚠️ Đọc trước: các con số dưới đây CHƯA net trừ nhân quả</h3>
       <p class="hint" style="margin-top:0;">"Lợi nhuận" ở tab này đếm <b>mọi</b> khách hàng phản hồi là do campaign
         tạo ra — kể cả những người đằng nào cũng sẽ mua dù không ai gọi (Sure Things). Ở mức chi phí liên hệ rẻ như
@@ -1141,9 +1142,9 @@ DATA.seg_labels.forEach((label, i) => {{
   segTableBody.appendChild(tr);
 }});
 
-Chart.defaults.font.family = "'Google Sans', Roboto, system-ui, sans-serif";
-Chart.defaults.color = '#52514e';
-Chart.defaults.borderColor = '#e1e0d9';
+Chart.defaults.font.family = "Roboto, 'Segoe UI', system-ui, sans-serif";
+Chart.defaults.color = '#5f6368';
+Chart.defaults.borderColor = '#e8eaed';
 
 function segBarConfig() {{
   return {{
@@ -1153,7 +1154,7 @@ function segBarConfig() {{
       datasets: [{{
         label: 'Response rate (%)',
         data: DATA.seg_rates,
-        backgroundColor: '#2a78d6',
+        backgroundColor: '#1a73e8',
         borderRadius: 4,
         maxBarThickness: 48,
       }}]
@@ -1186,14 +1187,14 @@ function lineConfig(datasets, xLabel, yLabel) {{
 }}
 
 new Chart(document.getElementById('chartRoc'), lineConfig([
-  {{ label: 'XGBoost', data: DATA.roc_xgb, borderColor: '#2a78d6', backgroundColor: 'transparent' }},
-  {{ label: 'LightGBM', data: DATA.roc_lgbm, borderColor: '#1baf7a', backgroundColor: 'transparent' }},
-  {{ label: 'Random', data: [{{x:0,y:0}},{{x:1,y:1}}], borderColor: '#c3c2b7', borderDash: [4,4], backgroundColor: 'transparent' }},
+  {{ label: 'XGBoost', data: DATA.roc_xgb, borderColor: '#1a73e8', backgroundColor: 'transparent' }},
+  {{ label: 'LightGBM', data: DATA.roc_lgbm, borderColor: '#f29900', backgroundColor: 'transparent' }},
+  {{ label: 'Random', data: [{{x:0,y:0}},{{x:1,y:1}}], borderColor: '#bdc1c6', borderDash: [4,4], backgroundColor: 'transparent' }},
 ], 'False Positive Rate', 'True Positive Rate'));
 
 new Chart(document.getElementById('chartPr'), lineConfig([
-  {{ label: 'XGBoost', data: DATA.pr_xgb, borderColor: '#2a78d6', backgroundColor: 'transparent' }},
-  {{ label: 'LightGBM', data: DATA.pr_lgbm, borderColor: '#1baf7a', backgroundColor: 'transparent' }},
+  {{ label: 'XGBoost', data: DATA.pr_xgb, borderColor: '#1a73e8', backgroundColor: 'transparent' }},
+  {{ label: 'LightGBM', data: DATA.pr_lgbm, borderColor: '#f29900', backgroundColor: 'transparent' }},
 ], 'Recall', 'Precision'));
 
 new Chart(document.getElementById('chartProfit'), {{
@@ -1203,7 +1204,7 @@ new Chart(document.getElementById('chartProfit'), {{
     datasets: [{{
       label: 'Lợi nhuận (VND)',
       data: DATA.scenario_profits,
-      backgroundColor: ['#898781', '#eda100', '#2a78d6', '#1baf7a'],
+      backgroundColor: ['#5f6368', '#d81b60', '#1a73e8', '#f29900'],
       borderRadius: 4,
       maxBarThickness: 64,
     }}]
