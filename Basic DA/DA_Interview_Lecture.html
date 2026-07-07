@@ -72,7 +72,6 @@
     transition: color 0.15s, border-color 0.15s, background 0.15s;
   }
   .topnav a:hover { color: var(--signal); border-color: var(--signal-soft-border); background: var(--signal-soft); }
-  .topnav a.active { color: var(--signal); background: var(--signal-soft); border-color: var(--signal-soft-border); font-weight: 700; }
 
   /* ---------- Shell ---------- */
   .shell { max-width: 1640px; margin: 0 auto; padding: 0 clamp(1.25rem, 3vw, 1.75rem) 100px; }
@@ -96,9 +95,9 @@
   }
   .hero-meta b { color: var(--ink-soft); font-weight: 600; }
 
-  /* ---------- Tier section (tab panel: chỉ 1 section hiện tại 1 lúc) ---------- */
-  section.tier { display: none; padding: 28px 0 8px; scroll-margin-top: 64px; }
-  section.tier.active { display: block; }
+  /* ---------- Tier section ---------- */
+  section.tier { padding: 52px 0 8px; border-top: 1px solid var(--rule); scroll-margin-top: 64px; }
+  section.tier:first-of-type { border-top: none; }
   .tier-eyebrow {
     display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
   }
@@ -297,6 +296,9 @@
     <a href="#tier7">7·SHAP</a>
     <a href="#tier8">8·Kinh doanh</a>
     <a href="#tier9">9·Nhân quả</a>
+    <a href="#risk">Rủi ro</a>
+    <a href="#leadership">Lãnh đạo</a>
+    <a href="#update0706">Cập nhật 6/7</a>
     <a href="#bonus">Bẫy PV</a>
     <a href="#capstone">Tổng kết</a>
   </div>
@@ -1088,6 +1090,132 @@ shap.dependence_plot(top_feature_1, sv, X_transformed_df)     <span class="c1">#
   </div>
 </section>
 
+<!-- ============ RISK MANAGEMENT ============ -->
+<section class="tier" id="risk">
+  <div class="tier-eyebrow"><span class="tier-num mono">🛡</span><span class="diff-pill diff-hard">Head of Data · Risk</span></div>
+  <h2 class="tier-title">Quản trị Rủi ro khi Triển khai Data Science</h2>
+  <p class="tier-intro">5 câu hỏi rủi ro Head of Data hay hỏi để kiểm tra xem bạn nghĩ xa hơn "model chạy đúng" — có nghĩ tới lúc nó chạy <i>sai</i> ngoài production không, và có quy trình ứng phó cụ thể hay chỉ có lý thuyết.</p>
+
+  <div class="qa-block">
+    <span class="qa-block-label">Câu hỏi từ Head of Data</span>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Trong tài liệu có đề cập đến việc dùng dữ liệu lịch sử để dự đoán hành vi khách hàng. Nếu tập khách hàng mục tiêu thay đổi đột ngột (ví dụ: khủng hoảng kinh tế làm giảm mạnh chi tiêu của tệp khách V.I.P), làm sao bạn thiết lập cơ chế giám sát (Model Monitoring) để nhận biết rủi ro mô hình đang dự đoán sai, và quy trình fallback (phương án dự phòng) của bạn là gì trước khi train lại mô hình?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Cần phân biệt 2 loại giám sát: (1) <b>Input/Feature Drift</b> — theo dõi phân phối biến đầu vào (đặc biệt <span class="mono">Avg_Monthly_Balance_VND</span>, <span class="mono">Segment</span>) bằng PSI/KS-test theo cửa sổ thời gian — nếu tỷ trọng khách VIP trong tệp target giảm đột ngột, PSI của Segment/Balance tăng vọt ngay, cảnh báo sớm trước khi model kịp sai trên diện rộng; (2) <b>Prediction/Concept Drift</b> — theo dõi khoảng cách giữa response rate DỰ ĐOÁN (P trung bình model đưa ra) và response rate THỰC TẾ đo được sau đó (có trễ nhưng vẫn theo dõi theo tuần) — 2 con số tách xa nhau là bằng chứng trực tiếp model đang sai, không chỉ input thay đổi.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>Fallback trước khi kịp retrain: (1) hạ ngưỡng tin cậy vào model — chuyển tạm phân khúc nghi ngờ drift (VIP) về Mass Marketing/rule-based đơn giản (baseline Tier 8), các phân khúc khác vẫn dùng model bình thường, không tắt toàn bộ hệ thống; (2) giảm ngân sách/tần suất campaign tạm thời cho tới khi có dữ liệu mới đủ tin cậy, tránh "đốt tiền" theo dự đoán đã biết là sai; (3) trigger retrain sớm hơn lịch định kỳ ngay khi PSI vượt ngưỡng, không đợi đủ chu kỳ.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Với baseline rate chỉ 11.9% trong chiến dịch marketing, một mô hình phân loại sẽ luôn phải đánh đổi giữa False Positive (tặng quà nhầm người không mua — lãng phí tiền) và False Negative (bỏ lỡ người sẵn sàng mua — mất doanh thu). Bạn sẽ làm thế nào để quy đổi các metric như Precision/Recall ra "giá trị tiền tệ" nhằm giúp Giám đốc Kinh doanh chọn được ngưỡng quyết định (threshold) ít rủi ro nhất?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Trình bày dưới dạng <b>ma trận chi phí 2×2</b> thay vì công thức trừu tượng: True Positive → chi 500đ, thu 10,000đ = lãi ròng 9,500đ; False Positive → chi 500đ, không ai mua = lỗ 500đ (lãng phí); False Negative → không tốn gì nhưng MẤT cơ hội lợi nhuận 10,000đ (chi phí cơ hội); True Negative → 0. Threshold tối ưu về mặt toán học chính là break-even = cost/reward (5%, Tier 8) — điểm tổng "Expected Cost" của cả 4 ô nhỏ nhất.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>Nhưng để Giám đốc Kinh doanh <i>chọn</i> chứ không chỉ <i>chấp nhận</i> 1 con số có sẵn, nên vẽ 1 Profit Curve theo từng threshold (0.01→0.99) hiển thị song song: (a) tổng lợi nhuận kỳ vọng, (b) số False Positive dự kiến (chi phí lãng phí), (c) số False Negative dự kiến (doanh thu bỏ lỡ) — để họ tự thấy trade-off bằng mắt và chọn điểm phù hợp khẩu vị rủi ro (có thể lệch khỏi break-even toán học nếu công ty ưu tiên an toàn thương hiệu hơn lợi nhuận ngắn hạn).</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Khi cung cấp tính năng giải thích mô hình bằng SHAP cho các bộ phận Front-office (như nhân viên sale xem vì sao khách hàng này có rủi ro tín dụng cao), bạn quản trị rủi ro lộ lọt thông tin nhạy cảm (PII) như thế nào trong khi vẫn phải giữ được tính minh bạch của Explainable AI?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Nguyên tắc cốt lõi: không bao giờ để Sale nhìn thấy giá trị THÔ của feature nhạy cảm, chỉ thấy TÊN feature + MỨC ĐỘ đóng góp đã "dịch" sang ngôn ngữ nghiệp vụ. Xây 1 lớp <b>Explanation Translation Layer</b> giữa raw SHAP output và UI: có whitelist feature ĐƯỢC PHÉP hiển thị (loại hẳn giới tính/tuổi/vùng miền dù có đóng góp SHAP thật — vừa tránh lộ PII vừa tránh rủi ro Fairness ở câu hỏi tiếp theo), diễn giải feature còn lại thành câu tiếng Việt dễ hiểu ("động lực mua hàng cao do lịch sử dùng khuyến mãi nhiều") thay vì số kỹ thuật thô (<span class="mono">Last_Active_Days=87</span>).</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>Về quyền truy cập: tách biệt hoàn toàn quyền "xem giải thích" (chỉ mức tổng hợp/phân loại) và quyền "xem hồ sơ khách hàng đầy đủ" — 2 hệ thống, 2 log truy cập riêng để audit độc lập, Sale không thể từ màn hình giải thích truy ngược ra raw feature value của khách hàng.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Bạn thiết lập một chiến dịch A/B Testing để đo lường mức độ rủi ro của chính sách phí mới. Tuy nhiên, sau 1 tuần, bạn phát hiện cơ chế chia tập (Randomization) bị lỗi, dẫn đến nhóm Treatment toàn khách hàng có thu nhập cao. Khối Business vẫn đang ép bạn ra báo cáo để chốt chính sách. Bằng kỹ thuật Causal Inference, bạn xử lý rủi ro thiên lệch (Bias) này như thế nào để vẫn ra được kết luận chính xác?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Đây là RCT đã hỏng giữa chừng (Randomization Failure), biến 1 thí nghiệm tưởng "sạch" thành dữ liệu quan sát có confounder rõ ràng (thu nhập). Không thể coi kết quả thô đáng tin, nhưng cũng không cần huỷ cả tuần dữ liệu — xử lý bằng chính kỹ thuật ở Tier 9: (1) báo cáo thẳng thắn với Business rằng đây KHÔNG còn là RCT nguyên bản, tránh sau này bị phát hiện và mất niềm tin hoàn toàn vào team Data; (2) đưa biến "thu nhập" (và confounder nghi ngờ khác) làm covariate vào 1 model kiểu S/T-Learner để ước lượng lại CATE có kiểm soát confounder, thay vì so trung bình thô 2 nhóm.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>(3) minh bạch mức tin cậy THẤP HƠN của kết quả đã hiệu chỉnh so với 1 RCT sạch thật — đề xuất chạy song song 1 A/B test mới với randomization đã sửa lỗi, không dừng hẳn quyết định kinh doanh nhưng gắn nhãn rõ "kết luận sơ bộ, cần xác nhận lại" để Business vẫn có input ra quyết định nhanh mà không đánh đổi tính trung thực khoa học.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Ngân hàng nhà nước yêu cầu các mô hình tính điểm tín dụng không được phân biệt đối xử (vd: dựa trên giới tính, vùng miền). Khi dùng các mô hình "hộp đen" phức tạp như XGBoost/LightGBM, khung kiểm định rủi ro của bạn thiết kế ra sao để chứng minh với hội đồng kiểm toán rằng mô hình hoàn toàn công bằng?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Khung 3 tầng bằng chứng: (1) <b>Tầng Input</b> — chứng minh biến nhạy cảm và proxy của chúng (mã bưu điện, tên đệm gợi ý giới tính) không đưa trực tiếp vào model, hoặc phải qua Proxy Detection để lượng hoá mức tương quan; (2) <b>Tầng Output</b> — chạy định kỳ Fairness Metrics chuẩn ngành (Demographic Parity Difference, Equal Opportunity Difference — so Recall/FPR giữa nhóm) trên tập test, đặt ngưỡng chấp nhận được (vd. chênh Recall giữa 2 nhóm giới tính &lt; 5 điểm %) — bằng chứng định lượng dễ trình bày nhất.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>(3) <b>Tầng Giải trình</b> — dùng SHAP (Tier 7) chứng minh: tách riêng dự đoán 2 khách hàng hồ sơ tài chính giống hệt nhau nhưng khác giới tính/vùng miền, SHAP values của feature TÀI CHÍNH (không phải nhân khẩu học) mới là yếu tố quyết định chính — bằng chứng "counterfactual fairness" trực quan nhất cho hội đồng kiểm toán không rành kỹ thuật. Cả 3 tầng phải chạy lại và document mỗi lần model retrain, lưu thành Model Card/Fairness Report đính kèm mỗi phiên bản trong Model Registry.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ LEADERSHIP ============ -->
+<section class="tier" id="leadership">
+  <div class="tier-eyebrow"><span class="tier-num mono">🎯</span><span class="diff-pill diff-hard">Head of Data · Leadership</span></div>
+  <h2 class="tier-title">Năng lực Dẫn dắt & Chiến lược (Leadership & Strategy)</h2>
+  <p class="tier-intro">5 câu hỏi Head of Data hay dùng để kiểm tra năng lực <i>ngoài</i> kỹ thuật — quản lý con người, quản lý kỳ vọng, xử lý khủng hoảng, và tầm nhìn dài hạn. Đây thường là nhóm câu quyết định ai được lên vị trí Lead, không phải ai code giỏi nhất.</p>
+
+  <div class="qa-block">
+    <span class="qa-block-label">Câu hỏi từ Head of Data</span>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Tôi thấy nhiều bạn Junior DA trong team hay mắc lỗi cơ bản như lạm dụng trung bình (mean) cho dữ liệu lệch cực mạnh, hoặc nhầm lẫn giữa Interval và Ratio. Là Data Lead, thay vì đi soi lỗi từng dòng code, bạn sẽ xây dựng quy trình Data Quality Assessment và Knowledge Sharing như thế nào để nâng cao chất lượng cả team mà không làm chậm tốc độ dự án?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Không đi soi từng dòng code (không scale được, tạo văn hoá sợ hãi) — xây 2 cơ chế song song: (1) <b>Automated Guardrail</b> thay vì Manual Review — viết bộ Data Quality Checklist tự động (dbt test/notebook linter) tự cảnh báo khi phát hiện pattern lỗi phổ biến (dùng <span class="mono">.mean()</span> trên cột Skewness cao mà không log-transform, gọi phép trung bình trên cột được tag "ordinal" trong Catalog) — biến kiến thức senior thành RULE tự động, không phụ thuộc Lead phải nhớ kiểm tra thủ công.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>(2) <b>Weekly Case Clinic</b> 30 phút — mỗi tuần lấy đúng 1 lỗi thật (ẩn danh) Junior mắc phải trong tuần, cả team mổ xẻ tại sao sai và sửa thế nào — hiệu quả hơn hẳn 1 buổi training lý thuyết dài vì gắn trực tiếp lỗi thật, mới xảy ra, dễ nhớ. Cả 2 cơ chế không làm chậm dự án vì (1) chạy tự động song song, không cần Lead ngồi review tay, và (2) chỉ 30 phút/tuần, tận dụng đúng lỗi đã xảy ra thay vì tạo thêm quy trình mới.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Phòng Quản trị Rủi ro yêu cầu team bạn xây dựng một Dashboard cảnh báo nợ xấu "ngay trong tuần này". Tuy nhiên, bạn thừa biết dữ liệu từ hệ thống Core Banking đẩy sang Data Warehouse đang thiếu hụt và sai lệch rất nhiều. Bạn sẽ thương lượng với Giám đốc Rủi ro ra sao để vừa giữ được mối quan hệ hợp tác, vừa có đủ thời gian làm sạch Tech Debt?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Không nói "không làm được", cũng không lặng lẽ làm ẩu cho kịp deadline — dùng chiến thuật "MVP có cảnh báo rủi ro đi kèm": giao Dashboard trong tuần như yêu cầu, nhưng đính kèm rõ "Data Confidence Label" trên từng chỉ số (vd. "Độ tin cậy: Thấp — dữ liệu Core Banking đang thiếu X%") thay vì trình bày số liệu như đã hoàn toàn đáng tin — bảo vệ cả Data Lead lẫn Giám đốc Rủi ro khỏi việc ra quyết định sai mà không biết.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>Đồng thời trình bày rõ 2 lộ trình song song có timeline: Lộ trình A (tuần này) — Dashboard tạm dùng data hiện có, gắn nhãn cảnh báo; Lộ trình B (2–4 tuần tới) — dọn Tech Debt ở nguồn cùng Data Engineering, sau đó gỡ nhãn. Thương lượng thành công nằm ở chỗ biến 1 yêu cầu mơ hồ thành 1 quyết định CÓ THÔNG TIN ĐẦY ĐỦ của chính Giám đốc Rủi ro (họ chọn dùng số liệu tạm có rủi ro biết trước, hay đợi thêm để có số liệu sạch) — thay vì Data Lead tự ý quyết định và gánh hết trách nhiệm khi sai.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Tháng trước, team bạn triển khai một Rule-based engine để chặn giao dịch gian lận. Nhưng khi lên Production, nó lại chặn nhầm (False Positive) hàng nghìn khách hàng thật khiến tổng đài CSKH thất thủ. Team bạn đang cực kỳ hoang mang và bị các phòng ban khác đổ lỗi. Là Head of Data, các bước xử lý khủng hoảng của bạn trong 24 giờ đầu tiên là gì?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span><b>Giờ 0–1:</b> rollback/disable ngay rule đang gây False Positive hàng loạt (hoặc nới lỏng ngưỡng tạm thời) — ưu tiên ngừng thiệt hại trước, không cố "vừa sửa vừa để chạy" giữa khủng hoảng; báo ngay CSKH để họ trấn an khách hàng bằng kịch bản chuẩn. <b>Giờ 1–4:</b> lập War Room liên chức năng (Data, Engineering, CSKH, Truyền thông) — 1 đầu mối duy nhất cập nhật tình hình mỗi giờ, tránh mỗi phòng ban tự suy đoán/đổ lỗi chéo gây hoang mang thêm.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span><b>Giờ 4–24:</b> điều tra root-cause thật (không đoán mò) — dùng feature importance xem rule/model bị kích hoạt sai bởi feature nào, xác định chính xác phạm vi ảnh hưởng để CSKH chủ động liên hệ xin lỗi thay vì bị động chờ khách gọi tới. <b>Sau 24h:</b> Post-mortem KHÔNG quy trách nhiệm cá nhân (blameless) — Head of Data phải là người đứng ra nhận trách nhiệm chung trước các phòng ban khác thay vì để nhân viên tuyến dưới bị đổ lỗi, biến sự cố thành 1 hạng mục cải tiến cụ thể (thêm canary/shadow-testing trước khi rule mới lên 100% traffic).</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Team Data Engineering thường xuyên thay đổi schema, đổi tên cột mà không thông báo, khiến các pipeline báo cáo rủi ro hàng ngày của team Analyst bị gãy liên tục. Bạn sẽ đứng ra làm việc với Data Engineering Lead như thế nào để giải quyết tận gốc mâu thuẫn này và thiết lập SLA chung?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Đây là vấn đề thiếu HỢP ĐỒNG (contract), không phải thiếu thiện chí — giải quyết tận gốc bằng cách biến quan hệ ngầm định thành SLA có văn bản: đề xuất "Data Contract" chính thức — mọi thay đổi schema/tên cột phải qua Pull Request có review của Analyst Lead, bắt buộc có "Deprecation Window" (vd. 2 tuần) — cột cũ vẫn tồn tại song song cột mới trong thời gian đó, không xoá/đổi tên đột ngột.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span>Thiết lập schema validation test chạy MỖI LẦN Data Engineering deploy — tự động chặn/cảnh báo nếu thay đổi phá vỡ hợp đồng đã thống nhất, thay vì Analyst tự phát hiện khi pipeline đã gãy. Về quan hệ: không tiếp cận như "đi bắt lỗi" DE Lead, mà đóng khung là cùng giảm rủi ro vận hành cho cả 2 bên (DE cũng mệt vì bị gọi hỏi liên tục mỗi lần đổi schema) — SLA chung giúp cả 2 team làm việc độc lập hơn về lâu dài.</p>
+    </div>
+    <div class="qa-item qa-item-exec">
+      <p class="qa-q"><span class="qa-tag qa-tag-q-exec">HỎI</span>Nếu tôi giao cho bạn toàn quyền định hình lại chiến lược của Data Team trong năm tới: chuyển dịch từ "Descriptive Analytics" (Báo cáo thống kê mô tả) sang "Prescriptive Analytics" (Dự đoán và khuyến nghị hành động giảm thiểu rủi ro). Bạn hãy phác thảo Roadmap 12 tháng, bao gồm cách cấu trúc lại nhân sự, đánh giá ROI, và thay đổi văn hoá làm việc với dữ liệu của công ty?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a-exec">ĐÁP</span>Roadmap chia 3 giai đoạn, đi từ nền tảng lên đúng tinh thần bài giảng này (dễ→khó): <b>Q1 — Nền tảng:</b> củng cố Data Governance/Feature Store, đảm bảo Descriptive Analytics hiện tại đáng tin cậy trước khi xây thêm — không thể xây Prescriptive trên nền dữ liệu còn lẫn lộn. <b>Q2 — Predictive:</b> triển khai model dự đoán (propensity, Uplift — như case study trong tài liệu) cho 1–2 use-case ưu tiên cao nhất, đo ROI thực tế (Tier 8) trước khi mở rộng. <b>Q3–Q4 — Prescriptive:</b> từ dự đoán "sẽ xảy ra gì" lên khuyến nghị "nên làm gì" — tích hợp Expected Value/Uplift Framework thẳng vào vận hành (tự động đề xuất threshold/action, không chỉ báo cáo số), thí điểm Optimization cho 1 quyết định kinh doanh cụ thể.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a-exec">ĐÁP (tiếp)</span><b>Nhân sự:</b> chuyển dần từ "Analyst báo cáo theo yêu cầu" sang mô hình lai — giữ 1 nhóm nhỏ Descriptive/BI phục vụ nhu cầu hàng ngày, xây thêm 1 nhóm chuyên trách Predictive/Prescriptive (kỹ năng ML + causal inference sâu — Tier 6-9), ưu tiên đào tạo nội bộ (cơ chế Mentorship câu trên) trước khi tuyển ngoài. <b>ROI:</b> không đo bằng số report xuất ra (metric Descriptive cũ), mà đo bằng giá trị quyết định đã thay đổi nhờ khuyến nghị của team (khung Tier 8: lợi nhuận tăng/rủi ro giảm quy ra tiền) — đây cũng là thay đổi văn hoá quan trọng nhất: từ "Data team làm báo cáo" sang "Data team chịu trách nhiệm 1 phần kết quả kinh doanh".</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ UPDATE 06/07 ============ -->
+<section class="tier" id="update0706">
+  <div class="tier-eyebrow"><span class="tier-num mono">🆕</span><span class="diff-pill diff-hard">Cập nhật 06/07/2026</span></div>
+  <h2 class="tier-title">Bổ sung: Đọc biểu đồ, Bias dữ liệu & Kiến trúc Quản trị Dữ liệu</h2>
+  <p class="tier-intro">5 câu hỏi tự đúc kết thêm sau khi ôn xong toàn bộ bài giảng — đào sâu 1 lần nữa vào việc <i>đọc</i> biểu đồ cho tinh, phân biệt các loại "dữ liệu xấu" hay bị gộp chung, và cách tổ chức dữ liệu ở quy mô Tập đoàn (RACI, Data Mesh) — phần Data Governance ở đây chỉ tra cứu nhanh xem áp dụng gì vào đâu, lý thuyết đầy đủ xem ở <span class="mono">Data Governance/Bai_Giang_Data_Governance.html</span>.</p>
+
+  <div class="qa-block">
+    <span class="qa-block-label">Tự hỏi — tự đáp</span>
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Trong tất cả biểu đồ đã dùng xuyên suốt bài giảng (histogram, boxplot, Q-Q plot, SHAP bar/dot, ROC/PR curve, correlation heatmap...), biểu đồ nào insightful nhất với 1 Data Analyst? Boxplot có phải lựa chọn hay nhất không?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Nhận định boxplot "hay" là đúng, nhưng cần nói rõ đúng ở khía cạnh nào. Boxplot vô địch ở <b>mật độ thông tin trên diện tích</b>: 1 hình chữ nhật gói gọn cả 5-number summary (Tier 1) LẪN gắn nhãn outlier tự động (rule 1.5·IQR) — và quan trọng nhất, nó là biểu đồ DUY NHẤT cho phép xếp <b>hàng chục nhóm cạnh nhau</b> (vd. Balance theo từng Segment/tỉnh thành) trong cùng 1 khung nhìn mà vẫn so sánh được ngay bằng mắt — không chart nào khác làm được việc này ở quy mô lớn.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Nhưng boxplot có 1 điểm mù: nó <b>giấu mất hình dạng multimodal</b> — 2 đỉnh phân phối tách biệt (vd. trộn 2 phân khúc khách hàng) vẫn hiện ra như 1 hộp rộng bình thường, đúng bẫy "Đa đỉnh" đã nói ở Tier 1. Nếu phải chọn 1 biểu đồ insightful nhất cho toàn bộ pipeline (không chỉ EDA), <b>SHAP summary dot (beeswarm)</b> mới là ứng viên nặng ký nhất — vì nó là chart <i>duy nhất</i> trả lời cùng lúc 4 câu hỏi trong 1 hình: biến nào quan trọng (thứ tự), tác động chiều nào (màu), mức độ (vị trí ngang), và trải đều trên từng khách hàng cụ thể (từng chấm) — thứ mà bar chart + correlation + 1 bảng riêng cộng lại mới làm được. Quy tắc thực dùng: <b>boxplot để so sánh nhiều nhóm khi làm EDA/báo cáo</b>, <b>SHAP dot để giải thích 1 model</b> — 2 việc khác nhau, không có "biểu đồ toàn năng" duy nhất.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Skewness, Feature Bias và Outlier hay bị gộp chung là "dữ liệu xấu", nhưng bản chất khác nhau hoàn toàn. Phân biệt rõ 3 khái niệm này và cách nhận diện từng loại trong case study?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span><b>Skewness</b> (Tier 1) và <b>Outlier</b> (Tier 1 Q&amp;A) là vấn đề của <i>hình dạng phân phối 1 biến</i> — sửa được bằng công thức toán thuần tuý (log-transform, IQR rule), không liên quan tới việc dữ liệu được THU THẬP như thế nào. <b>Feature Bias</b> là chuyện hoàn toàn khác: đây là <i>lệch lạc hệ thống trong cách 1 biến/nhãn được TẠO RA</i>, không sửa được bằng công thức toán — phải sửa tận gốc quy trình thu thập hoặc bù trừ bằng causal inference.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Ví dụ Feature Bias thật trong chính case study: <span class="mono">Historical_Promo_Response</span> chỉ được ghi nhận cho khách hàng ĐÃ từng được liên hệ khuyến mãi trước đó — target này vì vậy học từ 1 tập con khách hàng không đại diện cho toàn bộ tệp khách (label bias/survivorship bias). Đây chính là gốc rễ của vấn đề "Sure Things" đã lật lại ở Tier 9 — model Tier 6/8 tưởng đang học "ai sẽ mua" nhưng thực ra 1 phần đang học "ai đã từng được ưu ái liên hệ trước đây", 2 điều không giống nhau. Cách phân biệt nhanh khi phỏng vấn: hỏi "sửa bằng 1 dòng code toán học được không?" — Skew/Outlier: được; Feature Bias: không, phải sửa lại thiết kế thu thập dữ liệu hoặc dùng Uplift Modeling để bóc tách.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>"Regression to the Mean" (hồi quy về trung bình) đã nhắc sơ ở phần Bẫy PV — phân tích sâu hơn hiện tượng này với 1 ví dụ cụ thể trong bối cảnh ngân hàng/marketing, và nó khác gì với Selection Bias hay Confounding?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Cơ chế: khi 1 biến có giá trị CỰC ĐOAN ở lần đo đầu (rất cao/rất thấp), lần đo sau có xu hướng "kéo về gần trung bình" hơn — không phải vì có can thiệp gì, mà vì phần đóng góp NGẪU NHIÊN (may rủi) trong lần đo đầu khó lặp lại y hệt lần sau. Ví dụ cụ thể: chọn ra 100 khách hàng có Response cao nhất trong 1 campaign (trúng đúng thời điểm/tâm trạng mua sắm), rồi target riêng đúng 100 người này ở campaign kế tiếp — nhiều khả năng Response rate của CHÍNH nhóm này ở lần 2 sẽ thấp hơn lần 1, không phải vì campaign 2 dở hơn, mà vì 1 phần "đỉnh cao" ở lần 1 chỉ là may mắn thống kê, không phải tín hiệu bền vững.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span>Phân biệt: <b>Selection Bias</b> là chọn MẪU không đại diện ngay từ đầu (vd. chỉ khảo sát khách dùng app); <b>Confounding</b> là có 1 biến thứ 3 ảnh hưởng cả Treatment lẫn Outcome (Tier 9); còn <b>Regression to the Mean</b> là hiện tượng THỜI GIAN — chọn mẫu theo giá trị cực đoan tại 1 THỜI ĐIỂM rồi đo lại. Bẫy hay gặp: dễ nhầm "nhóm tự nhiên tăng/giảm trở lại" với "hiệu ứng thật của can thiệp mới" — business dễ kết luận sai "khách đã chán campaign 2" hoặc ngược lại "chiến dịch mới có tác dụng" khi thực ra chỉ là hồi quy tự nhiên. Cách phòng tránh: luôn có nhóm Control không can thiệp khi đánh giá lại đúng 1 nhóm đã chọn theo giá trị cực đoan — về bản chất, đây là lý do RCT/A/B test (Tier 3, Tier 9) không thể thay bằng "so sánh trước-sau" đơn thuần.</p>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>Không cần học lại lý thuyết Data Governance — chỉ cần ví dụ cụ thể: ở từng bước của pipeline Basic ML (00→09), cần áp dụng nguyên tắc DG nào?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span>Bảng tra nhanh — DG áp dụng đúng bước nào, không lý thuyết dài dòng:</p>
+      <div class="data-sample-wrap" style="margin-top:8px">
+        <table class="data-sample" style="min-width:0">
+          <tr><th>Bước pipeline</th><th>Nguyên tắc DG cần áp dụng</th></tr>
+          <tr><td>00 — Generate Data</td><td><b>Data Lineage</b>: mọi lần đổi DGP (v1→v2→v3) phải ghi vào metadata/changelog — <span class="mono">_REQUIREMENT.md</span> hiện đang làm đúng việc này thủ công.</td></tr>
+          <tr><td>01 — EDA</td><td><b>Data Quality Scorecard</b>: kết quả missing/skew/p-value nên lưu định kỳ (không chỉ chạy 1 lần), làm bằng chứng chất lượng theo thời gian.</td></tr>
+          <tr><td>02 — KMeans</td><td><b>Data Classification &amp; Ownership</b>: tên gọi persona/cụm ("khách VIP ngủ đông") cần 1 Owner duyệt, tránh mỗi phòng ban tự đặt tên khác nhau cho cùng 1 cụm.</td></tr>
+          <tr><td>03–04 — Model benchmark</td><td><b>Model Registry</b>: version hoá từng <span class="mono">.pkl</span>, ghi rõ ai train, ngày nào, trên data version nào.</td></tr>
+          <tr><td>04c — So sánh model</td><td><b>Business Glossary</b>: định nghĩa <span class="mono">best_model_by_auc</span> vs <span class="mono">best_model_by_profit</span> phải ghi rõ ràng, tránh hiểu nhầm khi đọc báo cáo (đúng insight đã có ở Tier 6).</td></tr>
+          <tr><td>05 — SHAP</td><td><b>PII Governance</b>: loại feature nhạy cảm khỏi bản diễn giải trước khi đưa cho Front-office (đã nói ở phần Rủi ro).</td></tr>
+          <tr><td>06 — Expected Profit</td><td><b>Data Ownership + Audit Trail</b>: business constants (cost 500đ/reward 10.000đ) phải có người duyệt chính thức và ghi ngày cập nhật — không phải hằng số "ai đó gõ vào code".</td></tr>
+          <tr><td>07–08 — Uplift/So sánh 6 model</td><td><b>Data Steward xác nhận định nghĩa</b>: <span class="mono">Treatment = Promo_Txn_Count_3M &gt; 0</span> là 1 quyết định nghiệp vụ quan trọng (Tier 9), không phải chỉ 1 dòng code — cần Steward duyệt trước khi dùng làm căn cứ nhân quả.</td></tr>
+          <tr><td>09 — Presentation</td><td><b>Access Management</b>: ai được xem presentation.html chứa chiến lược/lợi nhuận nhạy cảm cần kiểm soát quyền truy cập, không public tràn lan.</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <div class="qa-item">
+      <p class="qa-q"><span class="qa-tag qa-tag-q">HỎI</span>RACI, Data Dictionary, mô hình Centralized vs Data Mesh (mỗi phòng ban tự quản data riêng) — ưu nhược từng cái? Tập đoàn lớn dùng Data Mesh cho linh hoạt thì có còn cần Governance không?</p>
+      <p class="qa-a"><span class="qa-tag qa-tag-a">ĐÁP</span><b>RACI cho dữ liệu</b> (Responsible/Accountable/Consulted/Informed) áp vào chính file <span class="mono">customer_promo_data.csv</span>: R = Data Engineer sinh data, A = Data Owner domain Khách hàng (chịu trách nhiệm cuối), C = Business Marketing (phải hỏi ý kiến khi đổi định nghĩa "Response"), I = toàn bộ Analyst đang dùng file. <b>Data Dictionary</b> — pipeline này thực ra đã có "tiền thân" của nó: bảng liệt kê cột/ý nghĩa trong <span class="mono">_REQUIREMENT.md</span> — chỉ cần chuẩn hoá thành Business Glossary dùng chung thay vì nằm rải rác trong file Markdown của riêng 1 dự án.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span><b>Centralized</b>: 1 team Data trung tâm sở hữu toàn bộ. Ưu: nhất quán tuyệt đối, dễ ép chuẩn chất lượng vì ít đầu mối. Nhược: thành bottleneck ở tổ chức lớn — team trung tâm không đủ hiểu sâu nghiệp vụ TỪNG phòng ban, tốc độ ra sản phẩm dữ liệu chậm vì mọi yêu cầu xếp hàng qua 1 cửa. <b>Data Mesh</b>: mỗi domain tự sở hữu và "sản xuất" dữ liệu của mình như 1 sản phẩm hoàn chỉnh (data as a product). Ưu: linh hoạt, scale tốt cho Tập đoàn đa ngành, mỗi team hiểu sâu nghiệp vụ mình nhất nên chất lượng tại nguồn tốt hơn. Nhược: rủi ro fragmentation nếu thiếu tầng liên kết chung — tái diễn đúng vấn đề "Active User mỗi phòng định nghĩa 1 kiểu" đã nói trong <span class="mono">Data Governance/</span>.</p>
+      <p class="qa-a" style="margin-top:8px"><span class="qa-tag qa-tag-a">ĐÁP (tiếp)</span><b>Có, bắt buộc</b> — và đây là điểm hay bị hiểu lầm nhất về Data Mesh: nó không phải "bỏ Governance cho tự do" mà là đổi <i>cách</i> Governance được thực thi — từ tập trung 1 team áp đặt, sang <b>Federated Computational Governance</b> (đúng mô hình Federated đã có trong <span class="mono">Data Governance/</span>): các chuẩn TOÀN CỤC (định dạng liên thông, chuẩn mask PII, Business Glossary cho khái niệm dùng toàn Tập đoàn) vẫn do 1 hội đồng liên bang quyết định và <b>tự động hoá thực thi</b> (schema validation, tagging tự động) — chỉ phần vận hành chi tiết hàng ngày mới phân quyền cho từng domain. Thiếu tầng Governance liên bang này, Data Mesh vỡ vụn thành N "cát cứ địa phương" chỉ sau vài tháng — đúng rủi ro đã cảnh báo ở câu hỏi Federated Operating Model.</p>
+    </div>
+  </div>
+</section>
+
 <!-- ============ BONUS ============ -->
 <section class="tier" id="bonus">
   <div class="tier-eyebrow"><span class="tier-num mono">★</span><span class="diff-pill diff-hard">Bẫy phỏng vấn kinh điển</span></div>
@@ -1180,92 +1308,3 @@ shap.dependence_plot(top_feature_1, sv, X_transformed_df)     <span class="c1">#
 <footer class="end">
   Nguồn: <span class="mono">Basic ML/</span> (pipeline 00→09, case study ngân hàng dự đoán phản hồi khuyến mãi) + kiến thức thống kê chuẩn ngành. Số liệu thật lấy từ <span class="mono">model_metrics.json</span>, <span class="mono">06_profit_comparison.json</span>, <span class="mono">01_eda_results.json</span> trong repo.
 </footer>
-
-<style>
-  .tier-pager {
-    display: flex; justify-content: space-between; gap: 12px; margin: 36px 0 4px;
-    padding-top: 18px; border-top: 1px solid var(--rule);
-  }
-  .tier-pager button {
-    font-family: "Segoe UI", "Calibri", Arial, sans-serif; font-size: 13.5px; font-weight: 600;
-    color: var(--ink); background: var(--paper-raised); border: 1px solid var(--rule);
-    border-radius: 8px; padding: 10px 16px; cursor: pointer; max-width: 46%;
-    text-align: left; line-height: 1.4; transition: border-color 0.15s, color 0.15s;
-  }
-  .tier-pager button:hover { border-color: var(--signal-soft-border); color: var(--signal); }
-  .tier-pager button:disabled { visibility: hidden; }
-  .tier-pager .pager-next { text-align: right; margin-left: auto; }
-  .tier-pager .pager-lbl { display: block; font-size: 10.5px; color: var(--ink-faint); font-weight: 700; letter-spacing: 0.04em; margin-bottom: 3px; }
-</style>
-
-<script>
-(function () {
-  var order = ['tier0','tier1','tier2','tier3','tier4','tier5','tier6','tier7','tier8','tier9','bonus','capstone'];
-  var navLinks = Array.prototype.slice.call(document.querySelectorAll('.topnav-inner a'));
-  var sections = order.map(function (id) { return document.getElementById(id); });
-
-  function labelFor(id) {
-    var link = navLinks.filter(function (a) { return a.getAttribute('href') === '#' + id; })[0];
-    return link ? link.textContent : id;
-  }
-
-  function activate(id, opts) {
-    if (order.indexOf(id) === -1) id = order[0];
-    sections.forEach(function (sec) {
-      if (!sec) return;
-      sec.classList.toggle('active', sec.id === id);
-    });
-    navLinks.forEach(function (a) {
-      a.classList.toggle('active', a.getAttribute('href') === '#' + id);
-    });
-    if (!opts || opts.scroll !== false) {
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-    if (history.replaceState) history.replaceState(null, '', '#' + id);
-  }
-
-  navLinks.forEach(function (a) {
-    a.addEventListener('click', function (e) {
-      e.preventDefault();
-      activate(a.getAttribute('href').slice(1));
-    });
-  });
-
-  // Prev/Next pager tự sinh cuối mỗi tab, để chuyển tab không cần cuộn lên nav
-  order.forEach(function (id, i) {
-    var sec = document.getElementById(id);
-    if (!sec) return;
-    var pager = document.createElement('div');
-    pager.className = 'tier-pager';
-
-    var prevId = order[i - 1];
-    var nextId = order[i + 1];
-
-    var prevBtn = document.createElement('button');
-    prevBtn.type = 'button';
-    if (prevId) {
-      prevBtn.innerHTML = '<span class="pager-lbl">← Trước</span>' + labelFor(prevId);
-      prevBtn.addEventListener('click', function () { activate(prevId); });
-    } else {
-      prevBtn.disabled = true;
-    }
-
-    var nextBtn = document.createElement('button');
-    nextBtn.type = 'button';
-    nextBtn.className = 'pager-next';
-    if (nextId) {
-      nextBtn.innerHTML = '<span class="pager-lbl">Tiếp →</span>' + labelFor(nextId);
-      nextBtn.addEventListener('click', function () { activate(nextId); });
-    } else {
-      nextBtn.disabled = true;
-    }
-
-    pager.appendChild(prevBtn);
-    pager.appendChild(nextBtn);
-    sec.appendChild(pager);
-  });
-
-  var initial = (location.hash || '').replace('#', '');
-  activate(order.indexOf(initial) !== -1 ? initial : order[0], { scroll: false });
-})();
-</script>
