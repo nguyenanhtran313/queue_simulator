@@ -32,9 +32,24 @@
   a{color:var(--blue);}
   .layout{display:flex; max-width:1280px; margin:0 auto;}
   aside.toc{
-    width:270px; flex:0 0 270px; position:sticky; top:0; align-self:flex-start;
-    height:100vh; overflow-y:auto; padding:22px 16px; border-right:1px solid var(--border);
+    width:270px; flex:0 0 270px; position:sticky; top:48px; align-self:flex-start;
+    height:calc(100vh - 48px); overflow-y:auto; padding:22px 16px; border-right:1px solid var(--border);
   }
+  .doc-switcher{
+    position:sticky; top:0; z-index:51;
+    display:flex; align-items:center; gap:.6rem; flex-wrap:wrap;
+    background:var(--surface-1);
+    padding:8px clamp(1.25rem, 3vw, 1.75rem);
+    border-bottom:1px solid var(--border);
+    font-size:.78rem; color:var(--text-secondary);
+  }
+  .doc-switcher label{font-weight:600; color:var(--text-primary); white-space:nowrap;}
+  .doc-switcher select{
+    font:inherit; color:var(--text-primary); background:var(--page);
+    border:1px solid var(--border); border-radius:6px; padding:5px 8px;
+    max-width:360px; cursor:pointer;
+  }
+  .doc-switcher select:focus-visible{outline:2px solid var(--blue); outline-offset:1px;}
   aside.toc h4{font-size:.75rem; text-transform:uppercase; letter-spacing:.08em; color:var(--muted); margin:0 0 12px 4px;}
   aside.toc ol{list-style:none; margin:0; padding:0; counter-reset:sec;}
   aside.toc li{margin-bottom:2px;}
@@ -228,6 +243,18 @@
 </style>
 </head>
 <body>
+<div class="doc-switcher">
+  <label for="doc-switcher-select">Tài liệu:</label>
+  <select id="doc-switcher-select" onchange="if(this.value) location.href=this.value;">
+    <option value="../Basic%20DA/DA_Interview_Lecture.html">Basic DA · Cẩm nang phỏng vấn Data Analyst</option>
+    <option value="../Basic%20DE/onemount_architecture.html">Basic DE · Kiến trúc OneMount (GCP)</option>
+    <option value="../Basic%20DE/master_rise_aws_architecture.html">Basic DE · Kiến trúc Masterise (AWS)</option>
+    <option value="../Basic%20DE/onemount_vs_masterise_comparison.html">Basic DE · So sánh OneMount vs Masterise</option>
+    <option value="../Data%20Governance/DG_Checklist_DE_DA.html">Data Governance · Checklist DE &amp; DA</option>
+    <option value="../Data%20Governance/Bai_Giang_Data_Governance.html" selected disabled>Data Governance · Bài giảng nhập môn</option>
+    <option value="../Basic%20ML/presentation.html">Basic ML · Case study Promo ROI</option>
+  </select>
+</div>
 <div class="layout">
   <aside class="toc">
     <h4>Nội dung bài giảng</h4>

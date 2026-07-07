@@ -72,6 +72,21 @@
   }
   .topnav a:hover { color: var(--signal); border-color: var(--signal-soft-border); background: var(--signal-soft); }
 
+  /* ---------- Cross-document switcher ---------- */
+  .doc-switcher {
+    display: flex; align-items: center; gap: .6rem; flex-wrap: wrap;
+    padding: 8px clamp(1.25rem, 3vw, 1.75rem);
+    border-bottom: 1px solid var(--rule);
+    font-size: 12.5px; color: var(--ink-soft);
+  }
+  .doc-switcher label { font-weight: 600; color: var(--ink); white-space: nowrap; }
+  .doc-switcher select {
+    font: inherit; color: var(--ink); background: var(--paper-raised);
+    border: 1px solid var(--rule); border-radius: 6px; padding: 5px 8px;
+    max-width: 360px; cursor: pointer;
+  }
+  .doc-switcher select:focus-visible { outline: 2px solid var(--signal); outline-offset: 1px; }
+
   /* ---------- Shell ---------- */
   .shell { max-width: 1640px; margin: 0 auto; padding: 0 clamp(1.25rem, 3vw, 1.75rem) 100px; }
   .prose { max-width: 720px; }
@@ -279,6 +294,18 @@
 </style>
 
 <nav class="topnav" aria-label="Điều hướng nhanh">
+  <div class="doc-switcher">
+    <label for="doc-switcher-select">Tài liệu:</label>
+    <select id="doc-switcher-select" onchange="if(this.value) location.href=this.value;">
+      <option value="../Basic%20DA/DA_Interview_Lecture.html" selected disabled>Basic DA · Cẩm nang phỏng vấn Data Analyst</option>
+      <option value="../Basic%20DE/onemount_architecture.html">Basic DE · Kiến trúc OneMount (GCP)</option>
+      <option value="../Basic%20DE/master_rise_aws_architecture.html">Basic DE · Kiến trúc Masterise (AWS)</option>
+      <option value="../Basic%20DE/onemount_vs_masterise_comparison.html">Basic DE · So sánh OneMount vs Masterise</option>
+      <option value="../Data%20Governance/DG_Checklist_DE_DA.html">Data Governance · Checklist DE &amp; DA</option>
+      <option value="../Data%20Governance/Bai_Giang_Data_Governance.html">Data Governance · Bài giảng nhập môn</option>
+      <option value="../Basic%20ML/presentation.html">Basic ML · Case study Promo ROI</option>
+    </select>
+  </div>
   <div class="topnav-inner">
     <a href="#tier0">0·Nền tảng</a>
     <a href="#tier1">1·Mô tả DL</a>

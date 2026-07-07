@@ -637,11 +637,38 @@ HTML_TEMPLATE = r"""<!DOCTYPE html>
     .kpi-row {{ grid-template-columns: repeat(2, 1fr); }}
     .grid-2 {{ grid-template-columns: 1fr; }}
   }}
+
+  /* ---------- Cross-document switcher ---------- */
+  .doc-switcher {{
+    display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+    padding: 8px clamp(1.25rem, 3vw, 2rem);
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px; color: var(--text-secondary);
+  }}
+  .doc-switcher label {{ font-weight: 700; color: var(--text-primary); white-space: nowrap; }}
+  .doc-switcher select {{
+    font: inherit; color: var(--text-primary); background: var(--page-plane);
+    border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px;
+    max-width: 360px; cursor: pointer;
+  }}
+  .doc-switcher select:focus-visible {{ outline: 2px solid var(--ga-blue); outline-offset: 1px; }}
 </style>
 </head>
 <body>
 
 <header class="topbar">
+  <div class="doc-switcher">
+    <label for="doc-switcher-select">Tài liệu:</label>
+    <select id="doc-switcher-select" onchange="if(this.value) location.href=this.value;">
+      <option value="../Basic%20DA/DA_Interview_Lecture.html">Basic DA · Cẩm nang phỏng vấn Data Analyst</option>
+      <option value="../Basic%20DE/onemount_architecture.html">Basic DE · Kiến trúc OneMount (GCP)</option>
+      <option value="../Basic%20DE/master_rise_aws_architecture.html">Basic DE · Kiến trúc Masterise (AWS)</option>
+      <option value="../Basic%20DE/onemount_vs_masterise_comparison.html">Basic DE · So sánh OneMount vs Masterise</option>
+      <option value="../Data%20Governance/DG_Checklist_DE_DA.html">Data Governance · Checklist DE &amp; DA</option>
+      <option value="../Data%20Governance/Bai_Giang_Data_Governance.html">Data Governance · Bài giảng nhập môn</option>
+      <option value="../Basic%20ML/presentation.html" selected disabled>Basic ML · Case study Promo ROI</option>
+    </select>
+  </div>
   <div class="topbar-inner">
     <div class="brand">
       <div class="logo"></div>

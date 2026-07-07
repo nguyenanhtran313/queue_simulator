@@ -26,24 +26,26 @@ def main():
         print("Model not found. Please run 03_Logistic_Regression_Benchmark.py, 04_XGBoost_Production.py va 04b_LightGBM_Production.py first.")
         return
         
-    # Tính xác suất khách hàng sẽ phản hồi dựa vào model (Predict Proba)
+    # Tính xác suất khách hàng sẽ phản hồi dựa vào từng model (Predict Proba)
     # P(Response): Khả năng mà model nghĩ KH này sẽ bấm vào Promo.
-    df['Predicted_Prob'] = model.predict_proba(X)[:, 1]
-    
-    # Tính Lợi Nhuận Kỳ Vọng (Expected Profit) cho từng KH
-    # Công thức toán kỳ vọng: Expected Value = P(Win)*Reward - P(Lose)*Cost. Ở đây ta đơn giản hóa: 
-    # Profit = P(Mua)*Lợi nhuận - Chi phí tiếp cận
-    df['Expected_Profit'] = (df['Predicted_Prob'] * reward_per_response) - cost_per_email
-    
-    # Quyết định: Gửi email KH này nếu Lợi nhuận kỳ vọng > 0 (Tức là khoản đầu tư sinh lời).
-    # Equivalent to: P(Response) > Cost/Reward = 500/10000 = 5%
-    # Nếu model đoán xác suất mua > 5% ta sẽ gửi ZNS, ngược lại thì không.
-    df['Send_Email'] = df['Expected_Profit'] > 0
+    # Cả 3 model đều là Pipeline tự chứa (preprocessor + classifier) nên nhận thẳng X thô,
+    # không cần scale/encode tay ở đây — giữ tính nhất quán với cách mỗi model đã tự train.
+    for prefix, trained_model in [('LOGREG', logreg_model), ('XGB', xgb_model), ('LGBM', lgbm_model)]:
+        # Tính Lợi Nhuận Kỳ Vọng (Expected Profit) cho từng KH theo từng model
+        # Công thức toán kỳ vọng: Expected Value = P(Win)*Reward - P(Lose)*Cost. Ở đây ta đơn giản hóa:
+        # Profit = P(Mua)*Lợi nhuận - Chi phí tiếp cận
+        df[f'{prefix}_Prob'] = trained_model.predict_proba(X)[:, 1]
+        df[f'{prefix}_Expected_Profit'] = (df[f'{prefix}_Prob'] * reward_per_response) - cost_per_email
+
+        # Quyết định: Gửi email KH này nếu Lợi nhuận kỳ vọng > 0 (Tức là khoản đầu tư sinh lời).
+        # Equivalent to: P(Response) > Cost/Reward = 500/10000 = 5%
+        # Nếu model đoán xác suất mua > 5% ta sẽ gửi ZNS, ngược lại thì không.
+        df[f'{prefix}_Send_Email'] = df[f'{prefix}_Expected_Profit'] > 0
     
     # --- Tính toán ROI Simulation (Đánh giá hiệu quả kinh doanh) ---
     # Kịch bản 1: Gửi toàn bộ (Mass Marketing)
-    total_cost_if_all = len(df) * cost_per_email
-    revenue_if_all = df['Historical_Promo_Response'].sum() * reward_per_response
+    total_cost_if_all = int(len(df) * cost_per_email)
+    revenue_if_all = int(df['Historical_Promo_Response'].sum() * reward_per_response)
     profit_all = revenue_if_all - total_cost_if_all
 
     scenarios = {'Mass Marketing (gửi toàn bộ)': {

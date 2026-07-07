@@ -1,32 +1,32 @@
 {
   "cost_per_email": 500,
-  "reward_per_response": 12000,
+  "reward_per_response": 10000,
   "scenarios": {
     "Mass Marketing (gửi toàn bộ)": {
-      "n_send": 10000,
-      "cost": 5000000,
-      "revenue": 6192000,
-      "profit": 1192000
+      "n_send": 100000,
+      "cost": 50000000,
+      "revenue": 118760000,
+      "profit": 68760000
     },
     "Logistic Regression-optimized": {
-      "n_send": 7795,
-      "cost": 3897500,
-      "revenue": 6192000,
-      "profit": 2294500
+      "n_send": 75219,
+      "cost": 37609500,
+      "revenue": 113530000,
+      "profit": 75920500
     },
     "XGBoost-optimized": {
-      "n_send": 3737,
-      "cost": 1868500,
-      "revenue": 6108000,
-      "profit": 4239500
+      "n_send": 58285,
+      "cost": 29142500,
+      "revenue": 113010000,
+      "profit": 83867500
     },
     "LightGBM-optimized": {
-      "n_send": 3183,
-      "cost": 1591500,
-      "revenue": 6096000,
-      "profit": 4504500
+      "n_send": 93014,
+      "cost": 46507000,
+      "revenue": 118640000,
+      "profit": 72133000
     }
   },
-  "best_scenario": "LightGBM-optimized",
-  "best_scenario_uplift_vs_mass": 3312500
+  "best_scenario": "XGBoost-optimized",
+  "best_scenario_uplift_vs_mass": 15107500
 }
