@@ -377,6 +377,13 @@
     outline-offset: 2px;
   }
 
+  .item-body {
+    display: flex;
+    flex-direction: column;
+    gap: .3rem;
+    min-width: 0;
+  }
+
   ul.checklist label {
     font-size: .88rem;
     color: var(--gray700);
@@ -409,6 +416,32 @@
     color: var(--primary900);
   }
 
+  .detail-btn {
+    align-self: flex-start;
+    font: inherit;
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--primary500);
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    text-decoration: underline;
+    text-decoration-color: var(--primary100);
+    text-underline-offset: 2px;
+  }
+
+  .detail-btn:hover {
+    color: var(--primary900);
+    text-decoration-color: var(--primary900);
+  }
+
+  .detail-btn:focus-visible {
+    outline: 2px solid var(--primary500);
+    outline-offset: 2px;
+    border-radius: 2px;
+  }
+
   .gate {
     display: flex;
     gap: .65rem;
@@ -439,6 +472,114 @@
 
   footer a {
     color: var(--gray700);
+  }
+
+  /* ---------- Detail modal ---------- */
+  dialog.detail-modal {
+    border: none;
+    border-radius: 12px;
+    padding: 0;
+    max-width: 600px;
+    width: calc(100vw - 2rem);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, .2);
+    background: var(--white);
+    color: var(--gray900);
+  }
+
+  dialog.detail-modal::backdrop {
+    background: rgba(32, 33, 36, .5);
+  }
+
+  .detail-modal-inner {
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-height: 80vh;
+    overflow-y: auto;
+  }
+
+  .detail-modal-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .detail-modal-eyebrow {
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--primary500);
+    margin-bottom: .3rem;
+  }
+
+  .detail-modal-head h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--gray900);
+    text-wrap: balance;
+  }
+
+  .detail-modal-close {
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    border: none;
+    background: var(--gray50);
+    color: var(--gray700);
+    font-size: 1.1rem;
+    line-height: 1;
+    cursor: pointer;
+  }
+
+  .detail-modal-close:hover {
+    background: var(--gray200);
+    color: var(--gray900);
+  }
+
+  .detail-modal-plain {
+    font-size: .92rem;
+    color: var(--gray700);
+    margin: 0;
+  }
+
+  .detail-modal-section-label {
+    font-size: .7rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gray700);
+    margin: 0 0 .5rem;
+  }
+
+  .detail-modal-steps {
+    margin: 0;
+    padding-left: 1.15rem;
+    display: flex;
+    flex-direction: column;
+    gap: .45rem;
+  }
+
+  .detail-modal-steps li {
+    font-size: .88rem;
+    color: var(--gray700);
+  }
+
+  .detail-modal-collab {
+    font-size: .85rem;
+    color: var(--gray700);
+    background: var(--gray50);
+    border-radius: 6px;
+    padding: .75rem .9rem;
+    margin: 0;
+  }
+
+  .detail-modal-collab b {
+    color: var(--gray900);
   }
 
   @media (prefers-reduced-motion:no-preference) {
@@ -494,7 +635,9 @@
       rồi giữ tầng semantic gọn; DA gắn checkpoint từ lúc <b>nhận đầu bài từ business</b> đến
       lúc build <b>Power BI model</b>. Thuật ngữ dùng thống nhất với
       <a href="Introduction%20to%20DG.md">Business Glossary / Data Steward</a> đã có trong
-      thư mục này. Tick vào từng mục khi đã áp dụng — trạng thái được lưu lại trên trình duyệt này.
+      thư mục này. Tick vào từng mục khi đã áp dụng, hoặc bấm <b>"Xem hướng dẫn chi tiết"</b>
+      nếu chưa rõ mục đó nghĩa là gì / làm cụ thể ra sao — trạng thái tick được lưu lại trên
+      trình duyệt này.
     </p>
   </header>
 
@@ -535,29 +678,16 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-1-1"><label for="de-1-1"><span class="item-text">Task <b>schema
-                  validation</b> chạy trước task load — fail-fast nếu source đổi schema ngoài kế hoạch, không để lỗi
-                trôi xuống downstream.</span></label></li>
-          <li><input type="checkbox" id="de-1-2"><label for="de-1-2"><span class="item-text">Gắn nhãn phân loại dữ liệu
-                nhạy cảm (PII/tài chính) <b>ngay tại bước ingest</b> — không để việc classify trôi xuống tầng
-                sau.</span></label></li>
-          <li><input type="checkbox" id="de-1-3"><label for="de-1-3"><span class="item-text">Task kiểm tra chất lượng cơ
-                bản sau khi load: null-rate bất thường, row count so với kỳ trước, freshness so với SLA
-                nguồn.</span></label></li>
-          <li><input type="checkbox" id="de-1-4"><label for="de-1-4"><span class="item-text">Bản ghi lỗi/sai schema đưa
-                vào <b>quarantine table</b> riêng — không silently drop, không để lẫn vào bảng chính.</span></label>
-          </li>
-          <li><input type="checkbox" id="de-1-5"><label for="de-1-5"><span class="item-text">Mọi task ingest log đủ:
-                nguồn, thời điểm chạy, số dòng, version schema — phục vụ lineage &amp; audit về sau.</span></label></li>
-          <li><input type="checkbox" id="de-1-6"><label for="de-1-6"><span class="item-text">Đặt tên dataset/table/task
-                đúng naming convention đã thống nhất trong Data Catalog — không tự đặt tên tuỳ hứng.</span></label></li>
-          <li><input type="checkbox" id="de-1-7"><label for="de-1-7"><span class="item-text">Raw layer giới hạn quyền
-                đọc/ghi — chỉ DE và service account; <b>DA/BI không được query thẳng raw</b>.</span></label></li>
-          <li><input type="checkbox" id="de-1-8"><label for="de-1-8"><span class="item-text">Retention/archival policy
-                khai báo ngay khi tạo dataset mới — không để "tính sau".</span></label></li>
+          <li><input type="checkbox" id="de-1-1"><div class="item-body"><label for="de-1-1"><span class="item-text">Task <b>schema validation</b> chạy trước task load — fail-fast nếu source đổi schema ngoài kế hoạch, không để lỗi trôi xuống downstream.</span></label><button type="button" class="detail-btn" data-detail="de-1-1">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-2"><div class="item-body"><label for="de-1-2"><span class="item-text">Gắn nhãn phân loại dữ liệu nhạy cảm (PII/tài chính) <b>ngay tại bước ingest</b> — không để việc classify trôi xuống tầng sau.</span></label><button type="button" class="detail-btn" data-detail="de-1-2">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-3"><div class="item-body"><label for="de-1-3"><span class="item-text">Task kiểm tra chất lượng cơ bản sau khi load: null-rate bất thường, row count so với kỳ trước, freshness so với SLA nguồn.</span></label><button type="button" class="detail-btn" data-detail="de-1-3">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-4"><div class="item-body"><label for="de-1-4"><span class="item-text">Bản ghi lỗi/sai schema đưa vào <b>quarantine table</b> riêng — không silently drop, không để lẫn vào bảng chính.</span></label><button type="button" class="detail-btn" data-detail="de-1-4">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-5"><div class="item-body"><label for="de-1-5"><span class="item-text">Mọi task ingest log đủ: nguồn, thời điểm chạy, số dòng, version schema — phục vụ lineage &amp; audit về sau.</span></label><button type="button" class="detail-btn" data-detail="de-1-5">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-6"><div class="item-body"><label for="de-1-6"><span class="item-text">Đặt tên dataset/table/task đúng naming convention đã thống nhất trong Data Catalog — không tự đặt tên tuỳ hứng.</span></label><button type="button" class="detail-btn" data-detail="de-1-6">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-7"><div class="item-body"><label for="de-1-7"><span class="item-text">Raw layer giới hạn quyền đọc/ghi — chỉ DE và service account; <b>DA/BI không được query thẳng raw</b>.</span></label><button type="button" class="detail-btn" data-detail="de-1-7">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-1-8"><div class="item-body"><label for="de-1-8"><span class="item-text">Retention/archival policy khai báo ngay khi tạo dataset mới — không để "tính sau".</span></label><button type="button" class="detail-btn" data-detail="de-1-8">Xem hướng dẫn chi tiết →</button></div></li>
         </ul>
-        <div class="gate"><span class="tag">Gate</span><span>Toàn bộ mục trên PASS + schema đã đăng ký vào Data Catalog,
-            mới cho phép dbt đọc dữ liệu.</span></div>
+        <div class="gate"><span class="tag">Gate</span><span>Toàn bộ mục trên PASS + schema đã đăng ký vào Data Catalog, mới cho phép dbt đọc dữ liệu.</span></div>
       </div>
 
       <div class="stage" data-track="de">
@@ -572,33 +702,17 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-2-1"><label for="de-2-1"><span class="item-text">Mọi model có test
-                <code>not_null</code> + <code>unique</code> trên khoá chính, <code>relationships</code> cho khoá ngoại
-                quan trọng.</span></label></li>
-          <li><input type="checkbox" id="de-2-2"><label for="de-2-2"><span class="item-text">Model tầng <b>staging</b>
-                chỉ rename/cast/chuẩn hoá kiểu — business logic tách riêng ở intermediate/marts.</span></label></li>
-          <li><input type="checkbox" id="de-2-3"><label for="de-2-3"><span class="item-text">Mọi model có description
-                trong <code>.yml</code>; cột nhạy cảm gắn <code>meta: pii: true</code> để tự lộ ra khi generate
-                docs/catalog.</span></label></li>
-          <li><input type="checkbox" id="de-2-4"><label for="de-2-4"><span
-                class="item-text"><code>dbt source freshness</code> cấu hình cho source quan trọng, cảnh báo khi source
-                trễ hơn SLA.</span></label></li>
-          <li><input type="checkbox" id="de-2-5"><label for="de-2-5"><span class="item-text">Model đã "certified" áp
-                <code>dbt contracts</code>/enforce schema — tránh đổi cột ngầm làm vỡ báo cáo phía sau.</span></label>
-          </li>
-          <li><input type="checkbox" id="de-2-6"><label for="de-2-6"><span class="item-text">Che/pseudonymize dữ liệu
-                nhạy cảm ngay trong transform — không để PII sống nguyên tới tầng semantic.</span></label></li>
-          <li><input type="checkbox" id="de-2-7"><label for="de-2-7"><span class="item-text">Mọi model có
-                <code>meta: owner</code> — biết ai chịu trách nhiệm khi model lỗi hoặc cần đổi.</span></label></li>
-          <li><input type="checkbox" id="de-2-8"><label for="de-2-8"><span class="item-text">CI chạy
-                <code>dbt build</code> (kèm test) trên pull request — không merge code transform chưa qua
-                test.</span></label></li>
-          <li><input type="checkbox" id="de-2-9"><label for="de-2-9"><span class="item-text">Naming convention rõ theo
-                lớp: <code>stg_</code>, <code>int_</code>, <code>fct_</code>/<code>dim_</code> — tránh tên tuỳ ý gây khó
-                truy vết.</span></label></li>
+          <li><input type="checkbox" id="de-2-1"><div class="item-body"><label for="de-2-1"><span class="item-text">Mọi model có test <code>not_null</code> + <code>unique</code> trên khoá chính, <code>relationships</code> cho khoá ngoại quan trọng.</span></label><button type="button" class="detail-btn" data-detail="de-2-1">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-2"><div class="item-body"><label for="de-2-2"><span class="item-text">Model tầng <b>staging</b> chỉ rename/cast/chuẩn hoá kiểu — business logic tách riêng ở intermediate/marts.</span></label><button type="button" class="detail-btn" data-detail="de-2-2">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-3"><div class="item-body"><label for="de-2-3"><span class="item-text">Mọi model có description trong <code>.yml</code>; cột nhạy cảm gắn <code>meta: pii: true</code> để tự lộ ra khi generate docs/catalog.</span></label><button type="button" class="detail-btn" data-detail="de-2-3">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-4"><div class="item-body"><label for="de-2-4"><span class="item-text"><code>dbt source freshness</code> cấu hình cho source quan trọng, cảnh báo khi source trễ hơn SLA.</span></label><button type="button" class="detail-btn" data-detail="de-2-4">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-5"><div class="item-body"><label for="de-2-5"><span class="item-text">Model đã "certified" áp <code>dbt contracts</code>/enforce schema — tránh đổi cột ngầm làm vỡ báo cáo phía sau.</span></label><button type="button" class="detail-btn" data-detail="de-2-5">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-6"><div class="item-body"><label for="de-2-6"><span class="item-text">Che/pseudonymize dữ liệu nhạy cảm ngay trong transform — không để PII sống nguyên tới tầng semantic.</span></label><button type="button" class="detail-btn" data-detail="de-2-6">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-7"><div class="item-body"><label for="de-2-7"><span class="item-text">Mọi model có <code>meta: owner</code> — biết ai chịu trách nhiệm khi model lỗi hoặc cần đổi.</span></label><button type="button" class="detail-btn" data-detail="de-2-7">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-8"><div class="item-body"><label for="de-2-8"><span class="item-text">CI chạy <code>dbt build</code> (kèm test) trên pull request — không merge code transform chưa qua test.</span></label><button type="button" class="detail-btn" data-detail="de-2-8">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-2-9"><div class="item-body"><label for="de-2-9"><span class="item-text">Naming convention rõ theo lớp: <code>stg_</code>, <code>int_</code>, <code>fct_</code>/<code>dim_</code> — tránh tên tuỳ ý gây khó truy vết.</span></label><button type="button" class="detail-btn" data-detail="de-2-9">Xem hướng dẫn chi tiết →</button></div></li>
         </ul>
-        <div class="gate"><span class="tag">Gate</span><span>Chỉ model đã pass test + có description + có owner mới được
-            promote lên schema "marts" cho tầng semantic đọc.</span></div>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ model đã pass test + có description + có owner mới được promote lên schema "marts" cho tầng semantic đọc.</span></div>
       </div>
 
       <div class="stage" data-track="de">
@@ -613,23 +727,13 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-3-1"><label for="de-3-1"><span class="item-text">Chỉ số nghiệp vụ cốt lõi
-                (doanh thu, active user…) định nghĩa <b>một lần duy nhất</b> trong semantic layer — không định nghĩa lại
-                rải rác từng model/báo cáo.</span></label></li>
-          <li><input type="checkbox" id="de-3-2"><label for="de-3-2"><span class="item-text">Định nghĩa chỉ số khớp với
-                Business Glossary do Data Governance Council duy trì — không tự sáng tác định nghĩa
-                riêng.</span></label></li>
-          <li><input type="checkbox" id="de-3-3"><label for="de-3-3"><span class="item-text">Danh sách model/exposure lộ
-                ra ngoài được review định kỳ — không ai dùng quá một khoảng thời gian quy định thì
-                deprecate.</span></label></li>
-          <li><input type="checkbox" id="de-3-4"><label for="de-3-4"><span class="item-text">Mỗi metric/exposure ghi rõ
-                model gốc + tần suất refresh — DA dùng được ngay, không cần hỏi lại DE.</span></label></li>
-          <li><input type="checkbox" id="de-3-5"><label for="de-3-5"><span class="item-text">Chỉ "certified" marts được
-                cấp quyền cho BI kết nối trực tiếp — dataset thử nghiệm không lộ ra ngoài môi trường dev.</span></label>
-          </li>
+          <li><input type="checkbox" id="de-3-1"><div class="item-body"><label for="de-3-1"><span class="item-text">Chỉ số nghiệp vụ cốt lõi (doanh thu, active user…) định nghĩa <b>một lần duy nhất</b> trong semantic layer — không định nghĩa lại rải rác từng model/báo cáo.</span></label><button type="button" class="detail-btn" data-detail="de-3-1">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-3-2"><div class="item-body"><label for="de-3-2"><span class="item-text">Định nghĩa chỉ số khớp với Business Glossary do Data Governance Council duy trì — không tự sáng tác định nghĩa riêng.</span></label><button type="button" class="detail-btn" data-detail="de-3-2">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-3-3"><div class="item-body"><label for="de-3-3"><span class="item-text">Danh sách model/exposure lộ ra ngoài được review định kỳ — không ai dùng quá một khoảng thời gian quy định thì deprecate.</span></label><button type="button" class="detail-btn" data-detail="de-3-3">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-3-4"><div class="item-body"><label for="de-3-4"><span class="item-text">Mỗi metric/exposure ghi rõ model gốc + tần suất refresh — DA dùng được ngay, không cần hỏi lại DE.</span></label><button type="button" class="detail-btn" data-detail="de-3-4">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="de-3-5"><div class="item-body"><label for="de-3-5"><span class="item-text">Chỉ "certified" marts được cấp quyền cho BI kết nối trực tiếp — dataset thử nghiệm không lộ ra ngoài môi trường dev.</span></label><button type="button" class="detail-btn" data-detail="de-3-5">Xem hướng dẫn chi tiết →</button></div></li>
         </ul>
-        <div class="gate"><span class="tag">Gate</span><span>Metric/exposure mới phải qua Data Steward duyệt trước khi
-            thêm vào semantic layer chính thức.</span></div>
+        <div class="gate"><span class="tag">Gate</span><span>Metric/exposure mới phải qua Data Steward duyệt trước khi thêm vào semantic layer chính thức.</span></div>
       </div>
     </div>
 
@@ -652,28 +756,15 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="da-1-1"><label for="da-1-1"><span class="item-text">Ghi lại yêu cầu bằng văn
-                bản: <b>câu hỏi nghiệp vụ</b> cần trả lời, không chỉ "làm dashboard X" — xác định rõ quyết định mà báo
-                cáo phục vụ.</span></label></li>
-          <li><input type="checkbox" id="da-1-2"><label for="da-1-2"><span class="item-text">Đối chiếu định nghĩa chỉ số
-                được yêu cầu với Business Glossary — nếu business dùng khái niệm khác, escalate lên Data Steward để
-                thống nhất trước khi build, không tự quyết.</span></label></li>
-          <li><input type="checkbox" id="da-1-3"><label for="da-1-3"><span class="item-text">Kiểm tra đã có báo
-                cáo/metric tương tự chưa — tránh xây trùng, tránh nhiều phiên bản "sự thật" khác nhau.</span></label>
-          </li>
-          <li><input type="checkbox" id="da-1-4"><label for="da-1-4"><span class="item-text">Xác nhận nguồn dữ liệu nằm
-                trong danh sách marts đã "certified"; nếu phải dùng dữ liệu chưa qua semantic layer, xin duyệt riêng và
-                ghi rõ rủi ro.</span></label></li>
-          <li><input type="checkbox" id="da-1-5"><label for="da-1-5"><span class="item-text">Phân loại độ nhạy cảm của
-                dữ liệu sẽ hiển thị (PII, tài chính, lương…) và xác nhận người yêu cầu có quyền xem — không mặc định "ai
-                hỏi cũng cho".</span></label></li>
-          <li><input type="checkbox" id="da-1-6"><label for="da-1-6"><span class="item-text">Thống nhất SLA: tần suất
-                cập nhật dữ liệu, deadline bàn giao, người ký duyệt (sign-off) khi hoàn thành.</span></label></li>
-          <li><input type="checkbox" id="da-1-7"><label for="da-1-7"><span class="item-text">Xác định đối tượng xem báo
-                cáo cuối cùng để quyết định có cần Row-Level Security hay không.</span></label></li>
+          <li><input type="checkbox" id="da-1-1"><div class="item-body"><label for="da-1-1"><span class="item-text">Ghi lại yêu cầu bằng văn bản: <b>câu hỏi nghiệp vụ</b> cần trả lời, không chỉ "làm dashboard X" — xác định rõ quyết định mà báo cáo phục vụ.</span></label><button type="button" class="detail-btn" data-detail="da-1-1">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-2"><div class="item-body"><label for="da-1-2"><span class="item-text">Đối chiếu định nghĩa chỉ số được yêu cầu với Business Glossary — nếu business dùng khái niệm khác, escalate lên Data Steward để thống nhất trước khi build, không tự quyết.</span></label><button type="button" class="detail-btn" data-detail="da-1-2">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-3"><div class="item-body"><label for="da-1-3"><span class="item-text">Kiểm tra đã có báo cáo/metric tương tự chưa — tránh xây trùng, tránh nhiều phiên bản "sự thật" khác nhau.</span></label><button type="button" class="detail-btn" data-detail="da-1-3">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-4"><div class="item-body"><label for="da-1-4"><span class="item-text">Xác nhận nguồn dữ liệu nằm trong danh sách marts đã "certified"; nếu phải dùng dữ liệu chưa qua semantic layer, xin duyệt riêng và ghi rõ rủi ro.</span></label><button type="button" class="detail-btn" data-detail="da-1-4">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-5"><div class="item-body"><label for="da-1-5"><span class="item-text">Phân loại độ nhạy cảm của dữ liệu sẽ hiển thị (PII, tài chính, lương…) và xác nhận người yêu cầu có quyền xem — không mặc định "ai hỏi cũng cho".</span></label><button type="button" class="detail-btn" data-detail="da-1-5">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-6"><div class="item-body"><label for="da-1-6"><span class="item-text">Thống nhất SLA: tần suất cập nhật dữ liệu, deadline bàn giao, người ký duyệt (sign-off) khi hoàn thành.</span></label><button type="button" class="detail-btn" data-detail="da-1-6">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-1-7"><div class="item-body"><label for="da-1-7"><span class="item-text">Xác định đối tượng xem báo cáo cuối cùng để quyết định có cần Row-Level Security hay không.</span></label><button type="button" class="detail-btn" data-detail="da-1-7">Xem hướng dẫn chi tiết →</button></div></li>
         </ul>
-        <div class="gate"><span class="tag">Gate</span><span>Chỉ đưa vào backlog xây dựng khi đã có: định nghĩa chỉ số
-            rõ ràng + nguồn dữ liệu xác nhận + người sign-off.</span></div>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ đưa vào backlog xây dựng khi đã có: định nghĩa chỉ số rõ ràng + nguồn dữ liệu xác nhận + người sign-off.</span></div>
       </div>
 
       <div class="stage" data-track="da">
@@ -688,35 +779,17 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="da-2-1"><label for="da-2-1"><span class="item-text">Model theo
-                <b>star-schema</b> (fact/dimension rõ ràng) — tránh kéo thẳng bảng phẳng nhiều cột từ nguồn vào Power
-                BI.</span></label></li>
-          <li><input type="checkbox" id="da-2-2"><label for="da-2-2"><span class="item-text">Business logic dùng chung
-                nên đã nằm sẵn ở tầng semantic (dbt); DAX chỉ làm phép tính hiển thị — tránh viết lại business logic lần
-                hai.</span></label></li>
-          <li><input type="checkbox" id="da-2-3"><label for="da-2-3"><span class="item-text">Một dataset (semantic
-                model) dùng chung cho nhiều report thay vì mỗi report tự import/DirectQuery riêng — tránh mỗi báo cáo ra
-                một con số khác nhau cho cùng chỉ số.</span></label></li>
-          <li><input type="checkbox" id="da-2-4"><label for="da-2-4"><span class="item-text">Đặt tên bảng/measure khớp
-                thuật ngữ trong Business Glossary — người xem không phải đoán "Active Users" ở đây có giống báo cáo khác
-                không.</span></label></li>
-          <li><input type="checkbox" id="da-2-5"><label for="da-2-5"><span class="item-text">Bật <b>Row-Level
-                  Security</b> nếu dữ liệu phân quyền theo phòng ban/khu vực; test RLS với tài khoản thật trước khi
-                publish.</span></label></li>
-          <li><input type="checkbox" id="da-2-6"><label for="da-2-6"><span class="item-text">Gắn sensitivity label theo
-                chính sách bảo mật của tổ chức trước khi publish lên workspace production.</span></label></li>
-          <li><input type="checkbox" id="da-2-7"><label for="da-2-7"><span class="item-text">Certify/Promote dataset
-                trong Power BI Service sau khi Data Steward review — ưu tiên tin tưởng hơn dataset nháp.</span></label>
-          </li>
-          <li><input type="checkbox" id="da-2-8"><label for="da-2-8"><span class="item-text">Version control report định
-                kỳ (hoặc dùng deployment pipeline dev→test→prod) — không sửa thẳng trên production
-                workspace.</span></label></li>
-          <li><input type="checkbox" id="da-2-9"><label for="da-2-9"><span class="item-text">Review định kỳ danh sách
-                report đang publish — report không ai xem trong thời gian dài thì nghỉ, tránh workspace phình to không
-                kiểm soát.</span></label></li>
+          <li><input type="checkbox" id="da-2-1"><div class="item-body"><label for="da-2-1"><span class="item-text">Model theo <b>star-schema</b> (fact/dimension rõ ràng) — tránh kéo thẳng bảng phẳng nhiều cột từ nguồn vào Power BI.</span></label><button type="button" class="detail-btn" data-detail="da-2-1">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-2"><div class="item-body"><label for="da-2-2"><span class="item-text">Business logic dùng chung nên đã nằm sẵn ở tầng semantic (dbt); DAX chỉ làm phép tính hiển thị — tránh viết lại business logic lần hai.</span></label><button type="button" class="detail-btn" data-detail="da-2-2">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-3"><div class="item-body"><label for="da-2-3"><span class="item-text">Một dataset (semantic model) dùng chung cho nhiều report thay vì mỗi report tự import/DirectQuery riêng — tránh mỗi báo cáo ra một con số khác nhau cho cùng chỉ số.</span></label><button type="button" class="detail-btn" data-detail="da-2-3">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-4"><div class="item-body"><label for="da-2-4"><span class="item-text">Đặt tên bảng/measure khớp thuật ngữ trong Business Glossary — người xem không phải đoán "Active Users" ở đây có giống báo cáo khác không.</span></label><button type="button" class="detail-btn" data-detail="da-2-4">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-5"><div class="item-body"><label for="da-2-5"><span class="item-text">Bật <b>Row-Level Security</b> nếu dữ liệu phân quyền theo phòng ban/khu vực; test RLS với tài khoản thật trước khi publish.</span></label><button type="button" class="detail-btn" data-detail="da-2-5">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-6"><div class="item-body"><label for="da-2-6"><span class="item-text">Gắn sensitivity label theo chính sách bảo mật của tổ chức trước khi publish lên workspace production.</span></label><button type="button" class="detail-btn" data-detail="da-2-6">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-7"><div class="item-body"><label for="da-2-7"><span class="item-text">Certify/Promote dataset trong Power BI Service sau khi Data Steward review — ưu tiên tin tưởng hơn dataset nháp.</span></label><button type="button" class="detail-btn" data-detail="da-2-7">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-8"><div class="item-body"><label for="da-2-8"><span class="item-text">Version control report định kỳ (hoặc dùng deployment pipeline dev→test→prod) — không sửa thẳng trên production workspace.</span></label><button type="button" class="detail-btn" data-detail="da-2-8">Xem hướng dẫn chi tiết →</button></div></li>
+          <li><input type="checkbox" id="da-2-9"><div class="item-body"><label for="da-2-9"><span class="item-text">Review định kỳ danh sách report đang publish — report không ai xem trong thời gian dài thì nghỉ, tránh workspace phình to không kiểm soát.</span></label><button type="button" class="detail-btn" data-detail="da-2-9">Xem hướng dẫn chi tiết →</button></div></li>
         </ul>
-        <div class="gate"><span class="tag">Gate</span><span>Chỉ publish lên Production khi: RLS đã test + sensitivity
-            label đã gắn + Data Steward đã certify dataset.</span></div>
+        <div class="gate"><span class="tag">Gate</span><span>Chỉ publish lên Production khi: RLS đã test + sensitivity label đã gắn + Data Steward đã certify dataset.</span></div>
       </div>
     </div>
 
@@ -730,6 +803,24 @@
   </footer>
 
 </div>
+
+<dialog id="detail-modal" class="detail-modal">
+  <div class="detail-modal-inner">
+    <div class="detail-modal-head">
+      <div>
+        <div class="detail-modal-eyebrow" id="detail-eyebrow"></div>
+        <h3 id="detail-title"></h3>
+      </div>
+      <button type="button" class="detail-modal-close" id="detail-close" aria-label="Đóng">&times;</button>
+    </div>
+    <p class="detail-modal-plain" id="detail-plain"></p>
+    <div>
+      <p class="detail-modal-section-label">Làm cụ thể thế nào</p>
+      <ul class="detail-modal-steps" id="detail-steps"></ul>
+    </div>
+    <p class="detail-modal-collab" id="detail-collab"></p>
+  </div>
+</dialog>
 
 <script>
   (function () {
@@ -785,5 +876,443 @@
     });
 
     updateAll();
+
+    /* ---------- Detail modal: hướng dẫn cụ thể cho từng mục ---------- */
+    var DETAILS = {
+      'de-1-1': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Kiểm tra schema trước khi load dữ liệu',
+        plain: 'Trước khi đổ dữ liệu vào kho, phải có một bước tự động kiểm tra xem cấu trúc dữ liệu (tên cột, kiểu dữ liệu) có giống như dự kiến không. Nếu khác thì dừng lại ngay, không đổ tiếp — tránh việc dữ liệu sai âm thầm chảy xuống các bước sau.',
+        steps: [
+          'Trong Airflow, tạo một task riêng đứng ngay trước task load dữ liệu (dùng PythonOperator, hoặc công cụ như Great Expectations/Soda).',
+          'Task này đọc schema của dữ liệu mới về (tên cột, kiểu dữ liệu), so với một bản mô tả schema đã lưu sẵn từ trước.',
+          'Nếu khớp → task load mới được chạy tiếp. Nếu không khớp → Airflow đánh dấu task này FAILED, dừng cả DAG, gửi cảnh báo (Slack/Email) cho DE.'
+        ],
+        collab: 'DE viết và bảo trì bước kiểm tra này. Khi hệ thống nguồn (vd bên Product) đổi cấu trúc dữ liệu, họ cần báo trước cho DE cập nhật lại schema kỳ vọng, tránh bị chặn giữa chừng không rõ lý do.'
+      },
+      'de-1-2': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Đánh dấu dữ liệu nhạy cảm ngay khi tiếp nhận',
+        plain: 'Ngay khi dữ liệu mới về, phải đánh dấu luôn cột nào là thông tin nhạy cảm (số điện thoại, số dư tài khoản, lương...) — không để đến lúc ai đó dùng rồi mới phát hiện ra.',
+        steps: [
+          'Lập danh sách các loại dữ liệu nhạy cảm cần gắn nhãn (PII: tên/SĐT/CMND; tài chính: số dư/lương).',
+          'Dùng công cụ quét tự động (vd Google Cloud DLP) hoặc đơn giản là một file cấu hình liệt kê tên cột nhạy cảm, chạy ngay trong task ingest.',
+          'Lưu nhãn phân loại này vào Data Catalog, gắn kèm theo từng cột — để mọi công cụ sau này (dbt, BI) nhìn vào catalog là biết ngay cột nào nhạy cảm.'
+        ],
+        collab: 'DE gắn nhãn kỹ thuật; Data Steward/An ninh thông tin duyệt danh sách "loại nào tính là nhạy cảm"; DA/BI dựa vào nhãn này để biết cột nào cần xin quyền riêng trước khi dùng.'
+      },
+      'de-1-3': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Kiểm tra chất lượng cơ bản ngay sau khi load',
+        plain: 'Sau khi dữ liệu đã load xong, kiểm tra nhanh vài con số cơ bản: có bị thiếu dữ liệu bất thường không, số dòng có hụt so với mọi khi không, dữ liệu có bị trễ so với giờ hẹn không.',
+        steps: [
+          'Thêm một task Airflow chạy ngay sau task load, dùng dbt test / Great Expectations, hoặc một câu SQL đơn giản đếm số dòng NULL.',
+          'So sánh số dòng hôm nay với trung bình 7 ngày gần nhất — đặt ngưỡng cảnh báo (vd null-rate tăng vượt 20%).',
+          'Nếu có SLA về giờ dữ liệu phải sẵn sàng, thêm một bước so sánh thời điểm dữ liệu mới nhất với "giờ hẹn" đã cam kết.'
+        ],
+        collab: 'DE thiết lập; khi có cảnh báo, DE là người xử lý đầu tiên, có thể cần phối hợp với đội vận hành hệ thống nguồn nếu nguyên nhân do bên đó trễ.'
+      },
+      'de-1-4': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Tách riêng dữ liệu lỗi vào bảng cách ly (quarantine)',
+        plain: 'Những dòng dữ liệu bị lỗi (sai định dạng, thiếu trường bắt buộc...) không được xoá âm thầm, cũng không được trộn lẫn vào bảng dữ liệu sạch — phải để riêng ra một chỗ để sau này xem lại.',
+        steps: [
+          'Tạo một bảng riêng, ví dụ bronze.orders_quarantine, cùng cấu trúc với bảng chính nhưng có thêm cột error_reason.',
+          'Trong task ingest, dùng logic rẽ nhánh: dòng nào pass kiểm tra → ghi vào bảng chính; dòng nào fail → ghi vào bảng quarantine kèm lý do lỗi.',
+          'Định kỳ (vd hàng tuần) DE xem lại bảng quarantine để tìm nguyên nhân gốc và sửa tận nguồn.'
+        ],
+        collab: 'DE vận hành và theo dõi; nếu một loại lỗi lặp lại nhiều lần, DE báo lại cho đội phát triển hệ thống nguồn để sửa tận gốc, không chỉ vá ở tầng ingest.'
+      },
+      'de-1-5': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Ghi log đầy đủ mỗi lần chạy ingest',
+        plain: 'Mỗi lần chạy ingest, phải ghi lại nhật ký: lấy dữ liệu từ đâu, chạy lúc nào, lấy được bao nhiêu dòng, dùng phiên bản schema nào — để sau này cần truy vết lại thì có đủ thông tin, không phải đoán.',
+        steps: [
+          'Trong mỗi Airflow task, thêm vài dòng log in ra: tên nguồn, thời điểm chạy, số dòng đã ghi, version schema đang dùng.',
+          'Airflow tự lưu log này theo từng lần chạy task — xem lại được qua Airflow UI bất cứ lúc nào.',
+          'Nếu cần tra cứu lâu dài, có cấu trúc hơn, ghi thêm các thông tin này vào một bảng "audit log" riêng, không chỉ nằm trong file log.'
+        ],
+        collab: 'DE thiết lập; khi có sự cố dữ liệu, cả DE lẫn DA đều có thể tự tra log này để biết dữ liệu "sinh ra" từ đâu, không cần hỏi lại nhau mất thời gian.'
+      },
+      'de-1-6': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Đặt tên đúng quy ước chung',
+        plain: 'Đặt tên bảng/task theo đúng quy tắc chung cả team đã thống nhất (ví dụ luôn có tiền tố theo nguồn, theo tầng dữ liệu) — không tự nghĩ tên tuỳ ý, để người khác nhìn tên là đoán được ngay nội dung bên trong.',
+        steps: [
+          'Tra cứu quy tắc đặt tên đã có trong Data Catalog/wiki nội bộ trước khi tạo bảng hoặc task mới.',
+          'Nếu chưa có quy tắc rõ ràng cho trường hợp đang gặp, đề xuất với Data Steward để thống nhất một lần, ghi lại thành tài liệu chung.',
+          'Đăng ký tên mới vào Data Catalog ngay khi tạo — không để "tạo bảng trước, đặt tên vào catalog sau".'
+        ],
+        collab: 'Data Steward giữ vai trò duyệt/thống nhất quy tắc đặt tên; DE là người áp dụng mỗi khi tạo mới.'
+      },
+      'de-1-7': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Khoá quyền truy cập vùng dữ liệu thô (raw)',
+        plain: 'Vùng dữ liệu thô (raw/bronze) chỉ đội kỹ thuật (DE) và hệ thống tự động mới được đọc/ghi trực tiếp — dân phân tích/BI không được truy vấn thẳng vào đây vì dữ liệu còn thô, chưa làm sạch, dễ hiểu sai nếu dùng nhầm.',
+        steps: [
+          'Thiết lập quyền theo IAM/Role (GCP: IAM role; AWS: IAM policy; Databricks/Snowflake: Role-based access) — chỉ cấp quyền đọc/ghi vùng raw cho service account của pipeline và nhóm DE.',
+          'Với các vùng dữ liệu đã qua xử lý (Silver/Gold), cấp quyền đọc riêng cho DA/BI ở đó.',
+          'Định kỳ rà soát lại danh sách ai đang có quyền gì (access review), gỡ quyền thừa.'
+        ],
+        collab: 'DE cùng Data Steward/An ninh thông tin thiết lập và rà soát quyền; DA/BI chỉ cần biết mình không có quyền vào raw và phải dùng tầng Silver/Gold thay thế.'
+      },
+      'de-1-8': {
+        eyebrow: 'Data Engineer · Giai đoạn 1 · Ingest',
+        title: 'Định sẵn thời gian giữ dữ liệu (retention)',
+        plain: 'Ngay khi tạo một bảng dữ liệu mới, phải xác định luôn: dữ liệu này giữ trong bao lâu, sau đó thì chuyển sang lưu trữ lạnh (archive) hay xoá hẳn — không để đến lúc dữ liệu phình to mới tính chuyện dọn dẹp.',
+        steps: [
+          'Khi tạo bảng/dataset mới, ghi kèm: thời gian giữ (vd 2 năm), sau đó archive sang lưu trữ rẻ hơn hay xoá hẳn.',
+          'Cấu hình chính sách này bằng tính năng có sẵn của hạ tầng lưu trữ (vd Lifecycle Policy trên GCS/S3) để hệ thống tự động dọn, không cần làm tay từng lần.',
+          'Ghi rõ thông tin retention này vào Data Catalog để mọi người trong team đều biết.'
+        ],
+        collab: 'DE đề xuất và cấu hình kỹ thuật; cần Data Steward hoặc đội pháp lý xác nhận thời gian giữ có đúng quy định (vd luật bảo vệ dữ liệu) hay không.'
+      },
+      'de-2-1': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Khai báo test not_null / unique / relationships',
+        plain: 'Với mỗi bảng dữ liệu dbt tạo ra, phải khai báo sẵn các phép kiểm tra tự động: cột khoá chính không được để trống, không được trùng, và khoá liên kết sang bảng khác phải thực sự tồn tại.',
+        steps: [
+          'Trong file .yml mô tả model, khai báo dưới mục tests: not_null và unique cho cột khoá chính (vd customer_id).',
+          'Khai báo relationships cho các cột khoá ngoại (vd order.customer_id phải tồn tại trong bảng customer).',
+          'Chạy dbt test — dbt sẽ tự kiểm tra toàn bộ, nếu có dòng vi phạm sẽ báo lỗi rõ ràng kèm số lượng dòng sai.'
+        ],
+        collab: 'DE viết test khi viết model; nếu test fail liên tục do dữ liệu nguồn có vấn đề, DE cần quay lại xử lý ở Giai đoạn 1 (ingest).'
+      },
+      'de-2-2': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Tách business logic ra khỏi tầng staging',
+        plain: 'Ở lớp đầu tiên sau khi dữ liệu vào dbt (gọi là staging), chỉ được phép đổi tên cột/đổi kiểu dữ liệu cho gọn gàng — chưa được tính toán hay áp quy tắc nghiệp vụ gì cả. Quy tắc nghiệp vụ để dành cho lớp sau.',
+        steps: [
+          'Đặt quy ước: model trong thư mục models/staging/ chỉ chứa các phép SELECT ... AS, CAST(... AS ...), không có CASE WHEN mang tính nghiệp vụ.',
+          'Business logic (vd tính "khách hàng active", gộp nhóm...) chuyển sang model ở models/intermediate/ hoặc models/marts/.',
+          'Khi review Pull Request, từ chối merge nếu thấy logic nghiệp vụ nằm nhầm trong staging.'
+        ],
+        collab: 'DE tự tuân thủ khi viết code; reviewer (một DE khác) kiểm tra lại khi duyệt PR.'
+      },
+      'de-2-3': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Viết mô tả + gắn nhãn PII trong file .yml',
+        plain: 'Mỗi bảng/cột dữ liệu phải có mô tả bằng lời (cột này nghĩa là gì), và cột nào chứa thông tin nhạy cảm phải được đánh dấu riêng — để công cụ tự động sinh tài liệu/catalog thì thông tin này tự hiện ra, không cần hỏi lại người viết.',
+        steps: [
+          'Trong file .yml đi kèm model, điền trường description cho model và cho từng cột.',
+          'Với cột nhạy cảm, thêm meta: {pii: true} (hoặc field tương tự) ngay dưới cột đó.',
+          'Chạy dbt docs generate — tài liệu HTML sinh ra sẽ tự hiển thị mô tả và nhãn PII này cho người xem sau.'
+        ],
+        collab: 'DE viết mô tả khi tạo model; DA/người dùng catalog dựa vào mô tả này để hiểu dữ liệu mà không cần hỏi lại DE mỗi lần.'
+      },
+      'de-2-4': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Bật cảnh báo khi dữ liệu nguồn quá cũ (source freshness)',
+        plain: 'Cấu hình để dbt tự kiểm tra xem dữ liệu nguồn có bị "ngủ quên" — lâu rồi không cập nhật — hay không, và tự động cảnh báo nếu trễ so với cam kết.',
+        steps: [
+          'Trong file khai báo sources.yml, thêm mục freshness với ngưỡng cảnh báo (warn_after) và ngưỡng lỗi (error_after), dựa vào cột thời gian cập nhật (vd loaded_at).',
+          'Chạy lệnh dbt source freshness — thường đặt thành một task riêng trong Airflow, chạy định kỳ.',
+          'Tích hợp kết quả này với cảnh báo qua Slack/Email khi vượt ngưỡng, để không phải tự canh.'
+        ],
+        collab: 'DE cấu hình; khi có cảnh báo dữ liệu trễ, DE kiểm tra lại pipeline ingest ở Giai đoạn 1.'
+      },
+      'de-2-5': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Khoá cứng cấu trúc bảng đã "certified" (dbt contracts)',
+        plain: 'Với những bảng dữ liệu đã chính thức cho BI/báo cáo dùng, phải khoá cứng cấu trúc (tên cột, kiểu dữ liệu) lại — nếu ai đó sau này lỡ tay đổi mà không cập nhật đồng bộ, dbt sẽ báo lỗi ngay thay vì để báo cáo phía sau âm thầm sai số.',
+        steps: [
+          'Trong file .yml của model, khai báo config: {contract: {enforced: true}} và liệt kê rõ tên + kiểu dữ liệu từng cột.',
+          'Khi build lại, nếu ai đó đổi kiểu dữ liệu một cột (vd từ số sang chữ) mà quên cập nhật contract, dbt build sẽ báo lỗi ngay và không cho merge.'
+        ],
+        collab: 'DE áp dụng cho model đã "certified" (được DA tin dùng); DA có thể chủ động đề nghị DE bật contract cho model nào họ đang phụ thuộc nhiều.'
+      },
+      'de-2-6': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Che dữ liệu nhạy cảm trước khi lên tầng semantic',
+        plain: 'Trước khi dữ liệu nhạy cảm đi tới các bảng mà DA/BI được phép xem, phải được làm mờ đi (vd chỉ giữ vài ký tự cuối số điện thoại, hoặc mã hoá thành chuỗi không đọc được) — không để nguyên số điện thoại/CMND thật.',
+        steps: [
+          'Viết một hàm/macro dbt dùng chung (vd mask_phone(column)) để xử lý các cột nhạy cảm — có thể dùng hash (SHA-256) hoặc che một phần ký tự.',
+          'Áp dụng macro này ngay trong model transform khi ghi dữ liệu sang tầng Silver/Gold.',
+          'Dữ liệu gốc (chưa che) vẫn có thể giữ ở raw/bronze với quyền truy cập hạn chế (xem mục "Khoá quyền truy cập vùng dữ liệu thô"), chỉ tầng cao hơn mới bị che.'
+        ],
+        collab: 'DE viết và áp dụng macro che dữ liệu; Data Steward/An ninh thông tin xác nhận cách che có đủ an toàn theo quy định công ty.'
+      },
+      'de-2-7': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Ghi rõ người/đội chịu trách nhiệm (meta: owner)',
+        plain: 'Mỗi bảng dữ liệu dbt tạo ra phải ghi rõ ai (hoặc đội nào) chịu trách nhiệm — để khi có lỗi, biết ngay phải tìm ai thay vì hỏi vòng quanh cả team.',
+        steps: [
+          'Trong .yml, thêm meta: {owner: "ten-nguoi-hoac-team"} cho từng model.',
+          'Có thể tích hợp thêm để khi dbt build fail, cảnh báo tự động gửi thẳng tới đúng owner (qua Slack webhook) thay vì gửi chung chung cho cả team.'
+        ],
+        collab: 'Người/nhóm viết model tự ghi tên mình; khi đổi người phụ trách, phải nhớ cập nhật lại field này.'
+      },
+      'de-2-8': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Bắt buộc CI chạy test trước khi merge',
+        plain: 'Trước khi merge code transform mới vào nhánh chính, phải để máy tự động chạy thử toàn bộ test — không merge chỉ dựa vào việc "chắc là ổn".',
+        steps: [
+          'Cấu hình CI (vd GitHub Actions/GitLab CI) để mỗi khi có Pull Request, tự động chạy dbt build (dựng lại các model bị ảnh hưởng + chạy test) trên môi trường dev/staging.',
+          'Chỉ cho phép merge khi bước CI này báo kết quả pass (xanh) — chặn merge nếu CI đỏ.'
+        ],
+        collab: 'DE viết pipeline CI; mọi thành viên trong team dbt đều phải qua bước này trước khi merge, không có ngoại lệ "merge tay bỏ qua CI".'
+      },
+      'de-2-9': {
+        eyebrow: 'Data Engineer · Giai đoạn 2 · dbt',
+        title: 'Đặt tên model theo tiền tố tầng (stg_/int_/fct_/dim_)',
+        plain: 'Đặt tên file/model dbt theo đúng tiền tố quy ước để nhìn tên là biết ngay model thuộc tầng nào, không phải mở file ra mới hiểu.',
+        steps: [
+          'stg_ cho staging (làm sạch cơ bản), int_ cho intermediate (bước tính toán trung gian).',
+          'fct_ cho bảng sự kiện/giao dịch (fact), dim_ cho bảng mô tả (dimension) ở tầng marts.',
+          'Ghi rõ quy ước này vào README của dbt project để thành viên mới đọc theo, không cần hỏi truyền miệng.'
+        ],
+        collab: 'Cả team dbt cùng tuân thủ; reviewer từ chối PR nếu đặt tên sai quy ước.'
+      },
+      'de-3-1': {
+        eyebrow: 'Data Engineer · Giai đoạn 3 · Semantic layer',
+        title: 'Định nghĩa chỉ số cốt lõi một lần duy nhất',
+        plain: 'Những con số quan trọng hay dùng đi dùng lại (doanh thu, khách hàng active...) chỉ được định nghĩa công thức tính đúng một chỗ duy nhất — không phải mỗi báo cáo tự viết công thức riêng, dễ ra số khác nhau.',
+        steps: [
+          'Dùng dbt Semantic Layer (hoặc một file metrics.yml tổng hợp) để khai báo công thức một lần, vd active_user = COUNT(DISTINCT user_id) WHERE last_active_days <= 30.',
+          'Mọi model/report cần con số này phải gọi lại định nghĩa chung, không tự viết công thức riêng trong Power BI hay SQL rời rạc.'
+        ],
+        collab: 'DE định nghĩa dựa trên thống nhất với DA và Business Glossary; DA khi cần chỉ số mới phải đề xuất qua DE để thêm vào đây, không tự chế trong report của mình.'
+      },
+      'de-3-2': {
+        eyebrow: 'Data Engineer · Giai đoạn 3 · Semantic layer',
+        title: 'Đối chiếu công thức với Business Glossary',
+        plain: 'Công thức tính chỉ số phải khớp với định nghĩa mà cả công ty đã thống nhất (ghi trong Business Glossary) — không tự nghĩ ra định nghĩa khác dù nghe có vẻ hợp lý hơn.',
+        steps: [
+          'Trước khi viết công thức, tra định nghĩa trong Business Glossary (do Data Governance Council quản lý).',
+          'Nếu thấy định nghĩa glossary chưa rõ hoặc chưa đủ, đề xuất sửa ở glossary trước (qua Data Steward), rồi mới áp dụng — không tự ý làm khác đi.'
+        ],
+        collab: 'Data Steward/Data Governance Council giữ và duyệt glossary; DE tuân theo khi code hoá công thức thành số liệu thật.'
+      },
+      'de-3-3': {
+        eyebrow: 'Data Engineer · Giai đoạn 3 · Semantic layer',
+        title: 'Rà soát định kỳ, gỡ bỏ model không ai dùng',
+        plain: 'Định kỳ rà soát xem chỉ số/bảng nào không ai dùng nữa thì dọn đi — không để tầng semantic phình to mãi với nhiều thứ đã "chết" nhưng vẫn nằm đó.',
+        steps: [
+          'Dùng log truy vấn (query log) của kho dữ liệu/BI để xem exposure/model nào lâu không ai gọi tới (vd 3-6 tháng).',
+          'Lập danh sách, thông báo trước cho các bên liên quan trước khi gỡ (deprecate) — tránh gỡ nhầm cái đang được dùng ngầm mà mình không biết.'
+        ],
+        collab: 'DE rà soát mặt kỹ thuật; cần xác nhận lại với DA/business trước khi gỡ hẳn, không tự ý xoá.'
+      },
+      'de-3-4': {
+        eyebrow: 'Data Engineer · Giai đoạn 3 · Semantic layer',
+        title: 'Ghi rõ nguồn gốc + tần suất cập nhật cho mỗi chỉ số',
+        plain: 'Mỗi con số/exposure lộ ra cho DA dùng phải ghi kèm: nó tính từ bảng nào, và bao lâu thì được cập nhật một lần — để DA nhìn vào là biết luôn, không phải hỏi lại DE mỗi lần cần dùng.',
+        steps: [
+          'Trong tài liệu catalog/metrics, ghi rõ mỗi exposure: model gốc, và lịch chạy refresh (vd "cập nhật mỗi 6 tiếng").',
+          'Thông tin này nên hiện thẳng trong dbt docs hoặc trang catalog nội bộ, không chỉ nằm trong đầu người viết.'
+        ],
+        collab: 'DE ghi thông tin này khi publish; DA đọc trước khi dùng để biết mức độ "tươi" của dữ liệu, tránh hiểu nhầm là real-time.'
+      },
+      'de-3-5': {
+        eyebrow: 'Data Engineer · Giai đoạn 3 · Semantic layer',
+        title: 'Chỉ mở quyền BI cho marts đã "certified"',
+        plain: 'Chỉ những bảng đã được kiểm duyệt kỹ ("certified") mới cho phép Power BI kết nối trực tiếp — bảng đang thử nghiệm, chưa hoàn thiện thì không được lộ ra ngoài cho người khác lỡ dùng nhầm.',
+        steps: [
+          'Gắn nhãn "certified" (một tag trong catalog) cho model đã qua đủ bước test + review.',
+          'Cấu hình quyền kết nối BI chỉ trỏ vào schema/database chứa các model đã certified, không trỏ vào schema dev/sandbox.'
+        ],
+        collab: 'DE và Data Steward cùng quyết định model nào đủ điều kiện certified; DA chỉ được kết nối vào phần đã certified, không tự ý xin quyền vào vùng thử nghiệm.'
+      },
+      'da-1-1': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Ghi lại yêu cầu thành văn bản, không chỉ nghe qua miệng',
+        plain: 'Đừng nhận yêu cầu qua chat/miệng rồi làm luôn — phải viết lại thành văn bản: câu hỏi kinh doanh thực sự cần trả lời là gì, không chỉ chép lại tên dashboard được yêu cầu.',
+        steps: [
+          'Dùng một mẫu đơn giản: Ai hỏi? Câu hỏi kinh doanh cụ thể là gì? Quyết định nào sẽ dựa vào báo cáo này?',
+          'Lưu văn bản này ở nơi cả team truy cập được (Confluence/Notion/Jira ticket), không chỉ nằm trong tin nhắn chat dễ trôi mất.'
+        ],
+        collab: 'DA ghi lại và gửi cho người yêu cầu (business) xác nhận đúng ý trước khi bắt tay vào làm, tránh làm sai rồi phải sửa lại từ đầu.'
+      },
+      'da-1-2': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Đối chiếu với Business Glossary trước khi build',
+        plain: 'Nếu business gọi tên một khái niệm (vd "khách hàng active") nhưng cách hiểu của họ khác với định nghĩa đã có trong Glossary, phải báo lên người giữ Glossary (Data Steward) để thống nhất lại — không tự ý chọn một trong hai cách hiểu.',
+        steps: [
+          'Tra Business Glossary xem khái niệm business nhắc tới đã có định nghĩa chính thức chưa.',
+          'Nếu có nhưng khác ý business đang muốn, hoặc chưa có định nghĩa, gửi câu hỏi cho Data Steward/Data Governance Council để họ quyết định.',
+          'Đợi có quyết định chính thức rồi mới bắt đầu code hoá vào báo cáo.'
+        ],
+        collab: 'DA là người phát hiện và nêu vấn đề; Data Steward là người quyết định cuối cùng, không phải DA tự quyết.'
+      },
+      'da-1-3': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Kiểm tra xem đã có báo cáo tương tự chưa',
+        plain: 'Trước khi bắt đầu làm mới, tìm xem đã có ai làm báo cáo/chỉ số tương tự chưa — tránh mỗi người tự làm một bản, ra nhiều con số khác nhau cho cùng một câu hỏi.',
+        steps: [
+          'Tìm trong catalog báo cáo nội bộ (Power BI Service Workspace, hoặc danh sách report tổng hợp của team) theo từ khoá liên quan.',
+          'Hỏi trong nhóm chat của team DA/BI xem có ai từng làm việc tương tự chưa.'
+        ],
+        collab: 'DA tự tra cứu trước; nếu tìm thấy báo cáo cũ, nên liên hệ người làm trước để tận dụng lại thay vì làm từ đầu.'
+      },
+      'da-1-4': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Xác nhận nguồn dữ liệu đã "certified" chưa',
+        plain: 'Kiểm tra xem dữ liệu định dùng đã nằm trong danh sách "đã kiểm duyệt" (certified) chưa. Nếu chưa, phải xin phép riêng và ghi rõ là số liệu này còn rủi ro, chưa qua kiểm tra đầy đủ.',
+        steps: [
+          'Tra trong Data Catalog xem bảng/model định dùng có nhãn "certified" không.',
+          'Nếu không, liên hệ DE hỏi có thể đưa qua kiểm duyệt trước không, hoặc xin duyệt tạm thời từ Data Steward.',
+          'Nếu buộc phải dùng ngay, ghi chú rõ ràng trong báo cáo là "số liệu sơ bộ, chưa qua kiểm duyệt đầy đủ" để người xem biết mức độ tin cậy.'
+        ],
+        collab: 'DA kiểm tra và xin phép; DE/Data Steward là người xác nhận/cấp phép dùng tạm hay không.'
+      },
+      'da-1-5': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Xác nhận quyền xem trước khi hiển thị dữ liệu nhạy cảm',
+        plain: 'Trước khi cho ai xem báo cáo có dữ liệu nhạy cảm (lương, thông tin cá nhân...), phải kiểm tra người đó có được phép xem loại dữ liệu này không — không phải ai hỏi cũng đưa.',
+        steps: [
+          'Xem trong Data Catalog nhãn phân loại (PII/tài chính...) của các cột sẽ hiển thị trong báo cáo.',
+          'Đối chiếu với danh sách quyền truy cập đã quy định (vd chỉ quản lý cấp phòng trở lên mới xem được lương).',
+          'Nếu người yêu cầu không đủ quyền theo quy định, từ chối hoặc yêu cầu họ xin duyệt qua đúng quy trình (thường qua quản lý trực tiếp + Data Steward).'
+        ],
+        collab: 'DA kiểm tra khi nhận yêu cầu; Data Steward/An ninh thông tin là nơi xác nhận quyền cuối cùng nếu có tranh cãi.'
+      },
+      'da-1-6': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Thống nhất SLA trước khi bắt tay làm',
+        plain: 'Thống nhất rõ với người yêu cầu: dữ liệu cập nhật bao lâu một lần, khi nào giao xong, và ai là người xác nhận báo cáo đã đạt yêu cầu.',
+        steps: [
+          'Ghi rõ 3 thứ vào văn bản yêu cầu (xem mục "Ghi lại yêu cầu thành văn bản"): tần suất cập nhật dữ liệu, ngày giờ deadline giao, tên người sẽ ký duyệt khi hoàn thành.',
+          'Gửi lại cho người yêu cầu xác nhận trước khi bắt đầu làm.'
+        ],
+        collab: 'DA đề xuất các mốc này, người yêu cầu (business) xác nhận trước khi DA bắt đầu xây báo cáo.'
+      },
+      'da-1-7': {
+        eyebrow: 'Data Analyst · Giai đoạn 1 · Nhận đầu bài',
+        title: 'Xác định đối tượng xem để quyết định có cần phân quyền dữ liệu',
+        plain: 'Xác định trước report này ai sẽ xem — nếu nhiều phòng ban/khu vực cùng xem một báo cáo nhưng mỗi người chỉ nên thấy số liệu của mình, thì cần bật tính năng phân quyền theo dòng dữ liệu (Row-Level Security).',
+        steps: [
+          'Hỏi rõ: báo cáo này chỉ một người xem, cả phòng xem, hay toàn công ty xem?',
+          'Nếu nhiều nhóm cùng xem nhưng cần thấy dữ liệu khác nhau theo khu vực/phòng ban của mình → đánh dấu cần làm Row-Level Security ở bước sau.'
+        ],
+        collab: 'DA xác định nhu cầu cùng người yêu cầu; nếu cần RLS phức tạp, có thể cần DE hỗ trợ chuẩn bị sẵn dữ liệu phân quyền.'
+      },
+      'da-2-1': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Xây model theo kiểu star-schema',
+        plain: 'Xây model Power BI theo kiểu "ngôi sao": một bảng trung tâm chứa số liệu/giao dịch (fact), xung quanh là các bảng mô tả (dimension) như khách hàng, thời gian, sản phẩm — thay vì kéo một bảng phẳng có hàng trăm cột từ nguồn vào thẳng Power BI.',
+        steps: [
+          'Trong Power BI Desktop, vào tab "Model view", tổ chức bảng theo fact (ở giữa) và dimension (xung quanh), nối bằng quan hệ 1-nhiều.',
+          'Tránh import nguyên một bảng phẳng rộng — nếu dữ liệu nguồn là bảng phẳng, nên tách ra dimension/fact ngay từ tầng dbt (Silver/Gold) trước khi đưa vào Power BI.'
+        ],
+        collab: 'DA thiết kế model; nếu dữ liệu nguồn chưa tách sẵn, phối hợp với DE để tách ở tầng dbt trước khi đưa vào Power BI.'
+      },
+      'da-2-2': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Để business logic ở tầng dữ liệu, DAX chỉ hiển thị',
+        plain: 'Công thức tính các chỉ số quan trọng nên đã được tính sẵn ở tầng dữ liệu (dbt), Power BI chỉ nên dùng DAX để định dạng/tổng hợp hiển thị theo bộ lọc — không viết lại công thức nghiệp vụ từ đầu bằng DAX.',
+        steps: [
+          'Trước khi viết một measure DAX phức tạp, kiểm tra xem chỉ số đó đã có sẵn trong semantic layer (dbt metrics) chưa.',
+          'Nếu có, chỉ cần kéo thẳng cột đã tính sẵn vào, dùng DAX ở mức đơn giản (SUM, tính theo bộ lọc thời gian...).',
+          'Nếu thấy DAX của mình đang viết CASE WHEN/logic nghiệp vụ phức tạp giống hệt công thức kinh doanh, đó là dấu hiệu nên chuyển logic đó về tầng dbt thay vì để trong Power BI.'
+        ],
+        collab: 'DA trao đổi với DE nếu phát hiện logic nghiệp vụ chưa có sẵn ở tầng dữ liệu, để DE bổ sung vào semantic layer dùng chung.'
+      },
+      'da-2-3': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Dùng chung một dataset cho nhiều report',
+        plain: 'Nên tạo một bộ dữ liệu (dataset/semantic model) dùng chung, rồi nhiều báo cáo (report) cùng kết nối vào đó — không để mỗi report tự kéo dữ liệu riêng, dễ dẫn tới mỗi report ra một con số khác nhau cho cùng một chỉ số.',
+        steps: [
+          'Trong Power BI Service, publish một dataset dùng chung (Shared Dataset), bật "Enable this as a shared dataset".',
+          'Khi tạo report mới liên quan, chọn "Connect to a published dataset" thay vì import lại dữ liệu từ đầu.'
+        ],
+        collab: 'DA phụ trách dataset chung cần thông báo cho các DA khác biết dataset này tồn tại, khuyến khích dùng chung thay vì mỗi người tự làm riêng.'
+      },
+      'da-2-4': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Đặt tên bảng/measure khớp Business Glossary',
+        plain: 'Tên bảng/measure trong Power BI phải dùng đúng từ ngữ mà cả công ty đã thống nhất (Business Glossary) — để người xem không phải đoán xem "Active Users" ở báo cáo này có giống báo cáo khác không.',
+        steps: [
+          'Trước khi đặt tên một measure/cột hiển thị, tra Business Glossary xem thuật ngữ chính thức là gì.',
+          'Đặt tên đúng như vậy (kể cả cách viết hoa/thường nếu Glossary có quy định), tránh viết tắt tuỳ ý theo ý riêng.'
+        ],
+        collab: 'DA tự áp dụng khi đặt tên; nếu Glossary chưa có thuật ngữ cần dùng, báo Data Steward bổ sung trước khi đặt tên tuỳ tiện.'
+      },
+      'da-2-5': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Cấu hình và test Row-Level Security (RLS)',
+        plain: 'Nếu báo cáo có nhiều người xem nhưng mỗi người chỉ nên thấy phần dữ liệu của mình (vd theo khu vực), phải cấu hình để Power BI tự lọc dữ liệu theo người đăng nhập — và phải thử với tài khoản thật trước khi công bố.',
+        steps: [
+          'Trong Power BI Desktop, vào "Manage roles" (tab Modeling), tạo role (vd "Khu vực Miền Bắc") với một filter DAX, vd [Region] = "Mien Bac".',
+          'Gán user/nhóm AD tương ứng vào từng role trong Power BI Service, mục "Security" của dataset.',
+          'Dùng "View as roles" trong Desktop, hoặc nhờ đồng nghiệp đăng nhập thật để test xem đúng người chỉ thấy đúng phần dữ liệu của họ chưa, trước khi publish chính thức.'
+        ],
+        collab: 'DA cấu hình; cần phối hợp với IT/quản trị hệ thống để lấy đúng danh sách user/nhóm AD gán vào từng role.'
+      },
+      'da-2-6': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Gắn nhãn độ nhạy cảm (sensitivity label) trước khi publish',
+        plain: 'Trước khi công bố báo cáo lên môi trường thật, phải gắn nhãn phân loại độ nhạy cảm (theo chính sách bảo mật công ty, ví dụ "Nội bộ"/"Bảo mật") cho file/report đó.',
+        steps: [
+          'Trong Power BI Desktop hoặc Service, dùng tính năng "Sensitivity label" (thường tích hợp với Microsoft Purview/Information Protection nếu công ty đã cấu hình).',
+          'Chọn đúng nhãn theo mức độ nhạy cảm của dữ liệu trong báo cáo, tra theo chính sách nội bộ (tương tự cách phân loại ở bước "Xác nhận quyền xem dữ liệu nhạy cảm" của DA).'
+        ],
+        collab: 'DA gắn nhãn khi publish; nếu công ty chưa cấu hình sẵn hệ thống nhãn này, cần phối hợp với IT/An ninh thông tin để thiết lập trước.'
+      },
+      'da-2-7': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Xin certify/promote dataset sau khi được duyệt',
+        plain: 'Sau khi Data Steward đã xem qua và đồng ý, dataset được đánh dấu "Certified" trong Power BI Service — dấu hiệu này giúp người khác trong công ty biết đây là nguồn dữ liệu đáng tin, nên ưu tiên dùng hơn các bản nháp.',
+        steps: [
+          'Gửi dataset cho Data Steward/người phụ trách chất lượng dữ liệu review (kiểm tra định nghĩa, độ chính xác).',
+          'Sau khi được đồng ý, vào Power BI Service, phần cài đặt dataset, chọn endorsement "Certified" (cần quyền Admin hoặc người đã được cấp phép endorse).',
+          'Có thể dùng mức "Promoted" (tự đề xuất, không cần duyệt) làm bước trung gian trước khi xin Certified.'
+        ],
+        collab: 'DA đề xuất; Data Steward hoặc người có quyền endorsement trong tổ chức là người chính thức gắn nhãn Certified.'
+      },
+      'da-2-8': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Version control & deployment pipeline cho report',
+        plain: 'Đừng sửa trực tiếp lên bản báo cáo mà mọi người đang xem thật (production). Phải lưu lại các phiên bản theo thời gian, hoặc đi qua quy trình 3 bước: sửa ở môi trường thử (dev) → kiểm tra ở môi trường test → mới đưa vào bản thật (production) — giống như cách lập trình viên không sửa thẳng code đang chạy thật.',
+        steps: [
+          'Cách đơn giản nhất: mỗi lần sửa quan trọng, lưu một bản .pbix mới kèm ngày tháng (hoặc đưa file vào Git/SharePoint có lịch sử phiên bản) trước khi ghi đè bản cũ.',
+          'Cách bài bản hơn (cần Power BI Premium/Fabric capacity): dùng tính năng Power BI Deployment Pipelines — tạo sẵn 3 giai đoạn Development → Test → Production ngay trong Power BI Service.',
+          'Sửa và kiểm tra ở Development/Test trước; chỉ khi ổn mới bấm "Deploy to next stage" để đẩy sang Production — không bao giờ sửa tay trực tiếp trên workspace Production.',
+          'Nếu công ty đã dùng định dạng Power BI Projects (PBIP), có thể quản lý version qua Git giống hệt cách quản lý code thông thường.'
+        ],
+        collab: 'DA thực hiện version control hằng ngày; nếu muốn dùng Deployment Pipelines, cần xin cấp Power BI Premium/Fabric capacity từ IT/quản trị Power BI tenant trước.'
+      },
+      'da-2-9': {
+        eyebrow: 'Data Analyst · Giai đoạn 2 · Power BI modeling',
+        title: 'Rà soát định kỳ danh sách report đang publish',
+        plain: 'Định kỳ rà lại danh sách các báo cáo đang được công bố — báo cáo nào lâu rồi không ai mở thì nên dừng lại, tránh workspace chứa quá nhiều báo cáo cũ không ai kiểm soát.',
+        steps: [
+          'Dùng "Usage metrics" của Power BI Service (báo cáo tự động về lượt xem) để xem report nào ít/không ai xem trong một khoảng thời gian (vd 3-6 tháng).',
+          'Liên hệ người từng yêu cầu report đó để xác nhận có còn cần không, trước khi gỡ hoặc lưu trữ report.'
+        ],
+        collab: 'DA rà soát định kỳ (vd mỗi quý); xác nhận lại với business trước khi gỡ bỏ hẳn, tránh gỡ nhầm report vẫn đang âm thầm được dùng.'
+      }
+    };
+
+    var modal = document.getElementById('detail-modal');
+    var elEyebrow = document.getElementById('detail-eyebrow');
+    var elTitle = document.getElementById('detail-title');
+    var elPlain = document.getElementById('detail-plain');
+    var elSteps = document.getElementById('detail-steps');
+    var elCollab = document.getElementById('detail-collab');
+
+    document.querySelectorAll('.detail-btn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var d = DETAILS[btn.getAttribute('data-detail')];
+        if (!d) return;
+        elEyebrow.textContent = d.eyebrow || '';
+        elTitle.textContent = d.title || '';
+        elPlain.textContent = d.plain || '';
+        elSteps.innerHTML = '';
+        (d.steps || []).forEach(function (s) {
+          var li = document.createElement('li');
+          li.textContent = s;
+          elSteps.appendChild(li);
+        });
+        elCollab.innerHTML = '<b>Phối hợp:</b> ' + (d.collab || '');
+        modal.showModal();
+      });
+    });
+
+    document.getElementById('detail-close').addEventListener('click', function () {
+      modal.close();
+    });
+    modal.addEventListener('click', function (e) {
+      if (e.target === modal) modal.close();
+    });
   })();
 </script>
