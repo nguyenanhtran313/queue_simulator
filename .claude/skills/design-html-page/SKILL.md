@@ -56,7 +56,45 @@ Quy tắc: khi so sánh 2 nhóm/segment song song (2 cột, 2 track, 2 filter...
 - **Không dùng viền solid bọc quanh card** — dùng box-shadow rất nhạt để tách card khỏi nền `gray50`: `box-shadow: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);`
 - Một border-left màu accent (3–4px) để gắn nhãn segment/category là hợp lệ — đó là thông tin (phân loại), không phải trang trí, nên không vi phạm quy tắc "không viền".
 
-## 4. Typography
+## 4. Điều hướng cho trang nhiều section — thanh nav ngang cố định trên đầu
+
+Áp dụng khi trang là **report/framework dài, nhiều section** (không phải 1 dashboard/checklist gọn 1 màn hình) — ví dụ tài liệu 6+ section như "Data Governance Framework". Dùng một thanh nav ngang, **dính cố định ở mép trên** khi cuộn trang (không phải thanh nav thường trôi mất khi scroll xuống, và không dùng sidebar dọc bên trái).
+
+- **Cấu trúc khung trang:**
+  ```html
+  <header class="top-nav">
+    <div class="top-nav-inner">
+      <span class="top-nav-brand">Tên trang</span>
+      <nav aria-label="Mục lục">
+        <ul><li><a href="#section-id" data-toc>Nhãn</a></li>...</ul>
+      </nav>
+    </div>
+  </header>
+
+  <header class="page-header"><h1>...</h1><p class="subtitle">...</p></header>
+
+  <div class="content-wrap"><main id="main">...</main></div>
+  <footer>...</footer>
+  ```
+- **CSS lõi:**
+  ```css
+  .top-nav{ position:sticky; top:0; z-index:50; background:white; border-bottom:1px solid gray200; }
+  .top-nav-inner{
+    display:flex; align-items:center; flex-wrap:wrap; gap:0.6rem 2rem;
+    padding:0.8rem clamp(1.5rem, 3vw, 3rem);
+  }
+  .top-nav-brand{ font-weight:500; white-space:nowrap; flex-shrink:0; }
+  .top-nav ul{ list-style:none; margin:0; padding:0; display:flex; flex-wrap:wrap; gap:0.2rem 1.4rem; }
+  .top-nav a{ display:inline-block; padding:0.4rem 0.1rem; color:gray700; text-decoration:none; border-bottom:3px solid transparent; }
+  .top-nav a.active{ color:primary900; border-bottom-color:primary500; font-weight:500; }
+  ```
+  Dùng `position:sticky` (không phải `fixed`) — thanh nav tự chiếm đúng chỗ của nó trong flow, không cần `padding-top` thủ công trên phần nội dung bên dưới để né nó.
+- **Active state theo vị trí scroll:** dùng `IntersectionObserver` quan sát các `<section id="...">`, toggle class `.active` lên `<a data-toc>` tương ứng khi section đó intersect viewport (rootMargin kiểu `-10% 0px -70% 0px` để bắt đúng section đang đọc, không phải section vừa lướt qua).
+- **Thanh nav chỉ chứa điều hướng** — brand/tên trang ngắn gọn bên trái + danh sách link bên phải, cùng một hàng (wrap tự nhiên khi hẹp). Tiêu đề trang (H1), subtitle đặt riêng trong `.page-header` ngay bên dưới, không nhồi vào thanh nav.
+- **Mobile:** để `.top-nav-inner` tự `flex-wrap:wrap` (brand và danh sách link xuống hàng khi không đủ chỗ) thay vì phải viết media query riêng — chỉ cần giảm padding hai bên ở breakpoint hẹp.
+- Vẫn giữ `.skip-link` (bỏ qua điều hướng, nhảy thẳng tới `#main`) cho accessibility.
+
+## 5. Typography
 
 Một họ font sans-serif duy nhất: `Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif` (không có CDN font trong trang self-contained, dựa vào font hệ thống — không trộn thêm serif). Phân cấp bằng size/weight/case, không đổi họ font:
 
@@ -65,14 +103,14 @@ Một họ font sans-serif duy nhất: `Roboto, "Segoe UI", system-ui, -apple-sy
 - **Data Content** (dữ liệu bảng, checklist): 13–14px Regular, màu `gray700`; phần cần nhấn mạnh trong câu dùng `gray900` + semibold.
 - **Căn lề:** tên hạng mục/chuỗi chữ → căn trái. Số lượng/tỷ lệ %/tiền tệ → luôn căn phải (dễ so sánh hàng chục/trăm/nghìn).
 
-## 5. Nguyên tắc trực quan hóa dữ liệu
+## 6. Nguyên tắc trực quan hóa dữ liệu
 
 1. **Max Data, Min Ink:** bỏ hết gridline dọc/ngang nếu có thể, hoặc dùng viền cực mảnh `gray200`. Trục biểu đồ nên làm mờ bớt.
 2. **Micro-charts:** tích hợp cột/thanh ngang thu nhỏ (sparkline) ngay trong ô bảng/card thay vì để chart riêng ở chỗ khác — cho context ngay cạnh con số.
 3. **Đồng bộ màu theo ngữ cảnh:** 1 segment = 1 màu cố định xuyên suốt mọi chart/số liệu/bar liên quan (xem mục 2).
 4. **Tương tác đa chiều:** hover/click vào một cột trên chart chính nên tự động highlight/filter các số liệu liên quan trong cùng Card.
 
-## 6. Rule bắt buộc: luôn giãn ngang hết khổ, không chừa lề hai bên quá lớn
+## 7. Rule bắt buộc: luôn giãn ngang hết khổ, không chừa lề hai bên quá lớn
 
 Lỗi hay lặp lại: trang bị bó vào một cột hẹp (vd `max-width: 1100–1200px`) giữa màn hình rộng, để lại khoảng trắng chết hai bên. Áp dụng:
 
@@ -81,17 +119,17 @@ Lỗi hay lặp lại: trang bị bó vào một cột hẹp (vd `max-width: 110
 - **Ngoại lệ hợp lý — không áp dụng máy móc**: đoạn văn xuôi dài (lede, mô tả, câu giải thích) và text trong từng item/label vẫn nên giữ `max-width` ở mức dễ đọc (~60–80 ký tự) để không kéo dài hết cỡ màn hình gây khó đọc — chỉ riêng khối văn bản đó được phép hẹp hơn container, không phải cả trang.
 - Kiểm tra lại trên khung nhìn rộng (>1600px): nếu thấy hai dải trắng lớn đối xứng hai bên trong khi nội dung chính (card/table/grid) bị bó hẹp ở giữa, đó là dấu hiệu sai — nới `max-width`/padding ra.
 
-## 7. Kỹ thuật dựng file
+## 8. Kỹ thuật dựng file
 
-- Tự chứa hoàn toàn: không gọi CDN font/script/CSS ngoài (khớp CSP của Artifact tool) — dùng font-stack hệ thống ở mục 4.
+- Tự chứa hoàn toàn: không gọi CDN font/script/CSS ngoài (khớp CSP của Artifact tool) — dùng font-stack hệ thống ở mục 5.
 - JS thuần (vanilla), không framework, đặt trong `<script>` cuối file.
 - Nếu trang có trạng thái tương tác cần nhớ lại (checklist, filter đã chọn...), dùng `localStorage` — không cần backend.
 - Responsive: gộp layout nhiều cột về 1 cột ở breakpoint ~900px cho mobile/tablet; bảng/nội dung rộng cho vào container riêng có `overflow-x:auto` để không làm `body` cuộn ngang.
 - Tôn trọng `prefers-reduced-motion` cho các transition (progress bar, checkbox...).
 - Đặt `<title>` rõ ràng ở đầu file (không bọc `<!DOCTYPE>/<html>/<head>/<body>` — khớp cách Artifact tool wrap file).
 
-## 8. Quy trình khi được gọi
+## 9. Quy trình khi được gọi
 
-1. Xác định trang cần build là dạng gì (dashboard nhiều cột / checklist / trang so sánh / báo cáo văn xuôi) để quyết định mức áp mục 6 — dashboard/nhiều cột thì bắt buộc; văn xuôi dài thì giữ measure dễ đọc cho khối text, còn container ngoài vẫn nên rộng.
-2. Viết/sửa CSS theo token (mục 2–5) + rule full-width (mục 6).
+1. Xác định trang cần build là dạng gì (dashboard nhiều cột / checklist / trang so sánh / báo cáo văn xuôi / **report-framework nhiều section**) để quyết định mức áp mục 7 — dashboard/nhiều cột thì bắt buộc; văn xuôi dài thì giữ measure dễ đọc cho khối text, còn container ngoài vẫn nên rộng. Nếu trang có 5+ section dài (kiểu tài liệu/framework nội bộ) → dùng thanh nav ngang cố định trên đầu ở mục 4.
+2. Viết/sửa CSS theo token màu &amp; typography (mục 2, 3, 5, 6), thanh nav điều hướng nếu áp dụng (mục 4), và rule full-width (mục 7).
 3. Nếu là file mới hoặc sửa file đã publish qua Artifact, gọi lại `Artifact` để deploy (dùng lại `url` cũ nếu đang cập nhật trang đã có, để giữ nguyên link).

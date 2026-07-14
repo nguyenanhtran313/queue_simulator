@@ -1,20 +1,25 @@
-<title>Cẩm nang Data Governance: DAMA × AWS / Databricks / Power BI</title>
+<title>Data Governance Framework</title>
 <style>
   :root{
-    --bg:#F3F5F7;
+    --bg:#F3F4F6;
     --surface:#FFFFFF;
-    --surface-2:#EAEEF1;
-    --ink:#182430;
-    --muted:#5C6773;
-    --faint:#8B95A1;
-    --line:#DCE2E7;
-    --accent:#0F6E6E;
-    --accent-ink:#0A4F4F;
-    --accent-tint:#E4F1F0;
-    --code-bg:#101820;
-    --code-ink:#DCE7E6;
-    --code-accent:#8FDFCE;
-    --code-comment:#6E8B86;
+    --surface-2:#F1F3F4;
+    --ink:#202124;
+    --muted:#5F6368;
+    --faint:#80868B;
+    --line:#E8EAED;
+    --accent:#1A73E8;
+    --accent-ink:#174EA6;
+    --accent-tint:#E8F0FE;
+    --accent-tint-strong:#D2E3FC;
+    --success:#1E8E3E;
+    --warning:#F29900;
+    --danger:#D93025;
+    --pink:#D81B60;
+    --code-bg:#202124;
+    --code-ink:#E8EAED;
+    --code-accent:#8AB4F8;
+    --code-comment:#9AA0A6;
     --bronze:#A6673A;
     --silver:#6E7A88;
     --gold:#A8791E;
@@ -26,10 +31,10 @@
     --role-de:#1959b3;
     --role-analyst:#aa6118;
     --role-bizuser:#8019b3;
-    --radius:10px;
-    --serif: Cambria, Georgia, "Times New Roman", serif;
-    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
-    --mono: "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace;
+    --radius:8px;
+    --shadow-card: 0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+    --sans: Roboto, "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
+    --mono: "Roboto Mono", "Cascadia Code", Consolas, "SFMono-Regular", Menlo, monospace;
   }
 
   *{ box-sizing:border-box; }
@@ -44,11 +49,11 @@
     -webkit-font-smoothing:antialiased;
   }
   h1,h2,h3,h4{
-    font-family:var(--serif);
-    font-weight:700;
+    font-family:var(--sans);
+    font-weight:500;
     color:var(--ink);
     text-wrap:balance;
-    line-height:1.25;
+    line-height:1.3;
   }
   p{ margin:0 0 0.9em; }
   a{ color:var(--accent-ink); text-decoration-thickness:1px; text-underline-offset:2px; }
@@ -65,103 +70,75 @@
   }
   .skip-link:focus{ left:0; }
 
-  /* ---------- Masthead ---------- */
-  .masthead{
+  /* ---------- Fixed top navigation ---------- */
+  .top-nav{
+    position:sticky;
+    top:0;
+    z-index:50;
     background:var(--surface);
     border-bottom:1px solid var(--line);
-    padding:3.2rem 1.5rem 2.4rem;
   }
-  .masthead-inner{
-    max-width:98vw;
-    margin:0 auto;
+  .top-nav-inner{
     display:flex;
-    flex-direction:column;
-    gap:0.7rem;
-  }
-  .masthead-top{
-    display:flex;
-    justify-content:space-between;
     align-items:center;
-    gap:2rem 3rem;
     flex-wrap:wrap;
+    gap:0.6rem 2rem;
+    padding:0.8rem clamp(1.5rem, 3vw, 3rem);
   }
-  .title-block{ display:flex; flex-direction:column; gap:0.35rem; min-width:0; }
-  .toc-top{ flex-shrink:0; }
-  .toc-top ul{
+  .top-nav-brand{
+    font-size:0.95rem;
+    font-weight:500;
+    color:var(--ink);
+    white-space:nowrap;
+    flex-shrink:0;
+  }
+  .top-nav nav{ min-width:0; }
+  .top-nav ul{
     list-style:none;
     margin:0; padding:0;
     display:flex;
     flex-wrap:wrap;
-    gap:0.5rem 1.5rem;
+    gap:0.2rem 1.4rem;
   }
-  .toc-top a{
-    font-family:var(--mono);
-    font-size:0.74rem;
-    text-transform:uppercase;
-    letter-spacing:0.05em;
+  .top-nav a{
+    display:inline-block;
+    padding:0.4rem 0.1rem;
+    font-size:0.86rem;
     color:var(--muted);
     text-decoration:none;
     white-space:nowrap;
-    padding-bottom:0.3em;
-    border-bottom:2px solid transparent;
+    border-bottom:3px solid transparent;
   }
-  .toc-top a:hover{ color:var(--ink); }
-  .toc-top a.active{ color:var(--accent-ink); border-bottom-color:var(--accent); }
-  .eyebrow{
-    font-family:var(--mono);
-    font-size:0.72rem;
-    letter-spacing:0.14em;
-    text-transform:uppercase;
-    color:var(--accent-ink);
-    margin:0;
-    display:flex;
-    align-items:center;
-    gap:0.6em;
+  .top-nav a:hover{ color:var(--ink); }
+  .top-nav a.active{ color:var(--accent-ink); border-bottom-color:var(--accent); font-weight:500; }
+
+  .page-header{
+    background:var(--surface);
+    border-bottom:1px solid var(--line);
+    padding:2.1rem clamp(1.5rem, 3vw, 3rem) 1.7rem;
   }
-  .eyebrow::before{
-    content:"";
-    display:inline-block;
-    width:1.3em; height:2px;
-    background:var(--accent);
-  }
-  .masthead h1{
-    font-size:clamp(1.9rem, 3.4vw, 2.6rem);
-    margin:0.1em 0 0.1em;
+  .page-header h1{
+    font-size:clamp(1.6rem, 2.4vw, 2.05rem);
+    margin:0 0 0.5rem;
+    font-weight:500;
   }
   .subtitle{
-    font-size:1.05rem;
+    font-size:1rem;
     color:var(--muted);
-    max-width:62ch;
-    margin:0 0 0.6rem;
+    max-width:78ch;
+    margin:0;
   }
-  .meta-row{
-    display:flex;
-    flex-wrap:wrap;
-    gap:1.8rem 2.6rem;
-    margin:0.6rem 0 0;
-    padding-top:1.1rem;
-    border-top:1px solid var(--line);
-  }
-  .meta-row dt{
-    font-family:var(--mono);
-    font-size:0.68rem;
-    text-transform:uppercase;
-    letter-spacing:0.08em;
-    color:var(--faint);
-    margin:0 0 0.25em;
-  }
-  .meta-row dd{ margin:0; font-size:0.94rem; color:var(--ink); }
 
   /* ---------- Layout ---------- */
   .content-wrap{
-    max-width:98vw;
-    margin:0 auto;
-    padding:2.4rem 1.5rem 4rem;
+    max-width:100%;
+    padding:2.2rem clamp(1.5rem, 3vw, 3rem) 4rem;
   }
   main{ min-width:0; }
   section{ margin-bottom:3.4rem; scroll-margin-top:1.4rem; }
   section > h2{
-    font-size:1.55rem;
+    font-size:1.4rem;
+    font-weight:500;
     margin:0 0 0.3rem;
     padding-bottom:0.6rem;
     border-bottom:1px solid var(--line);
@@ -170,19 +147,27 @@
 
   .lead-card{
     background:var(--surface);
-    border:1px solid var(--line);
     border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
     padding:1.6rem 1.8rem;
   }
   .lead-card ul{ margin:0.6rem 0 0; padding-left:1.2rem; }
   .lead-card li{ margin-bottom:0.45rem; }
   .lead-card li::marker{ color:var(--accent); }
 
+  .two-col{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(320px, 1fr));
+    gap:1.3rem;
+    margin-top:1.4rem;
+  }
+  .two-col .howto-item{ margin-top:0; }
+
   /* ---------- Matrix table ---------- */
   .table-scroll{
     overflow-x:auto;
-    border:1px solid var(--line);
     border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
     background:var(--surface);
     margin-top:1.4rem;
   }
@@ -288,11 +273,6 @@
     gap:0.5rem;
     font-size:0.85rem;
   }
-  .role-legend-list .rank{
-    font-family:var(--mono);
-    font-size:0.68rem;
-    color:var(--faint);
-  }
   .role-legend-list .swatch{
     width:0.65em; height:0.65em;
     border-radius:50%;
@@ -327,6 +307,17 @@
   }
   table.priority-table td.job{ font-weight:700; color:var(--ink); }
   table.priority-table td.why{ color:var(--muted); }
+  table.priority-table td.crit{ white-space:nowrap; }
+  .crit-tag{
+    display:inline-block;
+    font-family:var(--mono);
+    font-size:0.72rem;
+    padding:0.15em 0.55em;
+    border-radius:999px;
+    background:var(--accent-tint);
+    color:var(--accent-ink);
+    border:1px solid var(--accent);
+  }
   .detail p{ margin:0 0 0.55em; font-size:0.82rem; color:var(--muted); }
   .detail p:last-child{ margin-bottom:0; }
   .detail .tag{
@@ -343,6 +334,149 @@
     font-size:0.85rem;
     margin-top:0.7rem;
   }
+
+  /* ---------- DAMA 11-area grid ---------- */
+  .dama-hub{
+    background:var(--accent-tint);
+    border:1px solid var(--accent);
+    border-radius:var(--radius);
+    padding:1.3rem 1.5rem;
+    margin-top:1.4rem;
+  }
+  .dama-hub p{ margin:0; color:var(--accent-ink); font-size:0.94rem; }
+  .dama-hub p strong{ color:var(--accent-ink); }
+  .dama-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(300px, 1fr));
+    gap:1.1rem;
+    margin-top:1.2rem;
+  }
+  .dama-card{
+    background:var(--surface);
+    border-left:3px solid var(--accent);
+    border-radius:0 var(--radius) var(--radius) 0;
+    box-shadow:var(--shadow-card);
+    padding:1.2rem 1.3rem 1.3rem;
+  }
+  .dama-card .dama-num{
+    font-family:var(--mono);
+    font-size:0.72rem;
+    color:var(--accent-ink);
+    display:block;
+    margin-bottom:0.3rem;
+  }
+  .dama-card h3{ font-size:1rem; margin:0 0 0.5rem; }
+  .dama-card p{ font-size:0.86rem; color:var(--muted); margin:0 0 0.6rem; }
+  .dama-card .dama-impact{
+    font-size:0.82rem;
+    color:var(--ink);
+    padding-top:0.6rem;
+    border-top:1px dashed var(--line);
+    margin:0;
+  }
+  .dama-card .dama-impact strong{ color:var(--accent-ink); }
+
+  /* ---------- Flow steps (vòng lặp vận hành / escalation) ---------- */
+  .flow-row{
+    display:flex;
+    flex-wrap:wrap;
+    align-items:stretch;
+    gap:0.6rem;
+    margin-top:1.4rem;
+  }
+  .flow-step{
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:1rem 1.2rem;
+    flex:1 1 200px;
+    min-width:180px;
+  }
+  .flow-step .flow-num{
+    display:inline-flex;
+    align-items:center; justify-content:center;
+    width:1.6rem; height:1.6rem;
+    border-radius:50%;
+    background:var(--accent);
+    color:#fff;
+    font-family:var(--mono);
+    font-size:0.8rem;
+    margin-bottom:0.5rem;
+  }
+  .flow-step h4{ font-size:0.94rem; margin:0 0 0.3rem; font-family:var(--sans); font-weight:700; color:var(--ink); }
+  .flow-step p{ font-size:0.82rem; color:var(--muted); margin:0; }
+  .flow-arrow{
+    display:flex; align-items:center; justify-content:center;
+    color:var(--faint);
+    font-size:1.4rem;
+    padding:0 0.3rem;
+    flex:0 0 auto;
+  }
+
+  /* ---------- Org tiers ---------- */
+  .org-tiers{ margin-top:1.4rem; display:flex; flex-direction:column; gap:0.7rem; }
+  .org-tier{
+    display:flex; align-items:flex-start; gap:1.2rem; flex-wrap:wrap;
+    background:var(--surface);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:0.9rem 1.2rem;
+  }
+  .org-tier .org-role{ flex:0 0 210px; font-weight:700; font-size:0.92rem; }
+  .org-tier .org-desc{ flex:1 1 320px; color:var(--muted); font-size:0.88rem; }
+
+  /* ---------- Roadmap ---------- */
+  .roadmap-row{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(230px,1fr));
+    gap:1.1rem;
+    margin-top:1.4rem;
+  }
+  .roadmap-phase{
+    background:var(--surface);
+    border-top:3px solid var(--accent);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow-card);
+    padding:1.1rem 1.2rem;
+  }
+  .roadmap-phase .phase-time{
+    font-family:var(--mono);
+    font-size:0.7rem;
+    text-transform:uppercase;
+    letter-spacing:0.06em;
+    color:var(--accent-ink);
+  }
+  .roadmap-phase h4{ margin:0.3rem 0 0.6rem; font-size:1rem; }
+  .roadmap-phase ul{ margin:0; padding-left:1.1rem; }
+  .roadmap-phase li{ font-size:0.83rem; color:var(--muted); margin-bottom:0.4rem; }
+  .roadmap-phase li::marker{ color:var(--accent); }
+
+  /* ---------- Maturity scale ---------- */
+  .maturity-scale{
+    display:flex;
+    flex-wrap:wrap;
+    margin-top:1.2rem;
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid var(--line);
+  }
+  .maturity-level{
+    flex:1 1 180px;
+    padding:0.9rem 0.9rem;
+    background:var(--surface);
+    border-right:1px solid var(--line);
+  }
+  .maturity-level:last-child{ border-right:none; }
+  .maturity-level .lvl-num{
+    font-family:var(--mono);
+    font-size:1.3rem;
+    color:var(--faint);
+    display:block;
+  }
+  .maturity-level h5{ margin:0.2rem 0 0.3rem; font-size:0.85rem; font-family:var(--sans); color:var(--ink); }
+  .maturity-level p{ font-size:0.76rem; color:var(--muted); margin:0; }
+  .maturity-level.current{ background:var(--accent-tint); }
+  .maturity-level.current .lvl-num{ color:var(--accent-ink); }
 
   /* ---------- How-to guide ---------- */
   .platform-badge{
@@ -370,9 +504,9 @@
 
   .howto-item{
     background:var(--surface);
-    border:1px solid var(--line);
     border-left:3px solid var(--accent);
     border-radius:0 var(--radius) var(--radius) 0;
+    box-shadow:var(--shadow-card);
     padding:1.3rem 1.5rem 1.4rem;
     margin-top:1.3rem;
   }
@@ -449,102 +583,192 @@
   .code-str{ color:var(--code-accent); }
 
   footer{
-    max-width:98vw;
-    margin:0 auto;
-    padding:2rem 1.5rem 3rem;
+    padding:2rem clamp(1.5rem, 3vw, 3rem) 3rem;
     color:var(--faint);
     font-size:0.85rem;
     border-top:1px solid var(--line);
   }
 
   @media (max-width:900px){
-    .masthead-top{ align-items:flex-start; }
+    .top-nav-inner{ padding:0.7rem clamp(1rem, 4vw, 1.5rem); }
   }
   @media (max-width:760px){
     table.matrix{ table-layout:auto; min-width:900px; }
   }
 
   @media (prefers-reduced-motion:no-preference){
-    .toc-top a, td.cell.has-detail summary{ transition:background-color .15s ease, color .15s ease, border-color .15s ease; }
+    .top-nav a, td.cell.has-detail summary{ transition:background-color .15s ease, color .15s ease, border-color .15s ease; }
   }
   @media (prefers-reduced-motion:reduce){
-    .toc-top a, td.cell.has-detail summary{ transition:none; }
+    .top-nav a, td.cell.has-detail summary{ transition:none; }
   }
 </style>
 
 <a class="skip-link" href="#main">Chuyển đến nội dung chính</a>
 
-<header class="masthead">
-  <div class="masthead-inner">
-    <div class="masthead-top">
-      <div class="title-block">
-        <p class="eyebrow">Nội bộ · Data Team · Cẩm nang vận hành</p>
-        <h1>Ma trận DAMA &amp; Hướng dẫn triển khai Data Pipeline</h1>
-      </div>
-      <nav class="toc-top" aria-label="Mục lục">
-        <ul>
-          <li><a href="#gioi-thieu" data-toc>Giới thiệu</a></li>
-          <li><a href="#ma-tran" data-toc>Ma trận DAMA</a></li>
-          <li><a href="#aws" data-toc>AWS</a></li>
-          <li><a href="#databricks" data-toc>Databricks</a></li>
-          <li><a href="#powerbi" data-toc>Power BI</a></li>
-          <li><a href="#kpi" data-toc>KPI Governance</a></li>
-        </ul>
-      </nav>
-    </div>
-    <p class="subtitle">Tài liệu tổng hợp cho <strong>Data Analyst</strong> và <strong>Data Engineer</strong>: ai chịu trách nhiệm gì ở từng bước của pipeline (theo 11 tiêu chí DAMA), và triển khai cụ thể ra sao trên AWS, Databricks, Power BI.</p>
-    <dl class="meta-row">
-      <div><dt>Đối tượng</dt><dd>DA · DE · Data Steward · Data Owner</dd></div>
-      <div><dt>Phạm vi</dt><dd>Data Source Onboarding → Business Feedback</dd></div>
-      <div><dt>Khung tham chiếu</dt><dd>DAMA-DMBOK, 11 tiêu chí</dd></div>
-      <div><dt>Cập nhật</dt><dd>13/07/2026</dd></div>
-    </dl>
+<header class="top-nav">
+  <div class="top-nav-inner">
+    <span class="top-nav-brand">Data Governance Framework</span>
+    <nav aria-label="Mục lục">
+      <ul>
+        <li><a href="#vi-sao" data-toc>Vì sao cần DG</a></li>
+        <li><a href="#dama" data-toc>Khung DAMA-DMBOK</a></li>
+        <li><a href="#ma-tran" data-toc>Ma trận hành động</a></li>
+        <li><a href="#quy-trinh" data-toc>Quy trình vận hành</a></li>
+        <li><a href="#how-to" data-toc>Triển khai cho PIC</a></li>
+        <li><a href="#kpi" data-toc>Đo lường tiến trình</a></li>
+      </ul>
+    </nav>
   </div>
+</header>
+
+<header class="page-header">
+  <h1>Data Governance Framework</h1>
+  <p class="subtitle">Khung quản trị dữ liệu áp dụng cho toàn bộ hệ sinh thái tập đoàn đa ngành — nhiều công ty thành viên, nhiều lĩnh vực kinh doanh: Data Governance là gì, chuẩn DAMA-DMBOK gồm những gì, áp dụng vào từng nghiệp vụ dữ liệu ra sao, ai làm gì theo mức độ ưu tiên nào, vận hành theo quy trình nào, và đo lường tiến trình bằng bộ KPI nào.</p>
 </header>
 
 <div class="content-wrap">
   <main id="main">
 
-    <section id="gioi-thieu">
-      <h2>Giới thiệu</h2>
-      <p class="section-lede">Cách đọc và dùng tài liệu này trong công việc hằng ngày.</p>
+    <section id="vi-sao">
+      <h2>Data Governance là gì &amp; vì sao doanh nghiệp cần</h2>
+      <p class="section-lede">Định nghĩa, bối cảnh và giá trị kinh doanh — nền tảng lý luận cho toàn bộ framework phía dưới.</p>
+
       <div class="lead-card">
-        <p>Tài liệu gồm hai phần bổ trợ cho nhau:</p>
-        <ul>
-          <li><strong>Ma trận trách nhiệm</strong> — đối chiếu <strong>11 tiêu chí DAMA</strong> (quản trị dữ liệu) với <strong>8 bước vòng đời dữ liệu</strong>, từ lúc onboard nguồn đến khi có phản hồi từ business (qua Bronze/Silver/Gold, BI/Dashboard, AI/Analytics). Mỗi ô có tương tác sẽ cho biết <strong>ai làm (PIC)</strong>, <strong>làm gì (Todo)</strong>, <strong>ảnh hưởng đến bước sau (Next Step)</strong> và <strong>ảnh hưởng đến kinh doanh (Biz Impact)</strong>. Bấm vào một PIC để mở chi tiết.</li>
-          <li><strong>Hướng dẫn triển khai (How-to)</strong> — với mỗi Todo ở trên, tài liệu chỉ rõ <em>làm ở đâu, dùng công cụ gì</em>, chia theo ba tầng công nghệ đang dùng: <strong>AWS</strong> (kéo &amp; lưu trữ), <strong>Databricks</strong> (làm sạch, modeling, governance) và <strong>Power BI</strong> (report, bảo mật dòng, phản hồi).</li>
-        </ul>
-        <p style="margin-top:1rem">Ô đánh dấu <span style="color:var(--faint)">–</span> nghĩa là tiêu chí DAMA đó không phải trọng tâm ở bước tương ứng.</p>
+        <p><strong>Định nghĩa.</strong> Data Governance (Quản trị dữ liệu) là khung chính sách, quy trình và tiêu chuẩn xác định cách một tổ chức <strong>sở hữu, quản lý và bảo vệ dữ liệu</strong> — nói cách khác, đó là việc thiết lập rõ ràng <strong>trách nhiệm giải trình (accountability)</strong> và <strong>thẩm quyền (authority)</strong> đối với dữ liệu, tách biệt hoàn toàn với Quản trị IT (vốn tập trung vào phần cứng, phần mềm, hạ tầng dự án).</p>
+        <p>Cách phân biệt dễ nhớ nhất với khái niệm hay bị nhầm — <strong>Data Management</strong>: Data Governance giống như <strong>bản thiết kế</strong>, xác định "cái gì cần làm" — chính sách, chuẩn dữ liệu, ai chịu trách nhiệm. Data Management giống như <strong>quá trình thi công</strong>, xác định "làm như thế nào" — pipeline, hạ tầng, công cụ cụ thể. Tài liệu này có cả hai phần: bản thiết kế (định nghĩa, chuẩn DAMA, ma trận trách nhiệm, quy trình vận hành) và hướng dẫn thi công cụ thể cho từng PIC.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="howto-item">
+          <h3>Hệ quả khi tập đoàn đa ngành không có Data Governance chung</h3>
+          <ul>
+            <li><strong>Không có "Single Source of Truth"</strong> — mỗi công ty thành viên (bất động sản, ô tô, y tế, giáo dục, bán lẻ...) tự định nghĩa và lưu dữ liệu riêng; cùng một khái niệm như "khách hàng active" hay "doanh thu ghi nhận" bị tính khác nhau ở từng nơi.</li>
+            <li><strong>Không rõ ai chịu trách nhiệm</strong> — khi số liệu lệch nhau giữa các báo cáo hợp nhất, không có quy trình rõ ràng để biết lỗi phát sinh ở đâu và ai phải xử lý.</li>
+            <li><strong>Không có góc nhìn 360° xuyên hệ sinh thái</strong> — một khách hàng dùng dịch vụ của nhiều công ty thành viên khác nhau vẫn bị hệ thống xem là nhiều khách hàng riêng biệt vì không có Master Data dùng chung.</li>
+            <li><strong>Rủi ro pháp lý &amp; uy tín thương hiệu</strong> — dữ liệu cá nhân của hàng triệu khách hàng nếu không được phân loại và bảo vệ đúng chuẩn sẽ vi phạm quy định bảo vệ dữ liệu cá nhân hiện hành.</li>
+            <li><strong>Chi phí ẩn rất lớn</strong> — IBM ước tính riêng tại Mỹ, chi phí do dữ liệu kém chất lượng gây ra lên tới <strong>3,1 nghìn tỷ USD/năm</strong> (làm lại việc, quyết định sai, cơ hội bị bỏ lỡ). Ở quy mô vận hành của một tập đoàn đa ngành, phần chi phí ẩn tương ứng không hề nhỏ.</li>
+          </ul>
+        </div>
+        <div class="howto-item">
+          <h3>Giá trị khi có Data Governance chung toàn doanh nghiệp</h3>
+          <ul>
+            <li><strong>Một ngôn ngữ dữ liệu chung</strong> — mọi công ty thành viên dùng chung định nghĩa và chuẩn dữ liệu, giảm thời gian đối chiếu số liệu thủ công khi hợp nhất báo cáo.</li>
+            <li><strong>Ra quyết định nhanh &amp; tin cậy hơn</strong> — Ban điều hành nhìn một con số duy nhất, không cần hỏi lại "số này tính theo cách nào".</li>
+            <li><strong>Nền tảng cho AI &amp; cá nhân hoá xuyên hệ sinh thái</strong> — chương trình khách hàng thân thiết, các mô hình gợi ý/scoring chỉ hoạt động tốt khi dữ liệu đầu vào sạch, có chủ, có định nghĩa rõ ràng.</li>
+            <li><strong>Tuân thủ pháp lý chủ động</strong> — dữ liệu nhạy cảm được phân loại và bảo vệ ngay từ đầu, thay vì xử lý sự cố sau khi đã xảy ra.</li>
+            <li><strong>Dữ liệu trở thành tài sản đo được giá trị</strong> — không còn là chi phí kỹ thuật "ai đó phải làm", mà là tài sản có chủ sở hữu, có KPI, có ROI, đóng góp trực tiếp vào kết quả kinh doanh.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="dama">
+      <h2>Khung DAMA-DMBOK — 11 tiêu chí quản trị dữ liệu</h2>
+      <p class="section-lede">DAMA-DMBOK (Data Management Body of Knowledge) là chuẩn quốc tế phổ biến nhất cho quản trị dữ liệu, gồm 11 tiêu chí xếp theo mô hình "bánh xe DAMA": Data Governance nằm ở trung tâm, giám sát và định hướng cho 10 tiêu chí còn lại.</p>
+
+      <div class="dama-hub">
+        <p><strong>Nguyên tắc trung tâm:</strong> Data Governance không phải một trong 11 việc phải làm ngang hàng nhau — đó là <strong>lớp giám sát bao trùm</strong>, quyết định ai làm, làm theo chuẩn nào, đo bằng KPI gì cho 10 tiêu chí kỹ thuật/vận hành còn lại. Không có Governance, 10 tiêu chí kia sẽ được triển khai rời rạc, mỗi công ty thành viên một kiểu — đúng vấn đề đã nêu ở phần trên.</p>
+      </div>
+
+      <div class="dama-grid">
+        <div class="dama-card">
+          <span class="dama-num">01 · Data Governance</span>
+          <h3>Quản trị dữ liệu</h3>
+          <p>Thiết lập quyền quyết định và trách nhiệm giải trình đối với dữ liệu: ai là Data Owner, ai là Data Steward, chính sách và tiêu chuẩn nào được áp dụng.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> lớp giám sát bao trùm — không có tiêu chí này, 10 tiêu chí còn lại không ai chịu trách nhiệm thực thi nhất quán.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">02 · Data Architecture</span>
+          <h3>Kiến trúc dữ liệu</h3>
+          <p>Bản thiết kế tổng thể: dữ liệu lưu ở đâu, luân chuyển thế nào giữa các hệ thống, chọn nền tảng công nghệ dùng chung.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> đảm bảo hạ tầng dữ liệu của các công ty thành viên kết nối được với nhau, tránh mỗi nơi xây một kiểu không tương thích.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">03 · Data Modeling &amp; Design</span>
+          <h3>Mô hình hoá &amp; thiết kế dữ liệu</h3>
+          <p>Thiết kế cấu trúc dữ liệu (thực thể, quan hệ, schema) phản ánh đúng nghiệp vụ và dễ mở rộng.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> một mô hình chuẩn cho "Khách hàng", "Hợp đồng", "Giao dịch" giúp mọi công ty thành viên nói cùng một ngôn ngữ dữ liệu.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">04 · Data Storage &amp; Operations</span>
+          <h3>Lưu trữ &amp; vận hành dữ liệu</h3>
+          <p>Vận hành hạ tầng lưu trữ: hiệu năng, sao lưu, vòng đời dữ liệu (hot/warm/cold), tối ưu chi phí.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> cân bằng tốc độ truy xuất và chi phí lưu trữ cho khối lượng dữ liệu khổng lồ của toàn doanh nghiệp.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">05 · Data Security</span>
+          <h3>Bảo mật dữ liệu</h3>
+          <p>Bảo vệ dữ liệu khỏi truy cập/sử dụng trái phép: mã hoá, phân quyền, ẩn danh dữ liệu nhạy cảm, tuân thủ luật bảo vệ dữ liệu cá nhân.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> giảm rủi ro pháp lý và uy tín thương hiệu — đặc biệt quan trọng khi nắm dữ liệu hàng triệu khách hàng qua nhiều kênh và công ty thành viên khác nhau.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">06 · Data Integration &amp; Interoperability</span>
+          <h3>Tích hợp &amp; liên thông dữ liệu</h3>
+          <p>Kết nối, đồng bộ dữ liệu giữa các hệ thống và công ty thành viên theo thời gian thực hoặc theo lịch.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> nền tảng để có góc nhìn khách hàng xuyên suốt hệ sinh thái — một khách hàng dùng dịch vụ của nhiều công ty thành viên khác nhau.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">07 · Reference &amp; Master Data</span>
+          <h3>Dữ liệu chủ &amp; dữ liệu tham chiếu (MDM)</h3>
+          <p>Xây dựng "bản ghi vàng" (golden record) cho các thực thể lõi dùng chung: khách hàng, sản phẩm, đối tác, địa điểm.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> một khách hàng chỉ có 1 hồ sơ duy nhất trên toàn doanh nghiệp, không bị đếm trùng hay đếm thiếu giữa các công ty con.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">08 · Data Warehousing &amp; BI</span>
+          <h3>Kho dữ liệu &amp; báo cáo</h3>
+          <p>Tổng hợp dữ liệu đã làm sạch thành báo cáo, dashboard phục vụ ra quyết định.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> đây là "mặt tiền" Ban điều hành nhìn thấy mỗi ngày — chất lượng của 10 tiêu chí còn lại quyết định độ tin cậy của con số ở đây.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">09 · Metadata Management</span>
+          <h3>Quản lý siêu dữ liệu</h3>
+          <p>Quản lý "dữ liệu về dữ liệu": từ điển thuật ngữ nghiệp vụ (business glossary), catalog, lineage (nguồn gốc dữ liệu).</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> giúp bất kỳ ai trong tổ chức tự tra cứu và hiểu đúng một con số mà không cần hỏi lại đội kỹ thuật.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">10 · Data Quality</span>
+          <h3>Chất lượng dữ liệu</h3>
+          <p>Đo lường và đảm bảo dữ liệu chính xác, đầy đủ, nhất quán, kịp thời.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> tiêu chí quyết định niềm tin — mọi nỗ lực BI hay AI đều vô nghĩa nếu dữ liệu đầu vào sai.</p>
+        </div>
+        <div class="dama-card">
+          <span class="dama-num">11 · Document &amp; Content Management</span>
+          <h3>Quản lý tài liệu &amp; nội dung</h3>
+          <p>Quản lý dữ liệu phi cấu trúc: hợp đồng, hình ảnh, tài liệu pháp lý, nội dung truyền thông.</p>
+          <p class="dama-impact"><strong>Ý nghĩa thực tế:</strong> với khối tài sản pháp lý và bất động sản lớn, đây là nhóm dữ liệu dễ bị bỏ sót nhưng rủi ro cao nếu thất lạc hoặc không kiểm soát được.</p>
+        </div>
       </div>
     </section>
 
     <section id="ma-tran">
-      <h2>Ma trận DAMA × Quy trình</h2>
-      <p class="section-lede">8 bước vòng đời dữ liệu (hàng) — Data Source Onboarding → Ingestion → Bronze → Silver → Gold → BI/Dashboard → AI/Analytics → Business Feedback — đối chiếu 11 tiêu chí DAMA (cột). Bấm vào tên vai trò trong một ô để xem Todo / Next Step / Biz Impact. Thứ tự 11 cột bên dưới xếp theo <strong>thứ tự triển khai thực tế</strong> (bảng ưu tiên ngay dưới đây), không theo số thứ tự gốc của DAMA-DMBOK.</p>
+      <h2>Ma trận hành động &amp; mức độ ưu tiên</h2>
+      <p class="section-lede">Đây là phần <strong>áp dụng 11 tiêu chí DAMA vào từng nghiệp vụ dữ liệu thực tế</strong> — 8 bước vòng đời dữ liệu (hàng): Data Source Onboarding → Ingestion → Bronze → Silver → Gold → BI/Dashboard → AI/Analytics → Business Feedback, đối chiếu 11 tiêu chí DAMA (cột). Bấm vào tên vai trò trong một ô để xem Todo / Next Step / Biz Impact. Thứ tự 11 cột bên dưới xếp theo <strong>mức độ ưu tiên triển khai</strong> (bảng ngay dưới đây), không theo số thứ tự gốc của DAMA-DMBOK.</p>
 
       <div class="lead-card priority-card">
-        <p class="priority-card-title"><strong>Thứ tự triển khai gợi ý</strong> — nền tảng con người/chính sách đi trước, giá trị self-service đi sau. Đây là căn cứ để sắp lại thứ tự 11 cột của ma trận bên dưới.</p>
+        <p class="priority-card-title"><strong>Mức độ ưu tiên triển khai</strong> — nền tảng con người/chính sách đi trước, giá trị self-service đi sau. Đây là căn cứ xác định thứ tự 11 cột của ma trận bên dưới.</p>
         <div class="table-scroll priority-scroll">
           <table class="priority-table">
             <thead>
-              <tr><th scope="col">Ưu tiên</th><th scope="col">Việc làm</th><th scope="col">Vì sao</th></tr>
+              <tr><th scope="col">Ưu tiên</th><th scope="col">Việc làm</th><th scope="col">Vì sao</th><th scope="col">Tiêu chí liên quan</th></tr>
             </thead>
             <tbody>
-              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Executive Sponsor</td><td class="why">Không có lãnh đạo thì Governance khó thành công</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Strategy</td><td class="why">Xác định mục tiêu kinh doanh cần hỗ trợ</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Domain</td><td class="why">Chia dữ liệu theo lĩnh vực (Customer, Product, Order...)</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Owner &amp; Steward</td><td class="why">Rõ người chịu trách nhiệm cho từng domain</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Policies &amp; Standards</td><td class="why">Thiết lập quy tắc chung cho dữ liệu</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Business Glossary &amp; Data Catalog</td><td class="why">Thống nhất ngôn ngữ và giúp tìm kiếm dữ liệu</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Metadata &amp; Lineage</td><td class="why">Hiểu dữ liệu đến từ đâu và đi đến đâu</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Data Quality</td><td class="why">Xây quy tắc và KPI chất lượng dữ liệu</td></tr>
-              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Data Security &amp; Privacy</td><td class="why">Bảo vệ dữ liệu nhạy cảm, đáp ứng tuân thủ</td></tr>
-              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Master Data Management</td><td class="why">Tạo "golden record" cho các thực thể cốt lõi</td></tr>
-              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Data Products &amp; Self-service Analytics</td><td class="why">Biến dữ liệu thành giá trị cho business</td></tr>
-              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Governance KPI &amp; Continuous Improvement</td><td class="why">Đo lường và cải tiến liên tục</td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Executive Sponsor</td><td class="why">Không có lãnh đạo thì Governance khó thành công</td><td class="crit"><span class="crit-tag">Governance</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Strategy</td><td class="why">Xác định mục tiêu kinh doanh cần hỗ trợ</td><td class="crit"><span class="crit-tag">Architecture</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Domain</td><td class="why">Chia dữ liệu theo lĩnh vực (Customer, Product, Order...)</td><td class="crit"><span class="crit-tag">Modeling</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Owner &amp; Steward</td><td class="why">Rõ người chịu trách nhiệm cho từng domain</td><td class="crit"><span class="crit-tag">Governance</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐⭐</td><td class="job">Data Policies &amp; Standards</td><td class="why">Thiết lập quy tắc chung cho dữ liệu</td><td class="crit"><span class="crit-tag">Governance</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Business Glossary &amp; Data Catalog</td><td class="why">Thống nhất ngôn ngữ và giúp tìm kiếm dữ liệu</td><td class="crit"><span class="crit-tag">Metadata</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Metadata &amp; Lineage</td><td class="why">Hiểu dữ liệu đến từ đâu và đi đến đâu</td><td class="crit"><span class="crit-tag">Metadata</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Data Quality</td><td class="why">Xây quy tắc và KPI chất lượng dữ liệu</td><td class="crit"><span class="crit-tag">Data Quality</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐⭐☆</td><td class="job">Data Security &amp; Privacy</td><td class="why">Bảo vệ dữ liệu nhạy cảm, đáp ứng tuân thủ</td><td class="crit"><span class="crit-tag">Security</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Master Data Management</td><td class="why">Tạo "golden record" cho các thực thể cốt lõi</td><td class="crit"><span class="crit-tag">MDM</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Data Products &amp; Self-service Analytics</td><td class="why">Biến dữ liệu thành giá trị cho business</td><td class="crit"><span class="crit-tag">DW/BI</span></td></tr>
+              <tr><td class="stars">⭐⭐⭐☆☆</td><td class="job">Governance KPI &amp; Continuous Improvement</td><td class="why">Đo lường và cải tiến liên tục</td><td class="crit"><span class="crit-tag">Governance</span></td></tr>
             </tbody>
           </table>
         </div>
+        <p class="matrix-note" style="margin-top:0.9rem">3 tiêu chí <strong>Storage</strong>, <strong>Integration</strong>, <strong>Document</strong> không có mục ưu tiên riêng ở bảng trên — đây là các tiêu chí thuộc tầng triển khai kỹ thuật, nằm ẩn bên trong "Data Strategy" / "Data Domain" chứ không được liệt kê thành 1 dòng riêng.</p>
       </div>
 
       <div class="table-scroll" role="region" aria-label="Bảng ma trận 8 bước vòng đời dữ liệu và 11 tiêu chí DAMA" tabindex="0">
@@ -999,7 +1223,7 @@
                   <div class="detail">
                     <p><span class="tag">Todo</span>DA đối chiếu KPI ở Gold layer với số liệu kỳ vọng trước khi publish.</p>
                     <p><span class="tag">Next Step</span>KPI công bố ra ngoài đã được double-check.</p>
-                    <p><span class="tag">Biz Impact</span>Tránh công bố sai số cho sếp/business.</p>
+                    <p><span class="tag">Biz Impact</span>Tránh công bố sai số cho Ban điều hành/business.</p>
                   </div>
                 </details>
               </td>
@@ -1021,7 +1245,7 @@
                   <div class="detail">
                     <p><span class="tag">Todo</span>Chỉ định Data Owner cho từng KPI hiển thị trên Dashboard.</p>
                     <p><span class="tag">Next Step</span>Biết hỏi ai khi KPI có sai lệch.</p>
-                    <p><span class="tag">Biz Impact</span>Sếp tin tưởng KPI vì có người chịu trách nhiệm rõ ràng.</p>
+                    <p><span class="tag">Biz Impact</span>Ban điều hành tin tưởng KPI vì có người chịu trách nhiệm rõ ràng.</p>
                   </div>
                 </details>
               </td>
@@ -1056,8 +1280,8 @@
                 <details><summary><span class="role role-analyst">Data Analyst</span></summary>
                   <div class="detail">
                     <p><span class="tag">Todo</span>DA cấu hình Row-Level Security trên Power BI.</p>
-                    <p><span class="tag">Next Step</span>Không cần tạo nhiều bản báo cáo riêng cho từng vùng/sếp.</p>
-                    <p><span class="tag">Biz Impact</span>Sếp vùng nào chỉ xem số vùng đó.</p>
+                    <p><span class="tag">Next Step</span>Không cần tạo nhiều bản báo cáo riêng cho từng vùng/cấp quản lý.</p>
+                    <p><span class="tag">Biz Impact</span>Lãnh đạo vùng nào chỉ xem số vùng đó.</p>
                   </div>
                 </details>
               </td>
@@ -1075,7 +1299,7 @@
                 <details><summary><span class="role role-analyst">Data Analyst</span></summary>
                   <div class="detail">
                     <p><span class="tag">Todo</span>DA build Dashboard tổng hợp KPI cho phòng ban.</p>
-                    <p><span class="tag">Next Step</span>Report go-live, sếp xem được số liệu hàng ngày.</p>
+                    <p><span class="tag">Next Step</span>Report go-live, lãnh đạo xem được số liệu hàng ngày.</p>
                     <p><span class="tag">Biz Impact</span>Ra quyết định nhanh hơn nhờ nhìn số trực quan.</p>
                   </div>
                 </details>
@@ -1172,7 +1396,7 @@
                 <details><summary><span class="role role-de">Data Engineer</span></summary>
                   <div class="detail">
                     <p><span class="tag">Todo</span>Kiểm tra Feature Quality (drift, null, outlier) trước khi feed vào model.</p>
-                    <p><span class="tag">Next Step</span>Model không bị "ăn" dữ liệu rác.</p>
+                    <p><span class="tag">Next Step</span>Model không bị nhiễu bởi dữ liệu rác.</p>
                     <p><span class="tag">Biz Impact</span>Giữ độ chính xác của model ổn định theo thời gian.</p>
                   </div>
                 </details>
@@ -1241,20 +1465,158 @@
       <p class="matrix-note">Bấm vào tên vai trò trong một ô để xem Todo / Next Step / Biz Impact của riêng ô đó — ô dấu “–” nghĩa là tiêu chí đó không phải trọng tâm ở bước này. Bấm vào tiêu đề hàng hoặc tiêu đề cột để mở/đóng toàn bộ hàng/cột đó cùng lúc; bấm vào ô góc trên-trái để mở/đóng toàn bộ ma trận. Mỗi ô chỉ ghi 1 PIC chính, tô màu theo chú thích bên dưới.</p>
 
       <div class="role-legend">
-        <span class="role-legend-title">Chú thích màu chức danh (xếp từ cấp bậc / thu nhập cao → thấp)</span>
+        <span class="role-legend-title">Chú thích màu chức danh</span>
         <ul class="role-legend-list">
-          <li><span class="rank">1</span><span class="swatch role-owner"></span><span class="role role-owner">Data Owner</span></li>
-          <li><span class="rank">2</span><span class="swatch role-steward"></span><span class="role role-steward">Data Steward</span></li>
-          <li><span class="rank">3</span><span class="swatch role-de"></span><span class="role role-de">Data Engineer</span></li>
-          <li><span class="rank">4</span><span class="swatch role-analyst"></span><span class="role role-analyst">Data Analyst</span></li>
-          <li><span class="rank">5</span><span class="swatch role-bizuser"></span><span class="role role-bizuser">Business User</span></li>
+          <li><span class="swatch role-owner"></span><span class="role role-owner">Data Owner</span></li>
+          <li><span class="swatch role-steward"></span><span class="role role-steward">Data Steward</span></li>
+          <li><span class="swatch role-de"></span><span class="role role-de">Data Engineer</span></li>
+          <li><span class="swatch role-analyst"></span><span class="role role-analyst">Data Analyst</span></li>
+          <li><span class="swatch role-bizuser"></span><span class="role role-bizuser">Business User</span></li>
         </ul>
       </div>
     </section>
 
+    <section id="quy-trinh">
+      <h2>Quy trình vận hành Data Governance</h2>
+      <p class="section-lede">Ma trận ở trên trả lời câu hỏi "ai làm gì" — phần này trả lời câu hỏi "vận hành theo vòng lặp nào, cơ cấu tổ chức ra sao, khi có sự cố thì xử lý thế nào, và triển khai theo lộ trình nào".</p>
+
+      <h3 style="margin-top:2rem">Vòng lặp vận hành</h3>
+      <div class="flow-row">
+        <div class="flow-step">
+          <span class="flow-num">1</span>
+          <h4>Thiết lập chính sách</h4>
+          <p>DGC &amp; Data Owner ban hành chính sách, tiêu chuẩn, chỉ định PIC theo ma trận hành động.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">2</span>
+          <h4>Thực thi</h4>
+          <p>Data Engineer, Data Analyst, Data Steward triển khai đúng theo ma trận và hướng dẫn kỹ thuật cho từng PIC.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">3</span>
+          <h4>Giám sát</h4>
+          <p>Đo lường bằng bộ KPI hoàn thiện Data Governance (phần cuối tài liệu), phát hiện sai lệch và sự cố.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">4</span>
+          <h4>Cải tiến</h4>
+          <p>Kết quả giám sát phản hồi ngược lại DGC để cập nhật chính sách — khép kín vòng lặp, lặp lại từ bước 1.</p>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2.4rem">Mô hình tổ chức quản trị</h3>
+      <div class="lead-card">
+        <p>DAMA-DMBOK định nghĩa 3 mô hình vận hành Data Governance: <strong>Centralized</strong> (một đội trung tâm làm toàn bộ), <strong>Replicated</strong> (mỗi công ty thành viên tự làm độc lập, áp cùng chuẩn nhưng không phối hợp), và <strong>Federated</strong> (trung tâm ban hành chính sách &amp; chuẩn dùng chung, các đơn vị tự vận hành theo đặc thù riêng).</p>
+        <p style="margin:0"><strong>Doanh nghiệp áp dụng mô hình Federated (Liên kết).</strong> Hội đồng Quản trị Dữ liệu (DGC) ở trung tâm ban hành chính sách, tiêu chuẩn và Business Glossary dùng chung cho toàn doanh nghiệp; mỗi công ty thành viên (bất động sản, ô tô, y tế, giáo dục, bán lẻ...) tự vận hành Data Owner &amp; Data Steward riêng để triển khai theo đặc thù ngành. Mô hình Centralized không khả thi ở quy mô đa ngành; mô hình Replicated dễ tái tạo lại chính tình trạng silo đang muốn giải quyết.</p>
+      </div>
+
+      <div class="org-tiers">
+        <div class="org-tier">
+          <span class="org-role">Hội đồng Quản trị Dữ liệu (DGC)</span>
+          <span class="org-desc">Head of Data chủ trì, cùng đại diện Ban điều hành mỗi công ty thành viên và Legal/Compliance. Họp định kỳ hàng quý: duyệt chính sách, xử lý escalation liên-công ty, đánh giá KPI toàn doanh nghiệp.</span>
+        </div>
+        <div class="org-tier">
+          <span class="org-role role role-owner">Data Owner</span>
+          <span class="org-desc">Lãnh đạo cấp cao phụ trách 1 domain dữ liệu tại từng công ty thành viên (vd Giám đốc Data của công ty mảng bất động sản phụ trách domain "Khách hàng bất động sản"). Chịu trách nhiệm cuối cùng, duyệt chính sách/SLA cho domain của mình, là thành viên thường trực của DGC.</span>
+        </div>
+        <div class="org-tier">
+          <span class="org-role role role-steward">Data Steward</span>
+          <span class="org-desc">Vận hành hàng ngày cho từng domain: định nghĩa thuật ngữ, phân loại dữ liệu nhạy cảm, duyệt catalog, là đầu mối xử lý sự cố trước khi leo thang lên DGC.</span>
+        </div>
+        <div class="org-tier">
+          <span class="org-role"><span class="role role-de">Data Engineer</span> &amp; <span class="role role-analyst">Data Analyst</span></span>
+          <span class="org-desc">Thực thi kỹ thuật theo chuẩn đã được Owner/Steward duyệt — xây pipeline, mô hình dữ liệu, dashboard, đúng theo PIC đã gán trong ma trận hành động ở trên.</span>
+        </div>
+        <div class="org-tier">
+          <span class="org-role role role-bizuser">Business User</span>
+          <span class="org-desc">Người dùng cuối tại các phòng ban nghiệp vụ — nguồn phản hồi quan trọng nhất để phát hiện sai lệch dữ liệu trong thực tế vận hành.</span>
+        </div>
+      </div>
+
+      <h3 style="margin-top:2.4rem">Quy trình xử lý sự cố &amp; thay đổi định nghĩa dữ liệu</h3>
+      <div class="flow-row">
+        <div class="flow-step">
+          <span class="flow-num">1</span>
+          <h4>Phát hiện</h4>
+          <p>Business User hoặc hệ thống tự động phát hiện sai lệch/sự cố dữ liệu.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">2</span>
+          <h4>Phân loại</h4>
+          <p>Data Steward tiếp nhận, đánh giá mức độ ảnh hưởng: trong 1 domain hay liên-công ty.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">3</span>
+          <h4>Xử lý</h4>
+          <p>Trong phạm vi 1 domain: Data Engineer/Analyst xử lý trực tiếp theo SLA đã cam kết.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">4</span>
+          <h4>Leo thang nếu cần</h4>
+          <p>Liên quan nhiều công ty thành viên hoặc thay đổi định nghĩa dùng chung: đưa lên DGC quyết định.</p>
+        </div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-step">
+          <span class="flow-num">5</span>
+          <h4>Đóng &amp; cập nhật</h4>
+          <p>Ghi vào Change Log, cập nhật lại Business Glossary/Catalog nếu có thay đổi định nghĩa.</p>
+        </div>
+      </div>
+      <div class="lead-card" style="margin-top:1rem">
+        <p style="margin:0"><strong>Ví dụ minh hoạ:</strong> phòng Tài chính của công ty thành viên A và phòng Marketing của công ty thành viên B định nghĩa khác nhau về "khách hàng active". Data Steward 2 bên đưa vấn đề lên DGC, thống nhất 1 định nghĩa duy nhất, ghi vào Business Glossary chung — mọi báo cáo sau đó của cả 2 công ty bắt buộc dùng chung định nghĩa này.</p>
+      </div>
+
+      <h3 style="margin-top:2.4rem">Lộ trình triển khai theo giai đoạn</h3>
+      <div class="roadmap-row">
+        <div class="roadmap-phase">
+          <span class="phase-time">Giai đoạn 1 · Quý 1–2</span>
+          <h4>Foundation</h4>
+          <ul>
+            <li>Thành lập Hội đồng Quản trị Dữ liệu (DGC)</li>
+            <li>Chỉ định Data Owner &amp; Data Steward cho các domain lõi (Khách hàng, Bất động sản, Xe, Y tế...)</li>
+            <li>Xác định Critical Data Elements</li>
+            <li>Ban hành chính sách &amp; tiêu chuẩn đầu tiên</li>
+          </ul>
+        </div>
+        <div class="roadmap-phase">
+          <span class="phase-time">Giai đoạn 2 · Quý 3–4</span>
+          <h4>Standardize</h4>
+          <ul>
+            <li>Xây Business Glossary &amp; Data Catalog dùng chung</li>
+            <li>Triển khai Master Data cho thực thể "Khách hàng" toàn doanh nghiệp</li>
+            <li>Thiết lập baseline đo Data Quality</li>
+          </ul>
+        </div>
+        <div class="roadmap-phase">
+          <span class="phase-time">Giai đoạn 3 · Năm 2</span>
+          <h4>Scale</h4>
+          <ul>
+            <li>Mở rộng đủ 11 tiêu chí DAMA cho toàn bộ công ty thành viên</li>
+            <li>Tự động hoá kiểm tra chất lượng dữ liệu</li>
+            <li>Kết nối Master Data với các hệ thống vận hành</li>
+          </ul>
+        </div>
+        <div class="roadmap-phase">
+          <span class="phase-time">Giai đoạn 4 · Năm 2+</span>
+          <h4>Optimize</h4>
+          <ul>
+            <li>Self-service analytics cho toàn doanh nghiệp</li>
+            <li>Dữ liệu sẵn sàng cho AI &amp; cá nhân hoá xuyên hệ sinh thái</li>
+            <li>Đo lường mức độ trưởng thành governance liên tục và cải tiến</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
     <section id="how-to">
-      <h2>Hướng dẫn triển khai</h2>
-      <p class="section-lede">Với mỗi Todo trong ma trận ở trên: làm ở đâu, dùng công cụ gì, các bước thực thi cụ thể — chia theo ba tầng công nghệ.</p>
+      <h2>Hướng dẫn triển khai cho PIC</h2>
+      <p class="section-lede">Với mỗi Todo trong ma trận hành động ở trên: làm ở đâu, dùng công cụ gì, các bước thực thi cụ thể cho từng PIC — chia theo ba tầng công nghệ đang triển khai (tham chiếu ngăn xếp hiện tại: AWS/Databricks/Power BI; công ty thành viên nào dùng stack khác vẫn áp dụng cùng nguyên tắc luồng trách nhiệm PIC bên dưới).</p>
 
       <section id="aws" class="platform-block">
         <span class="platform-badge aws"><span class="dot"></span>Phần 1 · AWS</span>
@@ -1371,7 +1733,7 @@ def gold_sales():
           <p class="where-line"><span class="label">Làm ở đâu</span>Power BI Desktop &amp; Service</p>
           <ul>
             <li><strong>DAX (kho BI):</strong> tạo các Measure chuẩn hóa, đưa hết vào một bảng ảo (Measure Table) để dễ quản lý.</li>
-            <li><strong>Giải nghĩa (Metadata):</strong> gõ mô tả (Description) vào phần Properties của từng Measure trong Model view. Bật chế độ Tooltip trên biểu đồ, kéo Measure giải nghĩa vào để khi sếp di chuột vào sẽ hiện ra “Công thức tính là A − B”.</li>
+            <li><strong>Giải nghĩa (Metadata):</strong> gõ mô tả (Description) vào phần Properties của từng Measure trong Model view. Bật chế độ Tooltip trên biểu đồ, kéo Measure giải nghĩa vào để khi người xem di chuột vào sẽ hiện ra “Công thức tính là A − B”.</li>
           </ul>
         </article>
 
@@ -1388,50 +1750,63 @@ def gold_sales():
     </section>
 
     <section id="kpi">
-      <h2>Đo lường mức độ hoàn thiện Data Governance</h2>
-      <p class="section-lede">Bộ KPI để tự chấm điểm chương trình Data Governance đã "đủ chín" chưa — dùng định kỳ (quý/năm), khác với KPI vận hành theo dõi hàng ngày ở ma trận phía trên.</p>
+      <h2>Đo lường tiến trình Data Governance</h2>
+      <p class="section-lede">Bộ 16 chỉ số để chấm điểm chương trình Data Governance định kỳ (quý/năm) trước DGC — khác với Todo/Next Step/Biz Impact ở ma trận phía trên vốn theo dõi hàng ngày theo từng ô. Chia làm 2 nhóm: <strong>Outcome</strong> (kết quả kỹ thuật — ai sở hữu dữ liệu, dữ liệu sạch tới đâu) và <strong>Adoption &amp; Process Maturity</strong> (con người trong tổ chức có thật sự dùng và vận hành governance hay không).</p>
 
-      <div class="lead-card">
-        <p><strong>Nhận xét về bộ chỉ số bạn đưa:</strong> về cơ bản là <strong>đúng và khá sát</strong> với các chỉ số phổ biến trong DAMA-DMBOK và các mô hình maturity governance thực tế (kiểu Gartner) — đủ để đo phần <em>"outcome"</em> (kết quả): ai sở hữu dữ liệu, dữ liệu sạch tới đâu, đã có lineage/metadata chưa, có tuân thủ chính sách không.</p>
-        <p>Điểm còn thiếu: bộ chỉ số này gần như <strong>chưa đo phần "adoption &amp; process maturity"</strong> — tức con người trong tổ chức có thật sự <em>dùng</em> và <em>vận hành</em> governance hay không, chứ không chỉ đo kết quả kỹ thuật. 5 chỉ số gợi ý bổ sung ở bảng thứ hai bên dưới là để bù phần này.</p>
-      </div>
-
-      <div class="table-scroll" role="region" aria-label="Bảng KPI hoàn thiện Data Governance bạn đưa ra" tabindex="0">
+      <div class="table-scroll" role="region" aria-label="Bảng KPI đo lường mức độ hoàn thiện Data Governance" tabindex="0">
         <table class="priority-table">
           <thead>
-            <tr><th scope="col">Nhóm</th><th scope="col">Chỉ số</th><th scope="col">Mục tiêu</th></tr>
+            <tr><th scope="col">Nhóm</th><th scope="col">Chỉ số</th><th scope="col">Mục tiêu</th><th scope="col">Vì sao cần</th></tr>
           </thead>
           <tbody>
-            <tr><td class="why">Ownership &amp; Accountability</td><td class="job">Data Owner được chỉ định</td><td>100%</td></tr>
-            <tr><td class="why">Ownership &amp; Accountability</td><td class="job">Data Steward được chỉ định</td><td>100%</td></tr>
-            <tr><td class="why">Phạm vi quản trị</td><td class="job">Critical Data Elements được định nghĩa</td><td>≥95%</td></tr>
-            <tr><td class="why">Data Quality</td><td class="job">Data Quality Score</td><td>≥98%</td></tr>
-            <tr><td class="why">Metadata Management</td><td class="job">Metadata Coverage</td><td>≥90%</td></tr>
-            <tr><td class="why">Metadata Management</td><td class="job">Data Lineage Coverage</td><td>≥85%</td></tr>
-            <tr><td class="why">Master Data Management</td><td class="job">Master Data Coverage</td><td>≥90%</td></tr>
-            <tr><td class="why">Compliance &amp; Risk</td><td class="job">Policy Compliance</td><td>≥95%</td></tr>
-            <tr><td class="why">Compliance &amp; Risk</td><td class="job">Data Incident</td><td>Giảm ≥50% so với năm trước</td></tr>
-            <tr><td class="why">Operational Efficiency</td><td class="job">Time to Deliver Data</td><td>Giảm xuống dưới 1 ngày</td></tr>
-            <tr><td class="why">Adoption &amp; Standardization</td><td class="job">Dashboard sử dụng KPI chuẩn</td><td>100%</td></tr>
-          </tbody>
-        </table>
-      </div>
-
-      <p class="matrix-note" style="margin-top:1.8rem"><strong>Gợi ý bổ sung</strong> — đo phần "adoption &amp; process maturity", nhóm chỉ số hay bị bỏ sót khi chỉ nhìn số liệu kỹ thuật:</p>
-
-      <div class="table-scroll" role="region" aria-label="Bảng KPI bổ sung về adoption và process maturity" tabindex="0">
-        <table class="priority-table">
-          <thead>
-            <tr><th scope="col">Nhóm</th><th scope="col">Chỉ số</th><th scope="col">Mục tiêu gợi ý</th><th scope="col">Vì sao cần</th></tr>
-          </thead>
-          <tbody>
+            <tr><td class="why">Ownership &amp; Accountability</td><td class="job">Data Owner được chỉ định</td><td>100%</td><td class="why">Rõ ai chịu trách nhiệm cho từng domain dữ liệu</td></tr>
+            <tr><td class="why">Ownership &amp; Accountability</td><td class="job">Data Steward được chỉ định</td><td>100%</td><td class="why">Có người vận hành hàng ngày cho từng domain</td></tr>
+            <tr><td class="why">Phạm vi quản trị</td><td class="job">Critical Data Elements được định nghĩa</td><td>≥95%</td><td class="why">Biết rõ đâu là dữ liệu quan trọng cần ưu tiên quản trị</td></tr>
+            <tr><td class="why">Data Quality</td><td class="job">Data Quality Score</td><td>≥98%</td><td class="why">Đảm bảo dữ liệu đủ tin cậy để ra quyết định</td></tr>
+            <tr><td class="why">Metadata Management</td><td class="job">Metadata Coverage</td><td>≥90%</td><td class="why">Ai cũng tra cứu được ý nghĩa dữ liệu mà không cần hỏi lại đội kỹ thuật</td></tr>
+            <tr><td class="why">Metadata Management</td><td class="job">Data Lineage Coverage</td><td>≥85%</td><td class="why">Biết dữ liệu đến từ đâu, sai ở bước nào khi có lỗi</td></tr>
+            <tr><td class="why">Master Data Management</td><td class="job">Master Data Coverage</td><td>≥90%</td><td class="why">Không đếm trùng/đếm thiếu các thực thể lõi (khách hàng, sản phẩm...)</td></tr>
+            <tr><td class="why">Compliance &amp; Risk</td><td class="job">Policy Compliance</td><td>≥95%</td><td class="why">Đảm bảo chính sách ban hành thực sự được tuân thủ</td></tr>
+            <tr><td class="why">Compliance &amp; Risk</td><td class="job">Data Incident</td><td>Giảm ≥50% so với năm trước</td><td class="why">Đo hiệu quả cải thiện chất lượng dữ liệu theo thời gian</td></tr>
+            <tr><td class="why">Operational Efficiency</td><td class="job">Time to Deliver Data</td><td>Giảm xuống dưới 1 ngày</td><td class="why">Business ra quyết định kịp thời</td></tr>
+            <tr><td class="why">Adoption &amp; Standardization</td><td class="job">Dashboard sử dụng KPI chuẩn</td><td>100%</td><td class="why">Toàn doanh nghiệp nhìn cùng 1 con số cho cùng 1 khái niệm</td></tr>
             <tr><td class="why">Adoption</td><td class="job">Data Catalog Adoption Rate</td><td>≥70% user active/tháng</td><td class="why">Có catalog mà không ai tra cứu thì coi như chưa có</td></tr>
             <tr><td class="why">Adoption</td><td class="job">Data Literacy / Training Completion</td><td>100% nhân sự liên quan</td><td class="why">Chính sách tốt vô nghĩa nếu người dùng không biết hoặc không hiểu</td></tr>
             <tr><td class="why">Operational Efficiency</td><td class="job">Issue Resolution SLA</td><td>&lt; 3 ngày làm việc</td><td class="why">Đo tốc độ phản hồi thực tế, không chỉ đếm số lượng incident</td></tr>
-            <tr><td class="why">Business Impact</td><td class="job">Cost of Poor Data Quality (COPQ)</td><td>Giảm theo từng quý</td><td class="why">Quy đổi ra tiền để thuyết phục lãnh đạo tiếp tục đầu tư</td></tr>
+            <tr><td class="why">Business Impact</td><td class="job">Cost of Poor Data Quality (COPQ)</td><td>Giảm theo từng quý</td><td class="why">Quy đổi ra tiền để thuyết phục Ban điều hành tiếp tục đầu tư</td></tr>
             <tr><td class="why">Process Maturity</td><td class="job">Governance Council Action Rate</td><td>≥90% quyết định thực thi đúng hạn</td><td class="why">Họp hội đồng mà không ai làm theo thì governance chỉ nằm trên giấy</td></tr>
           </tbody>
         </table>
+      </div>
+
+      <h3 style="margin-top:2.4rem">Thang đo mức độ trưởng thành</h3>
+      <p class="section-lede" style="margin-top:0.4rem">Dùng thang 5 mức này để DGC tự chấm điểm hiện trạng và thống nhất mục tiêu cho từng giai đoạn của lộ trình triển khai.</p>
+      <div class="maturity-scale">
+        <div class="maturity-level">
+          <span class="lvl-num">1</span>
+          <h5>Initial — Sơ khai</h5>
+          <p>Dữ liệu quản lý rời rạc theo từng công ty thành viên, chưa có chính sách chung, phát hiện lỗi bị động khi sự cố đã xảy ra.</p>
+        </div>
+        <div class="maturity-level">
+          <span class="lvl-num">2</span>
+          <h5>Managed — Được quản lý</h5>
+          <p>Đã có Data Owner/Steward ở một số domain, nhưng chưa nhất quán giữa các công ty thành viên.</p>
+        </div>
+        <div class="maturity-level">
+          <span class="lvl-num">3</span>
+          <h5>Defined — Được chuẩn hoá</h5>
+          <p>Có chính sách, tiêu chuẩn, Business Glossary dùng chung toàn doanh nghiệp theo mô hình Federated.</p>
+        </div>
+        <div class="maturity-level">
+          <span class="lvl-num">4</span>
+          <h5>Quantitatively Managed — Đo lường được</h5>
+          <p>Bộ 16 KPI ở trên được theo dõi định kỳ, DGC ra quyết định dựa trên số liệu thay vì cảm tính.</p>
+        </div>
+        <div class="maturity-level">
+          <span class="lvl-num">5</span>
+          <h5>Optimizing — Tối ưu liên tục</h5>
+          <p>Governance vận hành gần như tự động hoá, dữ liệu là nền tảng chiến lược cho AI và tăng trưởng toàn hệ sinh thái.</p>
+        </div>
       </div>
     </section>
 
@@ -1439,7 +1814,7 @@ def gold_sales():
 </div>
 
 <footer>
-  Tổng hợp từ <code>dama_data_workflow_matrix.md</code> và <code>todo_implementation_guide.md</code>. Dùng nội bộ cho Data Analyst / Data Engineer.
+  Data Governance Framework. Tài liệu nội bộ, chủ trì bởi Head of Data. Tham chiếu kỹ thuật ở phần Hướng dẫn triển khai dựa trên ngăn xếp AWS / Databricks / Power BI hiện tại.
 </footer>
 
 <script>
