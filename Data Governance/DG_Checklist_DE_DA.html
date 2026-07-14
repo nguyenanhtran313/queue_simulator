@@ -44,7 +44,7 @@
   }
 
   .page {
-    max-width: 1800px;
+    max-width: min(2400px, 98vw);
     margin: 0 auto;
     padding: 2.5rem clamp(1.5rem, 4vw, 3rem) 5rem;
     display: flex;
@@ -189,7 +189,7 @@
   /* ---------- columns ---------- */
   .tracks {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 1.75rem;
     align-items: start;
   }
@@ -206,6 +206,19 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 0 .2rem .8rem;
+  }
+
+  .focus-toolbar {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    flex-wrap: wrap;
+  }
+
+  .focus-toolbar-label {
+    font-size: .78rem;
+    font-weight: 600;
+    color: var(--gray700);
   }
 
   .track-head h2 {
@@ -323,22 +336,116 @@
     list-style: none;
     margin: 0;
     padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0;
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
   ul.checklist li {
+    display: contents;
+  }
+
+  .cb-cell {
     display: flex;
     gap: .7rem;
     align-items: flex-start;
     padding: .55rem 0;
     border-top: 1px solid var(--gray200);
+    min-width: 0;
   }
 
-  ul.checklist li:first-child {
+  .detail-cell {
+    display: none;
+    min-width: 0;
+  }
+
+  .checklist-head-cb,
+  .checklist-head-detail {
+    display: none;
+    font-size: .64rem;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--gray700);
+    padding-bottom: .5rem;
+  }
+
+  ul.checklist li.first .cb-cell,
+  ul.checklist li.first .detail-cell {
     border-top: none;
     padding-top: 0;
+  }
+
+  .col.expanded .detail-cell {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    padding: .55rem 0;
+    border-top: 1px solid var(--gray200);
+  }
+
+  .col.expanded li.first .detail-cell {
+    border-top: none;
+    padding-top: 0;
+  }
+
+  .tracks.focus-de .col.da {
+    display: none;
+  }
+
+  .tracks.focus-da .col.de {
+    display: none;
+  }
+
+  @media (min-width:901px) {
+    .col.expanded ul.checklist {
+      grid-template-columns: 1fr 1fr;
+      column-gap: 1.25rem;
+    }
+
+    .col.expanded .checklist-head-cb,
+    .col.expanded .checklist-head-detail {
+      display: block;
+    }
+  }
+
+  .detail-cell h4 {
+    font-size: .78rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--gray900);
+  }
+
+  .detail-cell .detail-item-plain {
+    font-size: .72rem;
+    color: var(--gray700);
+    margin: 0;
+  }
+
+  .detail-cell .detail-item-steps {
+    margin: 0;
+    padding-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: .2rem;
+  }
+
+  .detail-cell .detail-item-steps li {
+    display: list-item;
+    font-size: .68rem;
+    color: var(--gray700);
+  }
+
+  .detail-cell .detail-item-collab {
+    font-size: .68rem;
+    color: var(--gray700);
+    background: var(--gray50);
+    border-radius: 5px;
+    padding: .35rem .5rem;
+    margin: 0;
+  }
+
+  .detail-cell .detail-item-collab b {
+    color: var(--gray900);
   }
 
   ul.checklist input[type="checkbox"] {
@@ -377,13 +484,6 @@
     outline-offset: 2px;
   }
 
-  .item-body {
-    display: flex;
-    flex-direction: column;
-    gap: .3rem;
-    min-width: 0;
-  }
-
   ul.checklist label {
     font-size: .88rem;
     color: var(--gray700);
@@ -416,30 +516,42 @@
     color: var(--primary900);
   }
 
-  .detail-btn {
-    align-self: flex-start;
+  .expand-btn {
     font: inherit;
-    font-size: .78rem;
+    font-size: .76rem;
     font-weight: 600;
     color: var(--primary500);
-    background: none;
+    background: var(--primary50);
     border: none;
-    padding: 0;
+    border-radius: 6px;
+    padding: .35rem .7rem;
     cursor: pointer;
-    text-decoration: underline;
-    text-decoration-color: var(--primary100);
-    text-underline-offset: 2px;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: .3rem;
   }
 
-  .detail-btn:hover {
-    color: var(--primary900);
-    text-decoration-color: var(--primary900);
+  .expand-btn:hover {
+    background: var(--primary100);
   }
 
-  .detail-btn:focus-visible {
+  .expand-btn:focus-visible {
     outline: 2px solid var(--primary500);
     outline-offset: 2px;
-    border-radius: 2px;
+  }
+
+  .expand-btn .chev {
+    transition: transform .15s ease;
+  }
+
+  .expand-btn.open {
+    background: var(--primary100);
+    color: var(--primary900);
+  }
+
+  .expand-btn.open .chev {
+    transform: rotate(90deg);
   }
 
   .gate {
@@ -474,113 +586,7 @@
     color: var(--gray700);
   }
 
-  /* ---------- Detail modal ---------- */
-  dialog.detail-modal {
-    border: none;
-    border-radius: 12px;
-    padding: 0;
-    max-width: 600px;
-    width: calc(100vw - 2rem);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, .2);
-    background: var(--white);
-    color: var(--gray900);
-  }
-
-  dialog.detail-modal::backdrop {
-    background: rgba(32, 33, 36, .5);
-  }
-
-  .detail-modal-inner {
-    padding: 1.75rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-
-  .detail-modal-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 1rem;
-  }
-
-  .detail-modal-eyebrow {
-    font-size: .72rem;
-    letter-spacing: .08em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--primary500);
-    margin-bottom: .3rem;
-  }
-
-  .detail-modal-head h3 {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin: 0;
-    color: var(--gray900);
-    text-wrap: balance;
-  }
-
-  .detail-modal-close {
-    flex: 0 0 auto;
-    width: 2rem;
-    height: 2rem;
-    border-radius: 50%;
-    border: none;
-    background: var(--gray50);
-    color: var(--gray700);
-    font-size: 1.1rem;
-    line-height: 1;
-    cursor: pointer;
-  }
-
-  .detail-modal-close:hover {
-    background: var(--gray200);
-    color: var(--gray900);
-  }
-
-  .detail-modal-plain {
-    font-size: .92rem;
-    color: var(--gray700);
-    margin: 0;
-  }
-
-  .detail-modal-section-label {
-    font-size: .7rem;
-    letter-spacing: .06em;
-    text-transform: uppercase;
-    font-weight: 700;
-    color: var(--gray700);
-    margin: 0 0 .5rem;
-  }
-
-  .detail-modal-steps {
-    margin: 0;
-    padding-left: 1.15rem;
-    display: flex;
-    flex-direction: column;
-    gap: .45rem;
-  }
-
-  .detail-modal-steps li {
-    font-size: .88rem;
-    color: var(--gray700);
-  }
-
-  .detail-modal-collab {
-    font-size: .85rem;
-    color: var(--gray700);
-    background: var(--gray50);
-    border-radius: 6px;
-    padding: .75rem .9rem;
-    margin: 0;
-  }
-
-  .detail-modal-collab b {
-    color: var(--gray900);
-  }
+  /* (chi tiết từng mục nay nằm ngay trong .detail-cell của mỗi hàng — xem phần ul.checklist) */
 
   @media (prefers-reduced-motion:no-preference) {
     ul.checklist input[type="checkbox"] {
@@ -635,9 +641,9 @@
       rồi giữ tầng semantic gọn; DA gắn checkpoint từ lúc <b>nhận đầu bài từ business</b> đến
       lúc build <b>Power BI model</b>. Thuật ngữ dùng thống nhất với
       <a href="Introduction%20to%20DG.md">Business Glossary / Data Steward</a> đã có trong
-      thư mục này. Tick vào từng mục khi đã áp dụng, hoặc bấm <b>"Xem hướng dẫn chi tiết"</b>
-      nếu chưa rõ mục đó nghĩa là gì / làm cụ thể ra sao — trạng thái tick được lưu lại trên
-      trình duyệt này.
+      thư mục này. Tick vào từng mục khi đã áp dụng — trạng thái được lưu lại trên trình duyệt
+      này. Bấm <b>"Xem tất cả hướng dẫn"</b> ở đầu mỗi cột nếu chưa rõ các mục nghĩa là gì / làm
+      cụ thể ra sao — phần hướng dẫn sẽ mở ra ngay cột kế bên.
     </p>
   </header>
 
@@ -655,6 +661,16 @@
     <div class="kpi-card action">
       <button class="reset-link" id="reset-btn" type="button">Xoá tiến trình đã lưu</button>
     </div>
+  </section>
+
+  <section class="focus-toolbar">
+    <span class="focus-toolbar-label">Hướng dẫn chi tiết:</span>
+    <button type="button" class="expand-btn" id="expand-de" data-track="de">
+      <span class="chev">›</span><span class="expand-label">Data Engineer</span>
+    </button>
+    <button type="button" class="expand-btn" id="expand-da" data-track="da">
+      <span class="chev">›</span><span class="expand-label">Data Analyst</span>
+    </button>
   </section>
 
   <section class="tracks">
@@ -678,14 +694,15 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-1-1"><div class="item-body"><label for="de-1-1"><span class="item-text">Task <b>schema validation</b> chạy trước task load — fail-fast nếu source đổi schema ngoài kế hoạch, không để lỗi trôi xuống downstream.</span></label><button type="button" class="detail-btn" data-detail="de-1-1">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-2"><div class="item-body"><label for="de-1-2"><span class="item-text">Gắn nhãn phân loại dữ liệu nhạy cảm (PII/tài chính) <b>ngay tại bước ingest</b> — không để việc classify trôi xuống tầng sau.</span></label><button type="button" class="detail-btn" data-detail="de-1-2">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-3"><div class="item-body"><label for="de-1-3"><span class="item-text">Task kiểm tra chất lượng cơ bản sau khi load: null-rate bất thường, row count so với kỳ trước, freshness so với SLA nguồn.</span></label><button type="button" class="detail-btn" data-detail="de-1-3">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-4"><div class="item-body"><label for="de-1-4"><span class="item-text">Bản ghi lỗi/sai schema đưa vào <b>quarantine table</b> riêng — không silently drop, không để lẫn vào bảng chính.</span></label><button type="button" class="detail-btn" data-detail="de-1-4">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-5"><div class="item-body"><label for="de-1-5"><span class="item-text">Mọi task ingest log đủ: nguồn, thời điểm chạy, số dòng, version schema — phục vụ lineage &amp; audit về sau.</span></label><button type="button" class="detail-btn" data-detail="de-1-5">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-6"><div class="item-body"><label for="de-1-6"><span class="item-text">Đặt tên dataset/table/task đúng naming convention đã thống nhất trong Data Catalog — không tự đặt tên tuỳ hứng.</span></label><button type="button" class="detail-btn" data-detail="de-1-6">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-7"><div class="item-body"><label for="de-1-7"><span class="item-text">Raw layer giới hạn quyền đọc/ghi — chỉ DE và service account; <b>DA/BI không được query thẳng raw</b>.</span></label><button type="button" class="detail-btn" data-detail="de-1-7">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-1-8"><div class="item-body"><label for="de-1-8"><span class="item-text">Retention/archival policy khai báo ngay khi tạo dataset mới — không để "tính sau".</span></label><button type="button" class="detail-btn" data-detail="de-1-8">Xem hướng dẫn chi tiết →</button></div></li>
+          <li class="checklist-head-row"><div class="checklist-head-cb">Việc cần làm</div><div class="checklist-head-detail">Hướng dẫn chi tiết</div></li>
+          <li class="row first"><div class="cb-cell"><input type="checkbox" id="de-1-1"><label for="de-1-1"><span class="item-text">Task <b>schema validation</b> chạy trước task load — fail-fast nếu source đổi schema ngoài kế hoạch, không để lỗi trôi xuống downstream.</span></label></div><div class="detail-cell" data-detail="de-1-1"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-2"><label for="de-1-2"><span class="item-text">Gắn nhãn phân loại dữ liệu nhạy cảm (PII/tài chính) <b>ngay tại bước ingest</b> — không để việc classify trôi xuống tầng sau.</span></label></div><div class="detail-cell" data-detail="de-1-2"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-3"><label for="de-1-3"><span class="item-text">Task kiểm tra chất lượng cơ bản sau khi load: null-rate bất thường, row count so với kỳ trước, freshness so với SLA nguồn.</span></label></div><div class="detail-cell" data-detail="de-1-3"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-4"><label for="de-1-4"><span class="item-text">Bản ghi lỗi/sai schema đưa vào <b>quarantine table</b> riêng — không silently drop, không để lẫn vào bảng chính.</span></label></div><div class="detail-cell" data-detail="de-1-4"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-5"><label for="de-1-5"><span class="item-text">Mọi task ingest log đủ: nguồn, thời điểm chạy, số dòng, version schema — phục vụ lineage &amp; audit về sau.</span></label></div><div class="detail-cell" data-detail="de-1-5"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-6"><label for="de-1-6"><span class="item-text">Đặt tên dataset/table/task đúng naming convention đã thống nhất trong Data Catalog — không tự đặt tên tuỳ hứng.</span></label></div><div class="detail-cell" data-detail="de-1-6"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-7"><label for="de-1-7"><span class="item-text">Raw layer giới hạn quyền đọc/ghi — chỉ DE và service account; <b>DA/BI không được query thẳng raw</b>.</span></label></div><div class="detail-cell" data-detail="de-1-7"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-1-8"><label for="de-1-8"><span class="item-text">Retention/archival policy khai báo ngay khi tạo dataset mới — không để "tính sau".</span></label></div><div class="detail-cell" data-detail="de-1-8"></div></li>
         </ul>
         <div class="gate"><span class="tag">Gate</span><span>Toàn bộ mục trên PASS + schema đã đăng ký vào Data Catalog, mới cho phép dbt đọc dữ liệu.</span></div>
       </div>
@@ -702,15 +719,16 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-2-1"><div class="item-body"><label for="de-2-1"><span class="item-text">Mọi model có test <code>not_null</code> + <code>unique</code> trên khoá chính, <code>relationships</code> cho khoá ngoại quan trọng.</span></label><button type="button" class="detail-btn" data-detail="de-2-1">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-2"><div class="item-body"><label for="de-2-2"><span class="item-text">Model tầng <b>staging</b> chỉ rename/cast/chuẩn hoá kiểu — business logic tách riêng ở intermediate/marts.</span></label><button type="button" class="detail-btn" data-detail="de-2-2">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-3"><div class="item-body"><label for="de-2-3"><span class="item-text">Mọi model có description trong <code>.yml</code>; cột nhạy cảm gắn <code>meta: pii: true</code> để tự lộ ra khi generate docs/catalog.</span></label><button type="button" class="detail-btn" data-detail="de-2-3">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-4"><div class="item-body"><label for="de-2-4"><span class="item-text"><code>dbt source freshness</code> cấu hình cho source quan trọng, cảnh báo khi source trễ hơn SLA.</span></label><button type="button" class="detail-btn" data-detail="de-2-4">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-5"><div class="item-body"><label for="de-2-5"><span class="item-text">Model đã "certified" áp <code>dbt contracts</code>/enforce schema — tránh đổi cột ngầm làm vỡ báo cáo phía sau.</span></label><button type="button" class="detail-btn" data-detail="de-2-5">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-6"><div class="item-body"><label for="de-2-6"><span class="item-text">Che/pseudonymize dữ liệu nhạy cảm ngay trong transform — không để PII sống nguyên tới tầng semantic.</span></label><button type="button" class="detail-btn" data-detail="de-2-6">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-7"><div class="item-body"><label for="de-2-7"><span class="item-text">Mọi model có <code>meta: owner</code> — biết ai chịu trách nhiệm khi model lỗi hoặc cần đổi.</span></label><button type="button" class="detail-btn" data-detail="de-2-7">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-8"><div class="item-body"><label for="de-2-8"><span class="item-text">CI chạy <code>dbt build</code> (kèm test) trên pull request — không merge code transform chưa qua test.</span></label><button type="button" class="detail-btn" data-detail="de-2-8">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-2-9"><div class="item-body"><label for="de-2-9"><span class="item-text">Naming convention rõ theo lớp: <code>stg_</code>, <code>int_</code>, <code>fct_</code>/<code>dim_</code> — tránh tên tuỳ ý gây khó truy vết.</span></label><button type="button" class="detail-btn" data-detail="de-2-9">Xem hướng dẫn chi tiết →</button></div></li>
+          <li class="checklist-head-row"><div class="checklist-head-cb">Việc cần làm</div><div class="checklist-head-detail">Hướng dẫn chi tiết</div></li>
+          <li class="row first"><div class="cb-cell"><input type="checkbox" id="de-2-1"><label for="de-2-1"><span class="item-text">Mọi model có test <code>not_null</code> + <code>unique</code> trên khoá chính, <code>relationships</code> cho khoá ngoại quan trọng.</span></label></div><div class="detail-cell" data-detail="de-2-1"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-2"><label for="de-2-2"><span class="item-text">Model tầng <b>staging</b> chỉ rename/cast/chuẩn hoá kiểu — business logic tách riêng ở intermediate/marts.</span></label></div><div class="detail-cell" data-detail="de-2-2"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-3"><label for="de-2-3"><span class="item-text">Mọi model có description trong <code>.yml</code>; cột nhạy cảm gắn <code>meta: pii: true</code> để tự lộ ra khi generate docs/catalog.</span></label></div><div class="detail-cell" data-detail="de-2-3"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-4"><label for="de-2-4"><span class="item-text"><code>dbt source freshness</code> cấu hình cho source quan trọng, cảnh báo khi source trễ hơn SLA.</span></label></div><div class="detail-cell" data-detail="de-2-4"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-5"><label for="de-2-5"><span class="item-text">Model đã "certified" áp <code>dbt contracts</code>/enforce schema — tránh đổi cột ngầm làm vỡ báo cáo phía sau.</span></label></div><div class="detail-cell" data-detail="de-2-5"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-6"><label for="de-2-6"><span class="item-text">Che/pseudonymize dữ liệu nhạy cảm ngay trong transform — không để PII sống nguyên tới tầng semantic.</span></label></div><div class="detail-cell" data-detail="de-2-6"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-7"><label for="de-2-7"><span class="item-text">Mọi model có <code>meta: owner</code> — biết ai chịu trách nhiệm khi model lỗi hoặc cần đổi.</span></label></div><div class="detail-cell" data-detail="de-2-7"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-8"><label for="de-2-8"><span class="item-text">CI chạy <code>dbt build</code> (kèm test) trên pull request — không merge code transform chưa qua test.</span></label></div><div class="detail-cell" data-detail="de-2-8"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-2-9"><label for="de-2-9"><span class="item-text">Naming convention rõ theo lớp: <code>stg_</code>, <code>int_</code>, <code>fct_</code>/<code>dim_</code> — tránh tên tuỳ ý gây khó truy vết.</span></label></div><div class="detail-cell" data-detail="de-2-9"></div></li>
         </ul>
         <div class="gate"><span class="tag">Gate</span><span>Chỉ model đã pass test + có description + có owner mới được promote lên schema "marts" cho tầng semantic đọc.</span></div>
       </div>
@@ -727,11 +745,12 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="de-3-1"><div class="item-body"><label for="de-3-1"><span class="item-text">Chỉ số nghiệp vụ cốt lõi (doanh thu, active user…) định nghĩa <b>một lần duy nhất</b> trong semantic layer — không định nghĩa lại rải rác từng model/báo cáo.</span></label><button type="button" class="detail-btn" data-detail="de-3-1">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-3-2"><div class="item-body"><label for="de-3-2"><span class="item-text">Định nghĩa chỉ số khớp với Business Glossary do Data Governance Council duy trì — không tự sáng tác định nghĩa riêng.</span></label><button type="button" class="detail-btn" data-detail="de-3-2">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-3-3"><div class="item-body"><label for="de-3-3"><span class="item-text">Danh sách model/exposure lộ ra ngoài được review định kỳ — không ai dùng quá một khoảng thời gian quy định thì deprecate.</span></label><button type="button" class="detail-btn" data-detail="de-3-3">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-3-4"><div class="item-body"><label for="de-3-4"><span class="item-text">Mỗi metric/exposure ghi rõ model gốc + tần suất refresh — DA dùng được ngay, không cần hỏi lại DE.</span></label><button type="button" class="detail-btn" data-detail="de-3-4">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="de-3-5"><div class="item-body"><label for="de-3-5"><span class="item-text">Chỉ "certified" marts được cấp quyền cho BI kết nối trực tiếp — dataset thử nghiệm không lộ ra ngoài môi trường dev.</span></label><button type="button" class="detail-btn" data-detail="de-3-5">Xem hướng dẫn chi tiết →</button></div></li>
+          <li class="checklist-head-row"><div class="checklist-head-cb">Việc cần làm</div><div class="checklist-head-detail">Hướng dẫn chi tiết</div></li>
+          <li class="row first"><div class="cb-cell"><input type="checkbox" id="de-3-1"><label for="de-3-1"><span class="item-text">Chỉ số nghiệp vụ cốt lõi (doanh thu, active user…) định nghĩa <b>một lần duy nhất</b> trong semantic layer — không định nghĩa lại rải rác từng model/báo cáo.</span></label></div><div class="detail-cell" data-detail="de-3-1"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-3-2"><label for="de-3-2"><span class="item-text">Định nghĩa chỉ số khớp với Business Glossary do Data Governance Council duy trì — không tự sáng tác định nghĩa riêng.</span></label></div><div class="detail-cell" data-detail="de-3-2"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-3-3"><label for="de-3-3"><span class="item-text">Danh sách model/exposure lộ ra ngoài được review định kỳ — không ai dùng quá một khoảng thời gian quy định thì deprecate.</span></label></div><div class="detail-cell" data-detail="de-3-3"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-3-4"><label for="de-3-4"><span class="item-text">Mỗi metric/exposure ghi rõ model gốc + tần suất refresh — DA dùng được ngay, không cần hỏi lại DE.</span></label></div><div class="detail-cell" data-detail="de-3-4"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="de-3-5"><label for="de-3-5"><span class="item-text">Chỉ "certified" marts được cấp quyền cho BI kết nối trực tiếp — dataset thử nghiệm không lộ ra ngoài môi trường dev.</span></label></div><div class="detail-cell" data-detail="de-3-5"></div></li>
         </ul>
         <div class="gate"><span class="tag">Gate</span><span>Metric/exposure mới phải qua Data Steward duyệt trước khi thêm vào semantic layer chính thức.</span></div>
       </div>
@@ -756,13 +775,14 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="da-1-1"><div class="item-body"><label for="da-1-1"><span class="item-text">Ghi lại yêu cầu bằng văn bản: <b>câu hỏi nghiệp vụ</b> cần trả lời, không chỉ "làm dashboard X" — xác định rõ quyết định mà báo cáo phục vụ.</span></label><button type="button" class="detail-btn" data-detail="da-1-1">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-2"><div class="item-body"><label for="da-1-2"><span class="item-text">Đối chiếu định nghĩa chỉ số được yêu cầu với Business Glossary — nếu business dùng khái niệm khác, escalate lên Data Steward để thống nhất trước khi build, không tự quyết.</span></label><button type="button" class="detail-btn" data-detail="da-1-2">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-3"><div class="item-body"><label for="da-1-3"><span class="item-text">Kiểm tra đã có báo cáo/metric tương tự chưa — tránh xây trùng, tránh nhiều phiên bản "sự thật" khác nhau.</span></label><button type="button" class="detail-btn" data-detail="da-1-3">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-4"><div class="item-body"><label for="da-1-4"><span class="item-text">Xác nhận nguồn dữ liệu nằm trong danh sách marts đã "certified"; nếu phải dùng dữ liệu chưa qua semantic layer, xin duyệt riêng và ghi rõ rủi ro.</span></label><button type="button" class="detail-btn" data-detail="da-1-4">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-5"><div class="item-body"><label for="da-1-5"><span class="item-text">Phân loại độ nhạy cảm của dữ liệu sẽ hiển thị (PII, tài chính, lương…) và xác nhận người yêu cầu có quyền xem — không mặc định "ai hỏi cũng cho".</span></label><button type="button" class="detail-btn" data-detail="da-1-5">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-6"><div class="item-body"><label for="da-1-6"><span class="item-text">Thống nhất SLA: tần suất cập nhật dữ liệu, deadline bàn giao, người ký duyệt (sign-off) khi hoàn thành.</span></label><button type="button" class="detail-btn" data-detail="da-1-6">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-1-7"><div class="item-body"><label for="da-1-7"><span class="item-text">Xác định đối tượng xem báo cáo cuối cùng để quyết định có cần Row-Level Security hay không.</span></label><button type="button" class="detail-btn" data-detail="da-1-7">Xem hướng dẫn chi tiết →</button></div></li>
+          <li class="checklist-head-row"><div class="checklist-head-cb">Việc cần làm</div><div class="checklist-head-detail">Hướng dẫn chi tiết</div></li>
+          <li class="row first"><div class="cb-cell"><input type="checkbox" id="da-1-1"><label for="da-1-1"><span class="item-text">Ghi lại yêu cầu bằng văn bản: <b>câu hỏi nghiệp vụ</b> cần trả lời, không chỉ "làm dashboard X" — xác định rõ quyết định mà báo cáo phục vụ.</span></label></div><div class="detail-cell" data-detail="da-1-1"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-2"><label for="da-1-2"><span class="item-text">Đối chiếu định nghĩa chỉ số được yêu cầu với Business Glossary — nếu business dùng khái niệm khác, escalate lên Data Steward để thống nhất trước khi build, không tự quyết.</span></label></div><div class="detail-cell" data-detail="da-1-2"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-3"><label for="da-1-3"><span class="item-text">Kiểm tra đã có báo cáo/metric tương tự chưa — tránh xây trùng, tránh nhiều phiên bản "sự thật" khác nhau.</span></label></div><div class="detail-cell" data-detail="da-1-3"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-4"><label for="da-1-4"><span class="item-text">Xác nhận nguồn dữ liệu nằm trong danh sách marts đã "certified"; nếu phải dùng dữ liệu chưa qua semantic layer, xin duyệt riêng và ghi rõ rủi ro.</span></label></div><div class="detail-cell" data-detail="da-1-4"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-5"><label for="da-1-5"><span class="item-text">Phân loại độ nhạy cảm của dữ liệu sẽ hiển thị (PII, tài chính, lương…) và xác nhận người yêu cầu có quyền xem — không mặc định "ai hỏi cũng cho".</span></label></div><div class="detail-cell" data-detail="da-1-5"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-6"><label for="da-1-6"><span class="item-text">Thống nhất SLA: tần suất cập nhật dữ liệu, deadline bàn giao, người ký duyệt (sign-off) khi hoàn thành.</span></label></div><div class="detail-cell" data-detail="da-1-6"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-1-7"><label for="da-1-7"><span class="item-text">Xác định đối tượng xem báo cáo cuối cùng để quyết định có cần Row-Level Security hay không.</span></label></div><div class="detail-cell" data-detail="da-1-7"></div></li>
         </ul>
         <div class="gate"><span class="tag">Gate</span><span>Chỉ đưa vào backlog xây dựng khi đã có: định nghĩa chỉ số rõ ràng + nguồn dữ liệu xác nhận + người sign-off.</span></div>
       </div>
@@ -779,15 +799,16 @@
           </div>
         </div>
         <ul class="checklist">
-          <li><input type="checkbox" id="da-2-1"><div class="item-body"><label for="da-2-1"><span class="item-text">Model theo <b>star-schema</b> (fact/dimension rõ ràng) — tránh kéo thẳng bảng phẳng nhiều cột từ nguồn vào Power BI.</span></label><button type="button" class="detail-btn" data-detail="da-2-1">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-2"><div class="item-body"><label for="da-2-2"><span class="item-text">Business logic dùng chung nên đã nằm sẵn ở tầng semantic (dbt); DAX chỉ làm phép tính hiển thị — tránh viết lại business logic lần hai.</span></label><button type="button" class="detail-btn" data-detail="da-2-2">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-3"><div class="item-body"><label for="da-2-3"><span class="item-text">Một dataset (semantic model) dùng chung cho nhiều report thay vì mỗi report tự import/DirectQuery riêng — tránh mỗi báo cáo ra một con số khác nhau cho cùng chỉ số.</span></label><button type="button" class="detail-btn" data-detail="da-2-3">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-4"><div class="item-body"><label for="da-2-4"><span class="item-text">Đặt tên bảng/measure khớp thuật ngữ trong Business Glossary — người xem không phải đoán "Active Users" ở đây có giống báo cáo khác không.</span></label><button type="button" class="detail-btn" data-detail="da-2-4">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-5"><div class="item-body"><label for="da-2-5"><span class="item-text">Bật <b>Row-Level Security</b> nếu dữ liệu phân quyền theo phòng ban/khu vực; test RLS với tài khoản thật trước khi publish.</span></label><button type="button" class="detail-btn" data-detail="da-2-5">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-6"><div class="item-body"><label for="da-2-6"><span class="item-text">Gắn sensitivity label theo chính sách bảo mật của tổ chức trước khi publish lên workspace production.</span></label><button type="button" class="detail-btn" data-detail="da-2-6">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-7"><div class="item-body"><label for="da-2-7"><span class="item-text">Certify/Promote dataset trong Power BI Service sau khi Data Steward review — ưu tiên tin tưởng hơn dataset nháp.</span></label><button type="button" class="detail-btn" data-detail="da-2-7">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-8"><div class="item-body"><label for="da-2-8"><span class="item-text">Version control report định kỳ (hoặc dùng deployment pipeline dev→test→prod) — không sửa thẳng trên production workspace.</span></label><button type="button" class="detail-btn" data-detail="da-2-8">Xem hướng dẫn chi tiết →</button></div></li>
-          <li><input type="checkbox" id="da-2-9"><div class="item-body"><label for="da-2-9"><span class="item-text">Review định kỳ danh sách report đang publish — report không ai xem trong thời gian dài thì nghỉ, tránh workspace phình to không kiểm soát.</span></label><button type="button" class="detail-btn" data-detail="da-2-9">Xem hướng dẫn chi tiết →</button></div></li>
+          <li class="checklist-head-row"><div class="checklist-head-cb">Việc cần làm</div><div class="checklist-head-detail">Hướng dẫn chi tiết</div></li>
+          <li class="row first"><div class="cb-cell"><input type="checkbox" id="da-2-1"><label for="da-2-1"><span class="item-text">Model theo <b>star-schema</b> (fact/dimension rõ ràng) — tránh kéo thẳng bảng phẳng nhiều cột từ nguồn vào Power BI.</span></label></div><div class="detail-cell" data-detail="da-2-1"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-2"><label for="da-2-2"><span class="item-text">Business logic dùng chung nên đã nằm sẵn ở tầng semantic (dbt); DAX chỉ làm phép tính hiển thị — tránh viết lại business logic lần hai.</span></label></div><div class="detail-cell" data-detail="da-2-2"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-3"><label for="da-2-3"><span class="item-text">Một dataset (semantic model) dùng chung cho nhiều report thay vì mỗi report tự import/DirectQuery riêng — tránh mỗi báo cáo ra một con số khác nhau cho cùng chỉ số.</span></label></div><div class="detail-cell" data-detail="da-2-3"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-4"><label for="da-2-4"><span class="item-text">Đặt tên bảng/measure khớp thuật ngữ trong Business Glossary — người xem không phải đoán "Active Users" ở đây có giống báo cáo khác không.</span></label></div><div class="detail-cell" data-detail="da-2-4"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-5"><label for="da-2-5"><span class="item-text">Bật <b>Row-Level Security</b> nếu dữ liệu phân quyền theo phòng ban/khu vực; test RLS với tài khoản thật trước khi publish.</span></label></div><div class="detail-cell" data-detail="da-2-5"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-6"><label for="da-2-6"><span class="item-text">Gắn sensitivity label theo chính sách bảo mật của tổ chức trước khi publish lên workspace production.</span></label></div><div class="detail-cell" data-detail="da-2-6"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-7"><label for="da-2-7"><span class="item-text">Certify/Promote dataset trong Power BI Service sau khi Data Steward review — ưu tiên tin tưởng hơn dataset nháp.</span></label></div><div class="detail-cell" data-detail="da-2-7"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-8"><label for="da-2-8"><span class="item-text">Version control report định kỳ (hoặc dùng deployment pipeline dev→test→prod) — không sửa thẳng trên production workspace.</span></label></div><div class="detail-cell" data-detail="da-2-8"></div></li>
+          <li class="row"><div class="cb-cell"><input type="checkbox" id="da-2-9"><label for="da-2-9"><span class="item-text">Review định kỳ danh sách report đang publish — report không ai xem trong thời gian dài thì nghỉ, tránh workspace phình to không kiểm soát.</span></label></div><div class="detail-cell" data-detail="da-2-9"></div></li>
         </ul>
         <div class="gate"><span class="tag">Gate</span><span>Chỉ publish lên Production khi: RLS đã test + sensitivity label đã gắn + Data Steward đã certify dataset.</span></div>
       </div>
@@ -803,24 +824,6 @@
   </footer>
 
 </div>
-
-<dialog id="detail-modal" class="detail-modal">
-  <div class="detail-modal-inner">
-    <div class="detail-modal-head">
-      <div>
-        <div class="detail-modal-eyebrow" id="detail-eyebrow"></div>
-        <h3 id="detail-title"></h3>
-      </div>
-      <button type="button" class="detail-modal-close" id="detail-close" aria-label="Đóng">&times;</button>
-    </div>
-    <p class="detail-modal-plain" id="detail-plain"></p>
-    <div>
-      <p class="detail-modal-section-label">Làm cụ thể thế nào</p>
-      <ul class="detail-modal-steps" id="detail-steps"></ul>
-    </div>
-    <p class="detail-modal-collab" id="detail-collab"></p>
-  </div>
-</dialog>
 
 <script>
   (function () {
@@ -1283,36 +1286,64 @@
       }
     };
 
-    var modal = document.getElementById('detail-modal');
-    var elEyebrow = document.getElementById('detail-eyebrow');
-    var elTitle = document.getElementById('detail-title');
-    var elPlain = document.getElementById('detail-plain');
-    var elSteps = document.getElementById('detail-steps');
-    var elCollab = document.getElementById('detail-collab');
+    function fillDetailCell(cell, d) {
+      var h4 = document.createElement('h4');
+      h4.textContent = d.title;
+      cell.appendChild(h4);
 
-    document.querySelectorAll('.detail-btn').forEach(function (btn) {
-      btn.addEventListener('click', function () {
-        var d = DETAILS[btn.getAttribute('data-detail')];
-        if (!d) return;
-        elEyebrow.textContent = d.eyebrow || '';
-        elTitle.textContent = d.title || '';
-        elPlain.textContent = d.plain || '';
-        elSteps.innerHTML = '';
-        (d.steps || []).forEach(function (s) {
+      var p = document.createElement('p');
+      p.className = 'detail-item-plain';
+      p.textContent = d.plain;
+      cell.appendChild(p);
+
+      if (d.steps && d.steps.length) {
+        var ul = document.createElement('ul');
+        ul.className = 'detail-item-steps';
+        d.steps.forEach(function (s) {
           var li = document.createElement('li');
           li.textContent = s;
-          elSteps.appendChild(li);
+          ul.appendChild(li);
         });
-        elCollab.innerHTML = '<b>Phối hợp:</b> ' + (d.collab || '');
-        modal.showModal();
-      });
-    });
+        cell.appendChild(ul);
+      }
 
-    document.getElementById('detail-close').addEventListener('click', function () {
-      modal.close();
-    });
-    modal.addEventListener('click', function (e) {
-      if (e.target === modal) modal.close();
+      var collab = document.createElement('p');
+      collab.className = 'detail-item-collab';
+      var b = document.createElement('b');
+      b.textContent = 'Phối hợp: ';
+      collab.appendChild(b);
+      collab.appendChild(document.createTextNode(d.collab || ''));
+      cell.appendChild(collab);
+    }
+
+    function buildDetailCells(track) {
+      var col = document.querySelector('.col.' + track);
+      if (!col || col.dataset.built === '1') return;
+      col.querySelectorAll('.detail-cell[data-detail]').forEach(function (cell) {
+        var d = DETAILS[cell.getAttribute('data-detail')];
+        if (d) fillDetailCell(cell, d);
+      });
+      col.dataset.built = '1';
+    }
+
+    var tracksEl = document.querySelector('.tracks');
+    var focusedTrack = null; // null | 'de' | 'da' — chỉ 1 track được focus tại 1 thời điểm
+
+    function applyFocusState() {
+      ['de', 'da'].forEach(function (track) {
+        var isFocused = focusedTrack === track;
+        if (isFocused) buildDetailCells(track);
+        document.querySelector('.col.' + track).classList.toggle('expanded', isFocused);
+        document.getElementById('expand-' + track).classList.toggle('open', isFocused);
+        tracksEl.classList.toggle('focus-' + track, isFocused);
+      });
+    }
+
+    ['de', 'da'].forEach(function (track) {
+      document.getElementById('expand-' + track).addEventListener('click', function () {
+        focusedTrack = (focusedTrack === track) ? null : track;
+        applyFocusState();
+      });
     });
   })();
 </script>
