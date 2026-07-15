@@ -1,0 +1,2104 @@
+app:
+  description: Data assistant for all your data knowledge needs.
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: OMD - Data Assistant (UAT)
+  use_icon_as_answer_icon: true
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.20@de0063a630a6d1b2c025fb84f3462ba5151fb60618309cd595c3f4711b1df847
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: ''
+    id: 93c2280e-77e4-4c0d-b160-04d347fd97a6
+    name: dremio_api_key
+    selector:
+    - env
+    - dremio_api_key
+    value: el4xuV0WTDq3NMHafHF6djWsqDz7elaOPPwEpD/PDAC5Op8gPFjOq78wRFvZVw==
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 50
+        image_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: Hỏi tôi về các chỉ số nhé 😉
+    retriever_resource:
+      enabled: false
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions:
+    - gmv hàng xanh là gì?
+    - gt active khác gì gt purchased ?
+    - MCP Market?
+    - '#ZNS Fix Cost'
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1755230847996-source-1755233150469-target
+      selected: false
+      source: '1755230847996'
+      sourceHandle: source
+      target: '1755233150469'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: loop
+      id: 1755233150469-source-1755579206912-target
+      selected: false
+      source: '1755233150469'
+      sourceHandle: source
+      target: '1755579206912'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1755579206912'
+        sourceType: loop-start
+        targetType: http-request
+      id: 1755579206912start-source-1755579215124-target
+      selected: false
+      source: 1755579206912start
+      sourceHandle: source
+      target: '1755579215124'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: loop
+        targetType: http-request
+      id: 1755579206912-source-17552309664700-target
+      selected: false
+      source: '1755579206912'
+      sourceHandle: source
+      target: '17552309664700'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: 17552309664700-fail-branch-1755242960328-target
+      selected: false
+      source: '17552309664700'
+      sourceHandle: fail-branch
+      target: '1755242960328'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1755501561565-true-17555900360160-target
+      selected: false
+      source: '1755501561565'
+      sourceHandle: 'true'
+      target: '17555900360160'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 17555900360160-fail-branch-1755581782675-target
+      selected: false
+      source: '17555900360160'
+      sourceHandle: fail-branch
+      target: '1755581782675'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 17555900360160-source-1755230847996-target
+      selected: false
+      source: '17555900360160'
+      sourceHandle: source
+      target: '1755230847996'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: llm-source-answer-target
+      selected: false
+      source: llm
+      sourceHandle: source
+      target: answer
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 1755233150469-source-1755656580224-target
+      selected: false
+      source: '1755233150469'
+      sourceHandle: source
+      target: '1755656580224'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17552309664700-source-1755666411922-target
+      selected: false
+      source: '17552309664700'
+      sourceHandle: source
+      target: '1755666411922'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1755579206912'
+        sourceType: http-request
+        targetType: loop-end
+      id: 1755579215124-source-1755677813109-target
+      selected: false
+      source: '1755579215124'
+      sourceHandle: source
+      target: '1755677813109'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: 17552309664700-source-1755852603511-target
+      selected: false
+      source: '17552309664700'
+      sourceHandle: source
+      target: '1755852603511'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: answer
+        targetType: llm
+      id: 1755852603511-source-llm-target
+      selected: false
+      source: '1755852603511'
+      sourceHandle: source
+      target: llm
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - animated: true
+      data:
+        sourceType: llm
+        targetType: answer
+      id: tmp_llm-source-answer-target
+      selected: false
+      source: llm
+      sourceHandle: source_tmp
+      target: answer
+      targetHandle: target_tmp
+      type: custom
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17593902702980-source-17593913137020-target
+      selected: false
+      source: '17593902702980'
+      sourceHandle: source
+      target: '17593913137020'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 17593913137020-source-17593913684320-target
+      selected: false
+      source: '17593913137020'
+      sourceHandle: source
+      target: '17593913684320'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17593913684320-source-17593924004310-target
+      selected: false
+      source: '17593913684320'
+      sourceHandle: source
+      target: '17593924004310'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 17593975330950-source-17593978912430-target
+      selected: false
+      source: '17593975330950'
+      sourceHandle: source
+      target: '17593978912430'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 17593978912430-source-17593978954450-target
+      selected: false
+      source: '17593978912430'
+      sourceHandle: source
+      target: '17593978954450'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 17593979882650-source-1759398068977-target
+      selected: false
+      source: '17593979882650'
+      sourceHandle: source
+      target: '1759398068977'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: http-request
+      id: 17597350174700-source-17593975330950-target
+      selected: false
+      source: '17597350174700'
+      sourceHandle: source
+      target: '17593975330950'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 17593924004310-source-1759748619644-target
+      selected: false
+      source: '17593924004310'
+      sourceHandle: source
+      target: '1759748619644'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1759748619644-true-1759749138667-target
+      selected: false
+      source: '1759748619644'
+      sourceHandle: 'true'
+      target: '1759749138667'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1759748619644-false-17597350174700-target
+      selected: false
+      source: '1759748619644'
+      sourceHandle: 'false'
+      target: '17597350174700'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17593979882650-source-17598050028440-target
+      selected: false
+      source: '17593979882650'
+      sourceHandle: source
+      target: '17598050028440'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: 17598050028440-source-1759806213221-target
+      selected: false
+      source: '17598050028440'
+      sourceHandle: source
+      target: '1759806213221'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: answer
+      id: 1759806213221-false-1759806012551-target
+      selected: false
+      source: '1759806213221'
+      sourceHandle: 'false'
+      target: '1759806012551'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: 17593978954450-fail-branch-1755242960328-target
+      selected: false
+      source: '17593978954450'
+      sourceHandle: fail-branch
+      target: '1755242960328'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: answer
+      id: 17593913684320-fail-branch-1755242960328-target
+      selected: false
+      source: '17593913684320'
+      sourceHandle: fail-branch
+      target: '1755242960328'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: http-request
+      id: 17593865338040-source-17593902702980-target
+      selected: false
+      source: '17593865338040'
+      sourceHandle: source
+      target: '17593902702980'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1759748619644-false-1761117081214-target
+      selected: false
+      source: '1759748619644'
+      sourceHandle: 'false'
+      target: '1761117081214'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: answer
+      id: 1761117081214-source-1759396666362-target
+      selected: false
+      source: '1761117081214'
+      sourceHandle: source
+      target: '1759396666362'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: llm
+      id: 17593978954450-source-1761123027671-target
+      source: '17593978954450'
+      sourceHandle: source
+      target: '1761123027671'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1761123027671-source-17593979882650-target
+      source: '1761123027671'
+      sourceHandle: source
+      target: '17593979882650'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: if-else
+      id: 1755230832850-source-1755501561565-target
+      source: '1755230832850'
+      sourceHandle: source
+      target: '1755501561565'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1755501561565-b3484ea4-2de0-4398-83b5-2d78d5028b7a-17593865338040-target
+      source: '1755501561565'
+      sourceHandle: b3484ea4-2de0-4398-83b5-2d78d5028b7a
+      target: '17593865338040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1755501561565-false-17593865338040-target
+      source: '1755501561565'
+      sourceHandle: 'false'
+      target: '17593865338040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables: []
+      height: 54
+      id: '1755230832850'
+      position:
+        x: -116.94916293585669
+        y: 270.36298213098047
+      positionAbsolute:
+        x: -116.94916293585669
+        y: 270.36298213098047
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '17552309664700'
+          - body
+        desc: ''
+        memory:
+          query_prompt_template: 'Lệnh truy xuất {{#sys.query#}}
+
+            Tóm tắt dữ liệu {{#17552309664700.body#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 10
+        model:
+          completion_params:
+            temperature: 0.1
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: c7f1a3cc-f40e-4c18-b116-7b3f9e79b6e3
+          role: system
+          text: 'Context:
+
+            - Đây là data cần tóm tắt & phân tích: {{#17552309664700.body#}}, sử dụng
+            toàn bộ data không lấy sample gây sai lệch kết quả.
+
+            - Sản phẩm "XANH" là sản phẩm kéo lợi nhuận cần đẩy mạnh bán, sản phẩm
+            "ĐỎ" là sản phẩm lợi nhuận thấp cần hạn chế bán
+
+
+            **Nhiệm vụ**:
+
+            - Tóm tắt ngắn gọn, bắt buộc phải kèm số liệu cụ thể.
+
+            - Phân tích kỹ, đưa ra từ 4 đến 6 điều bất thường hoặc nổi trội, bắt buộc
+            phải kèm số liệu cụ thể và format số dạng thousand separator (ví dụ: 10,000)
+            và loại số khác để người dùng dễ đọc. Nếu có quá nhiều điều bất thường
+            thì thứ tự ưu tiên là phân tích theo khu vực, kênh bán hàng, người bán
+            hàng, sản phẩm....
+
+            - Trình bày lại bản phân tích ngắn gọn theo văn phong biền ngẫu, thẳng
+            thắn, không bay bổng. Bắt buộc phải đưa các con số để chứng minh lập luận.
+
+
+            **Yêu cầu**
+
+            - Không tiết lộ dữ liệu có bao nhiêu dòng.
+
+
+            **Hướng dẫn phân tích**:
+
+            - Bạn nhận được bảng dữ liệu thô, khi phân tích theo các lát cắt / dimension,
+            bạn phải calcuculate group by số liệu theo lát cắt / dimension đó.
+
+            - Sử dụng hàm SUM cho các dữ liệu gmv, doanh thu, pavlc
+
+
+            Cấu trúc phản hồi:
+
+            **Tổng quan**
+
+            **Phân tích**
+
+            **Kết luận**'
+        - id: 4e4095e5-84d1-41f3-b891-44488dfe6d66
+          role: user
+          text: ''
+        - id: 78271169-faaa-4c70-8cf8-7a0c18ca9ef9
+          role: assistant
+          text: ''
+        - id: d3ca9414-632c-430b-899c-814e2ab04565
+          role: user
+          text: ''
+        - id: c16f4331-1880-4487-a0ed-b17d1b5a2d34
+          role: assistant
+          text: ''
+        selected: false
+        title: INSIGHT_LLM
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: llm
+      position:
+        x: 3009.9437374508248
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 3009.9437374508248
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '-----
+
+          {{#llm.text#}}'
+        desc: ''
+        selected: false
+        title: INSIGHT_ANSWER
+        type: answer
+        variables: []
+      height: 104
+      id: answer
+      position:
+        x: 3287.9837860570246
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 3287.9837860570246
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: WXmnnN3uQMuxKlTDKY6MzQRIt7NqvyqX83v/m5aJc4fBT2HBA6H+9i2AsPnkMQ==
+            type: bearer
+          type: api-key
+        body:
+          data:
+          - id: key-value-79
+            key: ''
+            type: text
+            value: '{ "sql": "{{#sys.query#}}"
+
+              }'
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 300
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+          read: 300
+          write: 300
+        title: INSIGHT_HTTP Request
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/sql
+        variables: []
+      height: 140
+      id: '1755230847996'
+      position:
+        x: 1004.5106152688177
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 1004.5106152688177
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: WXmnnN3uQMuxKlTDKY6MzQRIt7NqvyqX83v/m5aJc4fBT2HBA6H+9i2AsPnkMQ==
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        error_strategy: fail-branch
+        headers: Content-Type:application/json
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          connect: 300
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+          read: 300
+          write: 300
+        title: INSIGHT_HTTP Request 2
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#1755233150469.result#}}/results
+        variables: []
+      height: 210
+      id: '17552309664700'
+      position:
+        x: 2398.2044201511076
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 2398.2044201511076
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(http_response: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(http_response)\n    # Job chạy nhanh quá, đợi tí\
+          \ lấy cái query\n    time.sleep(5)\n    return {\n        'result': data['id']\n\
+          \    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        title: INSIGHT_Code
+        type: code
+        variables:
+        - value_selector:
+          - '1755230847996'
+          - body
+          value_type: string
+          variable: http_response
+      height: 84
+      id: '1755233150469'
+      position:
+        x: 1334.7169048981725
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 1334.7169048981725
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: Lỗi {{#17552309664700.error_message#}}{{#17593978954450.error_message#}}{{#17593913684320.error_message#}}
+        desc: ''
+        selected: false
+        title: Error Notication
+        type: answer
+        variables: []
+      height: 140
+      id: '1755242960328'
+      position:
+        x: 3706.574190613707
+        y: 833.0140845814174
+      positionAbsolute:
+        x: 3706.574190613707
+        y: 833.0140845814174
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: b3484ea4-2de0-4398-83b5-2d78d5028b7a
+          conditions:
+          - comparison_operator: is not
+            id: 4790334a-fd42-4e07-9382-83046ef71761
+            value: hehe
+            varType: string
+            variable_selector:
+            - sys
+            - user_id
+          id: b3484ea4-2de0-4398-83b5-2d78d5028b7a
+          logical_operator: and
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: ee2c6480-78df-4897-8eaf-c684a7014f63
+            value: hehe
+            varType: string
+            variable_selector:
+            - sys
+            - user_id
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: COND-CHECK JOB
+        type: if-else
+      height: 174
+      id: '1755501561565'
+      position:
+        x: 243.12651868124965
+        y: 197.78454565625708
+      positionAbsolute:
+        x: 243.12651868124965
+        y: 197.78454565625708
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        break_conditions:
+        - comparison_operator: contains
+          id: fb7219e0-8701-473d-b794-1ca394694517
+          value: RUNNING
+          varType: string
+          variable_selector:
+          - '1755579215124'
+          - body
+        desc: ''
+        error_handle_mode: terminated
+        height: 278
+        logical_operator: and
+        loop_count: 4
+        loop_variables: []
+        selected: false
+        start_node_id: 1755579206912start
+        title: Loop
+        type: loop
+        width: 776
+      height: 278
+      id: '1755579206912'
+      position:
+        x: 1599.6037074022645
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 1599.6037074022645
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 776
+      zIndex: 1
+    - data:
+        desc: ''
+        isInLoop: true
+        selected: false
+        title: ''
+        type: loop-start
+      draggable: false
+      height: 48
+      id: 1755579206912start
+      parentId: '1755579206912'
+      position:
+        x: 60
+        y: 114.5
+      positionAbsolute:
+        x: 1659.6037074022645
+        y: 716.2947595261869
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-loop-start
+      width: 44
+      zIndex: 1002
+    - data:
+        authorization:
+          config:
+            api_key: WXmnnN3uQMuxKlTDKY6MzQRIt7NqvyqX83v/m5aJc4fBT2HBA6H+9i2AsPnkMQ==
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: Content_Type:application/json
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1755579206912'
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 10
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: INSIGHT_HTTP Request_CHECK JOBSTATE
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#1755233150469.result#}}
+        variables: []
+      height: 158
+      id: '1755579215124'
+      parentId: '1755579206912'
+      position:
+        x: 208
+        y: 60.42526537489471
+      positionAbsolute:
+        x: 1807.6037074022645
+        y: 662.2200249010816
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        answer: Đây không phải là một câu hỏi hợp lệ!
+        desc: ''
+        selected: false
+        title: Answer 6
+        type: answer
+        variables: []
+      height: 102
+      id: '1755581782675'
+      position:
+        x: 1004.5106152688177
+        y: 810.3006956303896
+      positionAbsolute:
+        x: 1004.5106152688177
+        y: 810.3006956303896
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(query: str) -> str:\n    cleaned_query = \" \".join(query.split())\n\
+          \    normalized_query = cleaned_query.upper()\n    if 'SELECT' in normalized_query\
+          \ and 'FROM' in normalized_query:\n        return {'result': 'True'}\n \
+          \   else:\n        raise ValueError(\"Invalid Input\")\n"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          result:
+            children: null
+            type: string
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        title: INSIGHT_Code_CHECK INPUT
+        type: code
+        variables:
+        - value_selector:
+          - sys
+          - query
+          value_type: string
+          variable: query
+      height: 120
+      id: '17555900360160'
+      position:
+        x: 695.344966096688
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 695.344966096688
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '_Lưu ý: AI tính toán có thể không chính xác với dữ liệu thô và data
+          lớn._
+
+          _Đang run query (timeout 3 phút)_
+
+          '
+        desc: ''
+        selected: false
+        title: Answer 7
+        type: answer
+        variables: []
+      height: 134
+      id: '1755656580224'
+      position:
+        x: 1623.6092482396296
+        y: 950.0919915885975
+      positionAbsolute:
+        x: 1623.6092482396296
+        y: 950.0919915885975
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "\ndef main(arg1: str) -> dict:\n    return {\n        \"result\": arg1,\n\
+          \    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: Code 4
+        type: code
+        variables:
+        - value_selector:
+          - '17552309664700'
+          - body
+          value_type: string
+          variable: arg1
+      height: 54
+      id: '1755666411922'
+      position:
+        x: 2710.8255680974526
+        y: 601.7947595261869
+      positionAbsolute:
+        x: 2710.8255680974526
+        y: 601.7947595261869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1755579206912'
+        selected: false
+        title: Exit Loop
+        type: loop-end
+      height: 54
+      id: '1755677813109'
+      parentId: '1755579206912'
+      position:
+        x: 511.9999999999998
+        y: 60.42526537489471
+      positionAbsolute:
+        x: 2111.6037074022643
+        y: 662.2200249010816
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-simple
+      width: 244
+      zIndex: 1002
+    - data:
+        answer: '_Đang tìm insight_
+
+          '
+        desc: ''
+        selected: false
+        title: Answer 8
+        type: answer
+        variables: []
+      height: 102
+      id: '1755852603511'
+      position:
+        x: 2742.634253165431
+        y: 713.4077595811544
+      positionAbsolute:
+        x: 2742.634253165431
+        y: 713.4077595811544
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: ed091d78-cbe0-4b62-84f3-9c15e37b441a
+          role: system
+          text: '[ROLE]
+
+            You are an AI assistant specialized in extracting metric names
+
+
+            [TASK]
+
+            Extract the exact metric names from user''s question {{#sys.query#}}
+
+
+            [OUTPUT LOGIC]
+
+            - Strictly return only the metric names.
+
+            - Capitalized result.
+
+            - IF multiple metrics found THEN concatenate metric names found with ''|''.
+
+            - Do not add escape sequences, do not use \n, do not use linebreak or
+            any special characters.'
+        - id: f34a6b07-1c58-4844-a1b8-14bc80527ebe
+          role: user
+          text: 'Extract metrics name from the following user''s input: {{#sys.query#}}'
+        - id: b8965588-e023-45f4-8cf9-24fe68da2ff5
+          role: assistant
+          text: '#Example
+
+            GT ACTIVE|GT PURCHASED
+
+            ---
+
+            #Now generate based on the actual input {{#sys.query#}}'
+        selected: false
+        structured_output_enabled: false
+        title: LLM-GET INPUT METRICS
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - sys
+            - files
+          enabled: false
+      height: 90
+      id: '17593865338040'
+      position:
+        x: 695.344966096688
+        y: 228.11900550283605
+      positionAbsolute:
+        x: 695.344966096688
+        y: 228.11900550283605
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: '{{#env.dremio_api_key#}}'
+            type: bearer
+          type: api-key
+        body:
+          data:
+          - id: key-value-79
+            key: ''
+            type: text
+            value: "{ \"sql\": \"\nSELECT \n    COUNT(a.MEASURE_NAME) as measure_count\n\
+              \    , ''''||LISTAGG(a.MEASURE_NAME, ''',''')||'''' as measure_name\n\
+              FROM (\n    SELECT DISTINCT MEASURE_NAME\n    FROM dp.omd.application.\"\
+              omd_bi_workspace\".\"omd_metric_knowledge\" a\n    WHERE REGEXP_LIKE(UPPER(a.MEASURE_NAME),'{{#17593865338040.text#}}')\n\
+              ) a\n\"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-QUERY RELATED METRICS
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/sql
+        variables: []
+      height: 140
+      id: '17593902702980'
+      position:
+        x: 1029.5832207600602
+        y: 228.11900550283605
+      positionAbsolute:
+        x: 1029.5832207600602
+        y: 228.11900550283605
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(http_response: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(http_response)\n    # Job chạy nhanh quá, đợi tí\
+          \ lấy cái query\n    time.sleep(8)\n    return {\n        # Note to declare\
+          \ 'result' in the output variables\n        'result': data['id']\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: CODE-GET DREMIO JOB ID
+        type: code
+        variables:
+        - value_selector:
+          - '17593902702980'
+          - body
+          value_type: string
+          variable: http_response
+      height: 54
+      id: '17593913137020'
+      position:
+        x: 1306.9376889352475
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 1306.9376889352475
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: '{{#env.dremio_api_key#}}'
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        error_strategy: fail-branch
+        headers: Content-Type:application/json
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-GET DREMIO OUTPUT
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#17593913137020.result#}}/results
+        variables: []
+      height: 210
+      id: '17593913684320'
+      position:
+        x: 1591.868404405287
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 1591.868404405287
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef main(context: str) -> dict:\n    outer_json = json.loads(context)\n\
+          \    row_count = outer_json[\"rowCount\"]\n    if row_count == 0:\n    \
+          \    return {\n            \"measure_count\": 0,\n            \"measure_name\"\
+          : \"\"\n        }\n\n    inner_json = outer_json[\"rows\"][0]\n\n    measure_count\
+          \ = inner_json[\"measure_count\"]\n\n    measure_name = inner_json[\"measure_name\"\
+          ]\n\n    # Return result\n    return {\n        \"measure_count\": measure_count,\n\
+          \        \"measure_name\": measure_name\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          measure_count:
+            children: null
+            type: number
+          measure_name:
+            children: null
+            type: string
+        selected: false
+        title: CODE-PARSE RELATED METRICS
+        type: code
+        variables:
+        - value_selector:
+          - '17593913684320'
+          - body
+          value_type: string
+          variable: context
+      height: 54
+      id: '17593924004310'
+      position:
+        x: 1873.8697171920144
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 1873.8697171920144
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: 'Tôi tìm được **{{#17593924004310.measure_count#}}** chỉ số liên quan.
+
+          **Danh sách chỉ số:** *(limit {{#1761117081214.limit#}})*
+
+          {{#1761117081214.measure_name_formatted#}}
+
+          {{#1761117081214.padding#}}
+
+          ---'
+        desc: ''
+        selected: false
+        title: REP-FOUND RELATED METRICS
+        type: answer
+        variables: []
+      height: 190
+      id: '1759396666362'
+      position:
+        x: 2772.8957500920733
+        y: 17.528315790941576
+      positionAbsolute:
+        x: 2772.8957500920733
+        y: 17.528315790941576
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: '{{#env.dremio_api_key#}}'
+            type: bearer
+          type: api-key
+        body:
+          data:
+          - id: key-value-79
+            key: ''
+            type: text
+            value: "{ \"sql\": \"\n    SELECT *\n    FROM dp.omd.application.\"omd_bi_workspace\"\
+              .\"omd_metric_knowledge\" a\n    WHERE a.MEASURE_NAME IN ({{#17597350174700.text#}})\n\
+              \"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-QUERY GLOSSARY
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/sql
+        variables: []
+      height: 140
+      id: '17593975330950'
+      position:
+        x: 2766.338024381487
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 2766.338024381487
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(http_response: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(http_response)\n    # Job chạy nhanh quá, đợi tí\
+          \ lấy cái query\n    time.sleep(8)\n    return {\n        # Note to declare\
+          \ 'result' in the output variables\n        'result': data['id']\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: CODE-GET DREMIO JOB ID 2
+        type: code
+        variables:
+        - value_selector:
+          - '17593975330950'
+          - body
+          value_type: string
+          variable: http_response
+      height: 54
+      id: '17593978912430'
+      position:
+        x: 3046.8583550374287
+        y: 228.11900550283605
+      positionAbsolute:
+        x: 3046.8583550374287
+        y: 228.11900550283605
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: '{{#env.dremio_api_key#}}'
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        error_strategy: fail-branch
+        headers: Content-Type:application/json
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-GET DREMIO OUTPUT 2
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#17593978912430.result#}}/results
+        variables: []
+      height: 210
+      id: '17593978954450'
+      position:
+        x: 3333.7641650932605
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 3333.7641650932605
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(text: str) -> dict:\n    data = json.loads(text)\n    \n \
+          \   report_parts = []\n    report_parts.append(\"\\n\")\n\n    for measure\
+          \ in data.get(\"measures\", []):\n        measure_name = measure.get(\"\
+          measure_name\", \"\")\n        measure_alias = measure.get(\"measure_alias\"\
+          , \"\")\n        description = measure.get(\"description\", \"\")\n    \
+          \    expression = measure.get(\"expression\", \"\")\n        \n        #\
+          \ Header\n        report_parts.append(f\"**Measures Name:** {measure_name}\"\
+          )\n        report_parts.append(f\"**Measures Alias:** {measure_alias}\"\
+          )\n        report_parts.append(f\"**Description:**\\n{description}\")\n\
+          \        report_parts.append(f\"**Expression:**\\n```\\n{expression}\\n```\\\
+          n\")\n\n        # Table header\n        table = []\n        table.append(\"\
+          Step | Task | R (Responsible) | A (Accountable) | C (Consulted) | I (Informed)\"\
+          )\n        table.append(\"--- | --- | --- | --- | --- | ---\")\n\n     \
+          \   # Sort tasks\n        tasks = sorted(measure.get(\"tasks\", []), key=lambda\
+          \ x: x.get(\"task_step\") or \"\")\n\n        for task in tasks:\n     \
+          \       task_step = task.get(\"task_step\", \"\")\n            task_name\
+          \ = task.get(\"task_name\", \"\")\n            raci = task.get(\"RACI\"\
+          , {})\n            r = raci.get(\"Responsible\", \"\")\n            a =\
+          \ raci.get(\"Accountable\", \"\")\n            c = raci.get(\"Consulted\"\
+          , \"\")\n            i = raci.get(\"Informed\", \"\")\n            table.append(f\"\
+          {task_step} | {task_name} | {r} | {a} | {c} | {i}\")\n\n        report_parts.append(\"\
+          \\n\".join(table))\n        report_parts.append(\"\\n---\\n\")\n\n    #\
+          \ Return result\n    return {\n        \"result\": \"\\n\".join(report_parts)\n\
+          \        }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: CODE-REPORT GLOSSARY
+        type: code
+        variables:
+        - value_selector:
+          - '1761123027671'
+          - text
+          value_type: string
+          variable: text
+      height: 54
+      id: '17593979882650'
+      position:
+        x: 3927.4163838951517
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 3927.4163838951517
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#17593979882650.result#}}'
+        desc: ''
+        selected: false
+        title: REP-REPORT GLOSSARY
+        type: answer
+        variables: []
+      height: 104
+      id: '1759398068977'
+      position:
+        x: 4228.909962536354
+        y: 97.66525751090347
+      positionAbsolute:
+        x: 4228.909962536354
+        y: 97.66525751090347
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '17593924004310'
+          - measure_name
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: ed091d78-cbe0-4b62-84f3-9c15e37b441a
+          role: system
+          text: '[ROLE]
+
+            You are an expert in Data Analytics.
+
+
+            [TASK]
+
+            Base on user''s input question ({{#sys.query#}}), interpret their needs.
+
+            Extract the measure names from a list of measure names.
+
+
+            [OUTPUT LOGIC]
+
+            - Strictly return only the metric names found in the list provided in
+            context.
+
+            - Output in the same format as the list provided in context: each measure
+            name is in single quotation mark and separated by a comma.
+
+            - Only output a maximum of five measure names.'
+        - id: f34a6b07-1c58-4844-a1b8-14bc80527ebe
+          role: user
+          text: 'Base on the user''s input: {{#sys.query#}},
+
+            Extract the exact relevant measure names from the following list of measure
+            names: {{#context#}} '
+        - id: b8965588-e023-45f4-8cf9-24fe68da2ff5
+          role: assistant
+          text: '#Example
+
+            ''#GT Active'',''#GT Purchased''
+
+            ---
+
+            #Now generate based on the actual input'
+        selected: false
+        structured_output_enabled: false
+        title: LLM-GET CONTEXT METRICS
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - sys
+            - files
+          enabled: false
+      height: 90
+      id: '17597350174700'
+      position:
+        x: 2472.8957500920733
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 2472.8957500920733
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: '='
+            id: 3bfae0da-3e88-448f-856a-493dc931f8bc
+            value: '0'
+            varType: number
+            variable_selector:
+            - '17593924004310'
+            - measure_count
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: COND-CHECK ROWCOUNT
+        type: if-else
+      height: 126
+      id: '1759748619644'
+      position:
+        x: 2155.806734890243
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 2155.806734890243
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: 'Tôi **không tìm được** chỉ số liên quan đến:
+
+          [{{#17593865338040.text#}}]'
+        desc: ''
+        selected: false
+        title: REP-NO RELATED METRICS
+        type: answer
+        variables: []
+      height: 120
+      id: '1759749138667'
+      position:
+        x: 2472.8957500920733
+        y: -118.31526135419492
+      positionAbsolute:
+        x: 2472.8957500920733
+        y: -118.31526135419492
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1761123027671'
+          - structured_output
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params: {}
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: ed091d78-cbe0-4b62-84f3-9c15e37b441a
+          role: system
+          text: '[ROLE]
+
+            You are an expert in Data Analytics.
+
+
+            [TASK]
+
+            Base on user''s input question ({{#sys.query#}}), interpret their question
+            if any.
+
+            Answer questions related to those metrics using information found in {{#1761123027671.text#}}.
+
+
+            [OUTPUT LOGIC]
+
+            - Keep output short and concise. Under 100 words.
+
+            - Easy to read formatting. Uses markdown, bold, underscore, italic,...
+            if necessary.
+
+            - Skip greetings.
+
+            - Do not invent information.
+
+            - Output language: Vietnamese.
+
+            - IF user''s input no question THEN output "NONE".'
+        - id: f34a6b07-1c58-4844-a1b8-14bc80527ebe
+          role: user
+          text: 'Answer the user''s input question in:{{#sys.query#}},
+
+            Strictly use information found in: {{#context#}}.'
+        selected: false
+        structured_output_enabled: false
+        title: LLM-ANSWER FOR INPUT
+        type: llm
+        variables: []
+        vision:
+          configs:
+            detail: high
+            variable_selector:
+            - sys
+            - files
+          enabled: false
+      height: 90
+      id: '17598050028440'
+      position:
+        x: 4228.909962536354
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 4228.909962536354
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '**[{{#sys.query#}}]**
+
+          {{#17598050028440.text#}}'
+        desc: ''
+        selected: false
+        title: REP-ANSWER TO INPUT
+        type: answer
+        variables: []
+      height: 122
+      id: '1759806012551'
+      position:
+        x: 4827.760708393525
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 4827.760708393525
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: d1713a04-13ae-4720-9468-80e2a967196b
+            value: NONE
+            varType: string
+            variable_selector:
+            - '17598050028440'
+            - text
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: true
+        title: COND-CHECK QUESTION
+        type: if-else
+      height: 126
+      id: '1759806213221'
+      position:
+        x: 4528.402194984403
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 4528.402194984403
+        y: 228.67291043784496
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import csv\nimport io\n\ndef main(measure_name: str, measure_count:\
+          \ int) -> dict:\n    # Cover lỗi trong measure name có phẩy\n    measure_list\
+          \ = next(\n        csv.reader(io.StringIO(measure_name), skipinitialspace=True,\
+          \ quotechar=\"'\")\n    )\n    measure_list = sorted(measure_list, key=lambda\
+          \ x: (len(x), x.lower()))\n\n    limit = 10\n    measure_list = measure_list[:limit]\n\
+          \    if measure_count > limit:\n        padding = \"...\"\n    else:\n \
+          \       padding = \"\"\n\n    chunk_size = 10\n    chunks = [measure_list[i:i+chunk_size]\
+          \ for i in range(0, len(measure_list), chunk_size)]\n\n    measure_name_formatted\
+          \ = []\n    for idx, chunk in enumerate(chunks, 1):\n        bulleted =\
+          \ \"\\n\".join([f\"- {m}\" for m in chunk])\n        measure_name_formatted.append(bulleted)\n\
+          \n    return {\n        \"measure_name_formatted\": measure_name_formatted,\n\
+          \        \"limit\": limit,\n        \"padding\": padding\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          limit:
+            children: null
+            type: number
+          measure_name_formatted:
+            children: null
+            type: array[string]
+          padding:
+            children: null
+            type: string
+        selected: false
+        title: CODE-LIST METRICS
+        type: code
+        variables:
+        - value_selector:
+          - '17593924004310'
+          - measure_name
+          value_type: string
+          variable: measure_name
+        - value_selector:
+          - '17593924004310'
+          - measure_count
+          value_type: number
+          variable: measure_count
+      height: 54
+      id: '1761117081214'
+      position:
+        x: 2472.8957500920733
+        y: 17.528315790941576
+      positionAbsolute:
+        x: 2472.8957500920733
+        y: 17.528315790941576
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '17593978954450'
+          - body
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 29f3dea0-f79b-4630-902d-1d29c791af01
+          role: system
+          text: '[ROLE]
+
+            You are an expert Data Transformer
+
+
+            [TASK]
+
+            Transform each measure_name into a structured json schema.
+
+            Then aggregate those json into a list.
+
+
+            [OUTPUT LOGIC]
+
+            - Each measure_name is a single json object.
+
+            - One measure can have multiple rows representing each task. Aggregate
+            those tasks as an array object within their measure_name object.
+
+            - Aggregate all measure_name json object into a list.
+
+            - Strictly use only the data within the input.
+
+            - IF value is blank THEN return ""'
+        - id: 910e25a2-01cb-4d6a-b2fd-4676d20711b5
+          role: user
+          text: 'Aggregate collumns into json format base on query data acquire from
+            dremio api: {{#context#}} '
+        - id: 9394f060-8690-4fc7-9c37-80f0117d997c
+          role: assistant
+          text: '#Example
+
+            {"measures": [{"measure_name": "#GT Active","measure_alias": "","description":
+            "Số lượng GT: Phát sinh đơn hàng hiệu lực kênh LẺ","expression": "CALCULATE([#GT
+            Purchased], KEEPFILTERS(f_sale[product_final_status_converter_name] in
+            {\"1MG pending\",\"3PL pending\",\"Success\"}))","tasks": [{"task_step":
+            "","task_name": "","RACI": {"Responsible": "","Accountable": "","Consulted":
+            "","Informed": ""}}]},{"measure_name": "#GT Purchased","measure_alias":
+            "","description": "Số lượng GT: Phát sinh đơn hàng kênh LẺ","expression":
+            "CALCULATE(DISTINCTCOUNT(f_sale[gt_code]), KEEPFILTERS(d_sub_channel[is_le]=1))","tasks":
+            [{"task_step": "","task_name": "","RACI": {"Responsible": "","Accountable":
+            "","Consulted": "","Informed": ""}}]}]}
+
+            ---
+
+            #Now generate based on the actual input'
+        selected: false
+        structured_output:
+          schema:
+            properties:
+              measures:
+                description: List of business measures and their definitions
+                items:
+                  properties:
+                    description:
+                      description: Detailed description of what the measure represents
+                      type: string
+                    expression:
+                      description: DAX or SQL expression defining how the measure
+                        is calculated
+                      type: string
+                    measure_alias:
+                      description: Alternate name or abbreviation for the measure
+                      type: string
+                    measure_name:
+                      description: The official name of the measure
+                      type: string
+                    tasks:
+                      description: List of related tasks for maintaining or reviewing
+                        the measure
+                      items:
+                        properties:
+                          RACI:
+                            description: RACI responsibility assignment for this task
+                            properties:
+                              Accountable:
+                                type: string
+                              Consulted:
+                                type: string
+                              Informed:
+                                type: string
+                              Responsible:
+                                type: string
+                            required:
+                            - Responsible
+                            - Accountable
+                            - Consulted
+                            - Informed
+                            type: object
+                          task_name:
+                            description: Task name or description
+                            type: string
+                          task_step:
+                            description: Step number or order
+                            type: string
+                        required:
+                        - task_step
+                        - task_name
+                        - RACI
+                        type: object
+                      type: array
+                  required:
+                  - measure_name
+                  - description
+                  - expression
+                  - tasks
+                  type: object
+                type: array
+            required:
+            - measures
+            type: object
+        structured_output_enabled: true
+        title: LLM-TRANSFORM TO JSON
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1761123027671'
+      position:
+        x: 3627.4163838951517
+        y: 228.67291043784496
+      positionAbsolute:
+        x: 3627.4163838951517
+        y: 228.67291043784496
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        author: Trần Nguyên Anh
+        desc: ''
+        height: 209
+        selected: false
+        showAuthor: true
+        text: '{"root":{"children":[{"children":[{"detail":0,"format":0,"mode":"normal","style":"","text":"Quy
+          tắc CRISP","type":"text","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"-
+          Context: cung cấp ngữ cảnh","type":"text","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"-
+          Role: đặt AI vào vai trò cụ thể","type":"text","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"-
+          Instruction: hướng dẫn rõ ràng","type":"text","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"-
+          Scope: giới hạn output","type":"text","version":1},{"type":"linebreak","version":1},{"detail":0,"format":0,"mode":"normal","style":"","text":"-
+          Pattern: cho ví dụ nếu cần","type":"text","version":1}],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""},{"children":[],"direction":"ltr","format":"","indent":0,"type":"paragraph","version":1,"textFormat":0,"textStyle":""}],"direction":"ltr","format":"","indent":0,"type":"root","version":1}}'
+        theme: blue
+        title: ''
+        type: ''
+        width: 240
+      height: 209
+      id: '1774604595888'
+      position:
+        x: 695.344966096688
+        y: -93.11013255647681
+      positionAbsolute:
+        x: 695.344966096688
+        y: -93.11013255647681
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-note
+      width: 240
+    viewport:
+      x: -2466.683610661501
+      y: 115.24381055227849
+      zoom: 0.870550563296124

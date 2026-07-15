@@ -1,0 +1,2095 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: workflow
+  name: OMD NEWS
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: agimaster/justwait:0.0.2@1cc2d5e7fbd6a829396c8a51947924f799f9566071bf8499c4e2a9f75ad3330f
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.20@de0063a630a6d1b2c025fb84f3462ba5151fb60618309cd595c3f4711b1df847
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: ''
+    id: a3700151-3675-42ab-8364-88406add8232
+    name: ggchat_webhook
+    selector:
+    - env
+    - ggchat_webhook
+    value: https://chat.googleapis.com/v1/spaces/AAAAxiqkEDc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=n8CY3bDurRAkvWivjGisHRJBSSS2U417EQAGkWe_MxY
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - remote_url
+      - local_file
+      enabled: true
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 50
+        image_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: http-request
+      id: 1767692412610-source-1767692461629-target
+      selected: false
+      source: '1767692412610'
+      sourceHandle: source
+      target: '1767692461629'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1767692461629-source-1767696268906-target
+      selected: false
+      source: '1767692461629'
+      sourceHandle: source
+      target: '1767696268906'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: loop
+      id: 1767696268906-source-1767696314570-target
+      selected: false
+      source: '1767696268906'
+      sourceHandle: source
+      target: '1767696314570'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1767696314570'
+        sourceType: http-request
+        targetType: code
+      id: 1767696331225-source-1767696389569-target
+      selected: false
+      source: '1767696331225'
+      sourceHandle: source
+      target: '1767696389569'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: loop
+        targetType: http-request
+      id: 1767696314570-source-1767696550864-target
+      selected: false
+      source: '1767696314570'
+      sourceHandle: source
+      target: '1767696550864'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1767696314570'
+        sourceType: loop-start
+        targetType: tool
+      id: 1767696314570start-source-1767759964536-target
+      selected: false
+      source: 1767696314570start
+      sourceHandle: source
+      target: '1767759964536'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1767696314570'
+        sourceType: tool
+        targetType: http-request
+      id: 1767759964536-source-1767696331225-target
+      selected: false
+      source: '1767759964536'
+      sourceHandle: source
+      target: '1767696331225'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: end
+      id: 17695681493550-source-1769136515552-target
+      selected: false
+      source: '17695681493550'
+      sourceHandle: source
+      target: '1769136515552'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17697419700060-source-17697451070860-target
+      selected: false
+      source: '17697419700060'
+      sourceHandle: source
+      target: '17697451070860'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 17697420938040-source-17697451070860-target
+      selected: false
+      source: '17697420938040'
+      sourceHandle: source
+      target: '17697451070860'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1770023676357-source-1770025782159-target
+      selected: false
+      source: '1770023676357'
+      sourceHandle: source
+      target: '1770025782159'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1770025819928-source-1770028198505-target
+      selected: false
+      source: '1770025819928'
+      sourceHandle: source
+      target: '1770028198505'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1767696550864-source-1770095409391-target
+      selected: false
+      source: '1767696550864'
+      sourceHandle: source
+      target: '1770095409391'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1770095409391-fail-branch-1770023676357-target
+      selected: false
+      source: '1770095409391'
+      sourceHandle: fail-branch
+      target: '1770023676357'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 17692233992230-source-1770105501827-target
+      selected: false
+      source: '17692233992230'
+      sourceHandle: source
+      target: '1770105501827'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1767759225403-source-1770105501827-target
+      selected: false
+      source: '1767759225403'
+      sourceHandle: source
+      target: '1770105501827'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1770105501827-source-17697419700060-target
+      selected: false
+      source: '1770105501827'
+      sourceHandle: source
+      target: '17697419700060'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1770105501827-source-17697420938040-target
+      selected: false
+      source: '1770105501827'
+      sourceHandle: source
+      target: '17697420938040'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1770105501827-fail-branch-1770023676357-target
+      selected: false
+      source: '1770105501827'
+      sourceHandle: fail-branch
+      target: '1770023676357'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 17697451070860-source-1770105726211-target
+      source: '17697451070860'
+      sourceHandle: source
+      target: '1770105726211'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1770105726211-source-17695681493550-target
+      source: '1770105726211'
+      sourceHandle: source
+      target: '17695681493550'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1770105726211-fail-branch-1770023676357-target
+      source: '1770105726211'
+      sourceHandle: fail-branch
+      target: '1770023676357'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1770025782159-source-1770025819928-target
+      source: '1770025782159'
+      sourceHandle: source
+      target: '1770025819928'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: variable-aggregator
+      id: 1767696550864-fail-branch-1770023676357-target
+      source: '1767696550864'
+      sourceHandle: fail-branch
+      target: '1770023676357'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1770095409391-source-1770182649052-target
+      source: '1770095409391'
+      sourceHandle: source
+      target: '1770182649052'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1770182649052-source-17692233992230-target
+      source: '1770182649052'
+      sourceHandle: source
+      target: '17692233992230'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1770182649052-source-1767759225403-target
+      source: '1770182649052'
+      sourceHandle: source
+      target: '1767759225403'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables: []
+      height: 54
+      id: '1767692412610'
+      position:
+        x: -1004.4904946794509
+        y: 383.0628662660415
+      positionAbsolute:
+        x: -1004.4904946794509
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: F46E1BgASTadFtdJiKPeplaNzYTGwc2slHgrp5v2OmibwV+ynsBdF3o7oQ0B3g==
+            type: bearer
+          type: api-key
+        body:
+          data:
+          - id: key-value-82
+            key: ''
+            type: text
+            value: "{ \"sql\": \n\"\nSELECT * FROM dp.omd.application.\"dbt_dremio\"\
+              .\"omd_news_data_knowledge\"\"\n\"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: SQL
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/sql
+        variables: []
+      height: 140
+      id: '1767692461629'
+      position:
+        x: -603.4846344227856
+        y: 383.0628662660415
+      positionAbsolute:
+        x: -603.4846344227856
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(http_resp: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(http_resp)\n    time.sleep(5)\n    return {\n   \
+          \     'result': data['id']\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: ID JOB Dremio
+        type: code
+        variables:
+        - value_selector:
+          - '1767692461629'
+          - body
+          value_type: string
+          variable: http_resp
+      height: 54
+      id: '1767696268906'
+      position:
+        x: -247.43752668720586
+        y: 383.0628662660415
+      positionAbsolute:
+        x: -247.43752668720586
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        break_conditions:
+        - comparison_operator: is
+          id: 286fb8e6-6967-4fb4-b334-9405e1995af1
+          value: COMPLETED
+          varType: string
+          variable_selector:
+          - '1767696389569'
+          - jobstate
+        - comparison_operator: contains
+          id: 3504c8cb-6883-43b0-875f-eb4747214333
+          value: FAILED
+          varType: string
+          variable_selector:
+          - '1767696389569'
+          - jobstate
+        desc: ''
+        error_handle_mode: terminated
+        height: 334
+        logical_operator: and
+        loop_count: 3
+        selected: false
+        start_node_id: 1767696314570start
+        title: Loop
+        type: loop
+        width: 1074
+      height: 334
+      id: '1767696314570'
+      position:
+        x: 90.84063196499085
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 90.84063196499085
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 1074
+      zIndex: 1
+    - data:
+        desc: ''
+        isInLoop: true
+        selected: false
+        title: ''
+        type: loop-start
+      draggable: false
+      height: 48
+      id: 1767696314570start
+      parentId: '1767696314570'
+      position:
+        x: 60
+        y: 115
+      positionAbsolute:
+        x: 150.84063196499085
+        y: 498.0628662660415
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-loop-start
+      width: 44
+      zIndex: 1002
+    - data:
+        authorization:
+          config:
+            api_key: F46E1BgASTadFtdJiKPeplaNzYTGwc2slHgrp5v2OmibwV+ynsBdF3o7oQ0B3g==
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: Content-Type:application/json
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1767696314570'
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: HTTP Request 2
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#1767696268906.result#}}
+        variables: []
+      height: 158
+      id: '1767696331225'
+      parentId: '1767696314570'
+      position:
+        x: 499.7142857142858
+        y: 111.42857142857144
+      positionAbsolute:
+        x: 590.5549176792766
+        y: 494.49143769461296
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        code: "import json\n\ndef main(body: str) -> dict:\n    body = json.loads(body)\n\
+          \    jobstate = body.get(\"jobState\", \"UNKNOWN\")\n\n    return {\n  \
+          \      \"jobstate\": jobstate\n        }\n\n"
+        code_language: python3
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1767696314570'
+        outputs:
+          jobstate:
+            children: null
+            type: string
+        selected: false
+        title: GET Jobstate
+        type: code
+        variables:
+        - value_selector:
+          - '1767696331225'
+          - body
+          value_type: string
+          variable: body
+      height: 54
+      id: '1767696389569'
+      parentId: '1767696314570'
+      position:
+        x: 814
+        y: 112
+      positionAbsolute:
+        x: 904.8406319649908
+        y: 495.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        authorization:
+          config:
+            api_key: F46E1BgASTadFtdJiKPeplaNzYTGwc2slHgrp5v2OmibwV+ynsBdF3o7oQ0B3g==
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        error_strategy: fail-branch
+        headers: Content-Type:application/json
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: GET data
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#1767696268906.result#}}/results
+        variables: []
+      height: 210
+      id: '1767696550864'
+      position:
+        x: 1225.133085721228
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 1225.133085721228
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: Viết header, body, vẽ chart
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 71a2474b-5fac-4edf-9572-c1f22b066ac3
+          role: system
+          text: "Bạn là BI Journalist theo phong cách báo chí kinh tế – dữ liệu.\n\
+            Nhiệm vụ:\n- Viết báo cáo dạng tạp chí / báo kinh doanh, không phải báo\
+            \ cáo phân tích thuần BI.\n\nDữ liệu đầu vào là 3 bảng JSON:\n- data_region:\
+            \ cấp miền\n- data_province: cấp tỉnh\n- data_region_brand: cấp thương\
+            \ hiệu group theo miền \n- data_province_brand: cấp thương hiệu group\
+            \ theo tỉnh \n\nCác trường quan trọng:\n- gmv_* : doanh thu\n- gta_* :\
+            \ customer/ tạp hóa (GT: generate trace) active. Hiểu đơn giản là khách\
+            \ hàng đang hoạt động\n- dod_* : so với hôm qua\n- wow_* : so với cùng\
+            \ kì tuần trước (nếu hôm nay là thứ 7 thì đang so với thứ 7 của tuần trước)\n\
+            - gmv_avg: GMV trung bình 6 ngày gần nhất (không tính ngày hôm qua)\n\
+            - gta_avg: số GTA trung bình 6 ngày gần nhất  (không tính ngày hôm qua)\n\
+            - *_deviation: So sánh hôm qua với mức trung bình 6 ngày gần nhất (trạng\
+            \ thái chung của tuần)\n\nQuy ước thời gian: Các trường dạng _d0…_d7 là\
+            \ dữ liệu theo ngày:\nd1 = hôm qua\nd2 = hôm qua trừ đi 1 ngày\n…\nd7\
+            \ = hôm qua trừ đi 6 ngày\n\nLƯU Ý: KHÔNG được viết trực tiếp ký hiệu\
+            \ d1, d2, d7 trong output.\nHãy diễn đạt bằng ngôn ngữ báo chí như:\n\
+            “hôm qua”, “so với ngày liền trước”, “so với cùng kỳ tuần trước”, “trong\
+            \ tuần qua”, “những ngày gần đây”. \n\n\nQUY TẮC BẮT BUỘC\n1) KHÔNG ĐƯỢC\
+            \ BỊA SỐ, KHÔNG TỰ SUY DIỄN.\n  Chỉ sử dụng đúng dữ liệu có trong JSON.\n\
+            2) OUTPUT CHÍNH XÁC 4 INSIGHT:\n  - insight 1: header + summary (insight)\
+            \ + SVG chart\n  - insight 2: header + summary (insight) + SVG chart\n\
+              - insight 3: header + summary (insight)\n  - insight 4: header + summary\
+            \ (insight)\n\n3) CHART:\nLƯU Ý lựa chọn chart, biểu đồ PHÙ HỢP và ĐỒNG\
+            \ NHẤT với insight, KHÔNG lạc đề\nCăn chỉnh các thành phần, kích thước\
+            \ trong chart phù hợp, KHÔNG ĐƯỢC đè lên nhau \nNếu dữ liệu không phù\
+            \ hợp vẽ chart → KHÔNG tự nghĩ thêm dữ liệu.\nGiá trị chart lấy trong\
+            \ dữ liệu các bảng input → KHÔNG được bịa\nInsight 1 và insight 2 khác\
+            \ loại chart\nLưu ý bar chart cần có nhiều cột (thường vẽ top 5) nếu chỉ\
+            \ có 2 cột thì k vẽ\n\n4) QUY ĐỊNH SVG:\n- SVG inline, bắt đầu bằng <svg>...</svg>\n\
+            - Font Cambria\n- Không CSS ngoài, không JS, không table HTML\n- Có title\
+            \ chart ngắn gọn, trục, value label rõ ràng\n- Legend (nếu có) đặt BÊN\
+            \ DƯỚI biểu đồ\n- Chart dùng màu xám đen\n- Trục x, legend và title chart\
+            \ căn chỉnh phù hợp, không được chèn vào chart\n\nKích thước:\n- Chart\
+            \ Insight 1: width 500, height 270\n- Chart Insight 2: width 280, height\
+            \ 220\n\n- Tọa độ SVG phải dựa trực tiếp vào dữ liệu (không normalize\
+            \ tùy ý)\n- Dùng Font Cambria, opacity 0.85\n\n5) PHẠM VI & GÓC NHÌN (RẤT\
+            \ QUAN TRỌNG):\n- Đây là báo cáo CẤP MIỀN, không phải nhật ký biến động\
+            \ từng ngày.\n- Chọn ra những biến động lớn nhất để viết 4 insight\n-\
+            \ Không dùng outlier \n- Không kể lại diễn biến d1 → d7 theo kiểu máy\
+            \ móc.\n- Mỗi insight phải trả lời được câu hỏi “VÌ SAO”:\n  + Miền tăng\
+            \ hay giảm chủ yếu do tỉnh nào dẫn dắt?\n  + Tăng trưởng đến từ mở rộng\
+            \ GTA hay từ giá trị giao dịch?\n  + Có hay không sự lệch pha giữa GMV\
+            \ và GTA?\n  + Vai trò của các thương hiệu lớn trong xu hướng chung của\
+            \ miền là gì?\n\n\n6) CÁCH KỂ CHUYỆN:\n- Mỗi insight cần có:\n  + Bối\
+            \ cảnh ngắn của thị trường miền\n  + Diễn biến chính (tăng / giảm / nghịch\
+            \ lý)\n  + Giải thích động lực dựa trên mối liên hệ giữa GMV – GTA – tỉnh\
+            \ – thương hiệu\n- Phải có “luận điểm” rõ ràng, mang tính báo chí.\n-\
+            \ Không viết trung tính, không liệt kê số liệu khô khan.\n- Không dùng\
+            \ câu kết an toàn kiểu “cần theo dõi thêm” \"đặt câu hỏi\"\n\n7) QUY ĐỊNH\
+            \ ĐỊNH LƯỢNG:\n - mục header:\n+ insight stt 1 và 2: viết \"giật tít\"\
+            , báo chí/tạp chí, drama, căng, hoa mĩ, hình tượng hóa, nêu nghịch lý,\
+            \ xung đột hoặc điểm bất thường trong dữ liệu. Viết max 55 kí tự\n+ insight\
+            \ stt 3 và 4: viết đơn giản, ngắn gọn. Viết max 50 kí tự\n - mục summary:\n\
+            + insight stt 1 và 2: viết insight dài 3 đến 5 câu. Viết style báo chí,\
+            \ hoa mĩ, kịch tính. Viết max là 600 kí tự\n+ insight stt 3 và 4: viết\
+            \ 1 đến 2 câu, ngắn gọn, style báo chí, hoa mĩ. Viết max là 200 kí tự\n\
+              - không lặp lại ý giữa các insight\n\n8) FORMAT OUTPUT\n  Trả JSON thuần.\
+            \ KHÔNG markdown, KHÔNG ```json, KHÔNG giải thích thêm.\n"
+        - id: aa1add2a-4887-447d-9c96-bf4eadead223
+          role: user
+          text: Hãy đọc dữ liệu ở này và sinh insight theo đúng hướng dẫn ở SYSTEM  {{#1770182649052.data_mb#}}và
+            mẫu ở assistant
+        - id: 1b3a6562-a9ea-49af-91dd-a7374158f31a
+          role: assistant
+          text: "{\n  \"insights\": [\n    {\n      \"stt\": 1,\n      \"header\"\
+            : \"GMV lao lên dữ dội, thổi bùng kỳ vọng tăng trưởng trong ngắn hạn\"\
+            ,\n      \"summary\": \"Tổng doanh thu (GMV) của Miền Bắc ghi nhận mức\
+            \ tăng trưởng mạnh 26,4% so với tuần trước, vươn lên 5,58 tỷ đồng, trong\
+            \ bối cảnh sức mua tại khu vực này đang có dấu hiệu phục hồi rõ nét. Song\
+            \ hành với đà tăng doanh thu, số lượng khách hàng hoạt động (GTA) cũng\
+            \ mở rộng 10,4%, đạt 1.020, phản ánh sự lan tỏa của nhu cầu tiêu dùng\
+            \ trên diện rộng. Động lực tăng trưởng đến chủ yếu từ các địa phương trọng\
+            \ điểm, trong đó TP. Hà Nội 1 tiếp tục giữ vai trò đầu tàu với GMV đạt\
+            \ 1,91 tỷ đồng. Đáng chú ý, tỉnh Hải Dương ghi nhận mức bứt phá mạnh mẽ\
+            \ nhất khi GMV tăng tới 103,8%, góp phần củng cố bức tranh tích cực của\
+            \ thị trường phía Bắc và cho thấy dư địa tăng trưởng vẫn còn rộng mở.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' viewBox='0 0 548 276'\
+            \ xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}.value-label{font-size:8px;fill:#333}</style><text\
+            \ x='274' y='18' class='title'>Xu hướng GMV tại Miền Bắc (7 ngày)</text><line\
+            \ x1='40' y1='28' x2='40' y2='215' stroke='#ccc'/><line x1='40' y1='215'\
+            \ x2='430' y2='215' stroke='#ccc'/><text x='40' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -7</text><text x='95' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -6</text><text x='150' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -5</text><text x='205' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -4</text><text x='260' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -3</text><text x='315' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -2</text><text x='370' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -1</text><text x='425' y='232' class='label'\
+            \ text-anchor='middle'>Hôm nay</text><polyline points='40,46 95,34 150,46\
+            \ 205,126 260,215 315,98 370,96 425,72' fill='none' stroke='#000' stroke-width='2'/><text\
+            \ x='40' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='95' y='29' class='value-label' text-anchor='middle'>6.4B</text><text\
+            \ x='150' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='205' y='121' class='value-label' text-anchor='middle'>4.0B</text><text\
+            \ x='260' y='210' class='value-label' text-anchor='middle'>1.6B</text><text\
+            \ x='315' y='93' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='370' y='91' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='425' y='67' class='value-label' text-anchor='middle'>5.6B</text></svg>\"\
+            \n   \n    },\n   {\n      \"stt\": 2,\n      \"header\": \"GMV của DANISA\
+            \ tại Bắc Ninh ghi nhận mức sụt giảm mạnh trong kỳ gần nhất\",\n     \
+            \ \"summary\": \"Tại Bắc Ninh, DANISA chứng kiến GMV lao dốc hơn 45% so\
+            \ với ngày trước, dù số lượng GT active vẫn duy trì xu hướng tăng. Sự\
+            \ lệch pha này cho thấy doanh thu sụt giảm không đến từ thiếu khách hàng,\
+            \ mà chủ yếu do giá trị đơn hàng bình quân giảm mạnh. Dữ liệu đơn hàng\
+            \ và GT self-order cho thấy GT vẫn hoạt động đều, nhưng xu hướng “mua\
+            \ nhỏ – mua dè” đang chi phối, khiến GMV suy yếu dù nền khách hàng chưa\
+            \ rút lui\",\n      \"svg\": \"<svg width='230' height='200' viewBox='0\
+            \ 0 230 200' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}</style><text\
+            \ x='115' y='18' class='title'><tspan x='115' dy='0'>Tỷ trọng GMV của\
+            \ G7 tại TP. Hà Nội</tspan><tspan x='115' dy='14'>(Hôm qua)</tspan></text><g\
+            \ transform='translate(98,100)'><path d='M0,0 L0,-65 A65,65 0 0,1 24.16,-60.34\
+            \ Z' fill='#444444'/><text x='10' y='-30' font-size='10' fill='#fff' text-anchor='middle'>6.06%</text><path\
+            \ d='M0,0 L24.16,-60.34 A65,65 0 1,1 0,-65 Z' fill='#D0D0D0'/><text x='-10'\
+            \ y='30' font-size='10' fill='#000' text-anchor='middle'>93.94%</text></g><g\
+            \ transform='translate(173,130)'><rect x='0' y='0' width='10' height='10'\
+            \ fill='#444444'/><text x='14' y='9' font-size='10'>G7 TP. Hà Nội</text><rect\
+            \ x='0' y='20' width='10' height='10' fill='#D0D0D0'/><text x='14' y='29'\
+            \ font-size='10'>Thị trường còn lại</text></g></svg>\n\"\n    },\n   \
+            \ {\n      \"stt\": 3,\n      \"header\": \"DANISA tại Bắc Ninh giảm sâu\
+            \ GMV\",\n      \"summary\": \"Tại Bắc Ninh, DANISA ghi nhận GMV giảm\
+            \ hơn 50% so với hôm qua. Trái ngược, GTA vẫn tăng nhẹ, cho thấy hoạt\
+            \ động bán hàng vẫn duy trì nhưng giá trị đơn hàng suy giảm rõ rệt.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:14px;font-weight:bold;text-anchor:middle}.label{font-size:10px;fill:#333}.value-label{font-size:9px;fill:#333}</style><text\
+            \ x='274' y='20' class='title'>GMV theo từng brand</text><text x='274'\
+            \ y='35' class='label' text-anchor='middle'>Đơn vị: tỷ VND</text><line\
+            \ x1='180' y1='50' x2='180' y2='245' stroke='#ccc'/><rect x='180' y='60'\
+            \ width='360' height='16' fill='#444444'/><text x='170' y='72' class='label'\
+            \ text-anchor='end'>G7</text><text x='545' y='72' class='value-label'>5.6</text><rect\
+            \ x='180' y='88' width='315' height='16' fill='#444444'/><text x='170'\
+            \ y='100' class='label' text-anchor='end'>Diana</text><text x='500' y='100'\
+            \ class='value-label'>4.9</text><rect x='180' y='116' width='241' height='16'\
+            \ fill='#444444'/><text x='170' y='128' class='label' text-anchor='end'>Cosy</text><text\
+            \ x='430' y='128' class='value-label'>3.8</text><rect x='180' y='144'\
+            \ width='234' height='16' fill='#444444'/><text x='170' y='156' class='label'\
+            \ text-anchor='end'>Omachi</text><text x='425' y='156' class='value-label'>3.7</text><rect\
+            \ x='180' y='172' width='228' height='16' fill='#444444'/><text x='170'\
+            \ y='184' class='label' text-anchor='end'>Chinsu</text><text x='420' y='184'\
+            \ class='value-label'>3.6</text><rect x='180' y='200' width='225' height='16'\
+            \ fill='#444444'/><text x='170' y='212' class='label' text-anchor='end'>Acecook</text><text\
+            \ x='415' y='212' class='value-label'>3.5</text></svg>\"\n    },\n   \
+            \ {\n      \"stt\": 4,\n      \"header\": \"Hải Phòng duy trì đà tăng\
+            \ trưởng ổn định\",\n      \"summary\": \"Hải Phòng tiếp tục thể hiện\
+            \ sự ổn định với GMV tăng 27.4% và GTA tăng nhẹ 1.3%. Đây là một trong\
+            \ số ít địa phương ghi nhận tăng trưởng đồng thời cả doanh thu và quy\
+            \ mô GT.\",\n      \"svg\": null\n    }\n  ]\n}\n"
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              insights:
+                items:
+                  additionalProperties: false
+                  properties:
+                    header:
+                      type: string
+                    stt:
+                      type: string
+                    summary:
+                      type: string
+                    svg:
+                      type: string
+                  required:
+                  - header
+                  - summary
+                  - stt
+                  type: object
+                type: array
+            required:
+            - insights
+            type: object
+        structured_output_enabled: true
+        title: 'write content MB '
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 118
+      id: '1767759225403'
+      position:
+        x: 2599.6411938625815
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 2599.6411938625815
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        is_team_authorization: true
+        loop_id: '1767696314570'
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The number of seconds to wait
+            ja_JP: The number of seconds to wait
+            pt_BR: The number of seconds to wait
+            zh_Hans: 等待的秒数
+          label:
+            en_US: Seconds
+            ja_JP: Seconds
+            pt_BR: Seconds
+            zh_Hans: 秒数
+          llm_description: The number of seconds to pause execution
+          max: null
+          min: null
+          name: seconds
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: number
+        params:
+          seconds: ''
+        provider_id: agimaster/justwait/justwait
+        provider_name: agimaster/justwait/justwait
+        provider_type: builtin
+        selected: false
+        title: Wait
+        tool_configurations: {}
+        tool_description: Wait for a specified number of seconds, similar to Python's
+          time.sleep() function
+        tool_label: Wait
+        tool_name: wait
+        tool_node_version: '2'
+        tool_parameters:
+          seconds:
+            type: constant
+            value: 5
+        type: tool
+      height: 54
+      id: '1767759964536'
+      parentId: '1767696314570'
+      position:
+        x: 204
+        y: 112
+      positionAbsolute:
+        x: 294.84063196499085
+        y: 495.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '17697419700060'
+          - header_1
+          value_type: string
+          variable: header_MN_1
+        - value_selector:
+          - '17697419700060'
+          - summary_1
+          value_type: string
+          variable: summary_MN_1
+        - value_selector:
+          - '17697419700060'
+          - svg_1
+          value_type: string
+          variable: svg_MN_1
+        - value_selector:
+          - '17697419700060'
+          - header_2
+          value_type: string
+          variable: header_MN_2
+        - value_selector:
+          - '17697419700060'
+          - summary_2
+          value_type: string
+          variable: summary_MN_2
+        - value_selector:
+          - '17697419700060'
+          - svg_2
+          value_type: string
+          variable: svg_MN_2
+        - value_selector:
+          - '17697419700060'
+          - header_3
+          value_type: string
+          variable: header_MN_3
+        - value_selector:
+          - '17697419700060'
+          - summary_3
+          value_type: string
+          variable: summary_MN_3
+        - value_selector:
+          - '17697419700060'
+          - header_4
+          value_type: string
+          variable: header_MN_4
+        - value_selector:
+          - '17697419700060'
+          - summary_4
+          value_type: string
+          variable: summary_MN_4
+        - value_selector:
+          - '17697420938040'
+          - header_1
+          value_type: string
+          variable: header_MB_1
+        - value_selector:
+          - '17697420938040'
+          - summary_1
+          value_type: string
+          variable: summary_MB_1
+        - value_selector:
+          - '17697420938040'
+          - svg_1
+          value_type: string
+          variable: svg_MB_1
+        - value_selector:
+          - '17697420938040'
+          - header_2
+          value_type: string
+          variable: header_MB_2
+        - value_selector:
+          - '17697420938040'
+          - summary_2
+          value_type: string
+          variable: summary_MB_2
+        - value_selector:
+          - '17697420938040'
+          - svg_2
+          value_type: string
+          variable: svg_MB_2
+        - value_selector:
+          - '17697420938040'
+          - header_3
+          value_type: string
+          variable: header_MB_3
+        - value_selector:
+          - '17697420938040'
+          - summary_3
+          value_type: string
+          variable: summary_MB_3
+        - value_selector:
+          - '17697420938040'
+          - header_4
+          value_type: string
+          variable: header_MB_4
+        - value_selector:
+          - '17697420938040'
+          - summary_4
+          value_type: string
+          variable: summary_MB_4
+        - value_selector:
+          - '17695681493550'
+          - header_1
+          value_type: string
+          variable: header_TQ_1
+        - value_selector:
+          - '17695681493550'
+          - summary_1
+          value_type: string
+          variable: summary_TQ_1
+        - value_selector:
+          - '17695681493550'
+          - svg_1
+          value_type: string
+          variable: svg_TQ_1
+        - value_selector:
+          - '17695681493550'
+          - header_2
+          value_type: string
+          variable: header_TQ_2
+        - value_selector:
+          - '17695681493550'
+          - summary_2
+          value_type: string
+          variable: summary_TQ_2
+        - value_selector:
+          - '17695681493550'
+          - svg_2
+          value_type: string
+          variable: svg_TQ_2
+        - value_selector:
+          - '17695681493550'
+          - header_3
+          value_type: string
+          variable: header_TQ_3
+        - value_selector:
+          - '17695681493550'
+          - summary_3
+          value_type: string
+          variable: summary_TQ_3
+        - value_selector:
+          - '17695681493550'
+          - header_4
+          value_type: string
+          variable: header_TQ_4
+        - value_selector:
+          - '17695681493550'
+          - summary_4
+          value_type: string
+          variable: summary_TQ_4
+        selected: false
+        title: END
+        type: end
+      height: 844
+      id: '1769136515552'
+      position:
+        x: 4856.746463814995
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 4856.746463814995
+        y: 383.0628662660415
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: Viết header, body, vẽ chart
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 71a2474b-5fac-4edf-9572-c1f22b066ac3
+          role: system
+          text: "Bạn là BI Journalist theo phong cách báo chí kinh tế – dữ liệu.\n\
+            Nhiệm vụ:\n- Viết báo cáo dạng tạp chí / báo kinh doanh, không phải báo\
+            \ cáo phân tích thuần BI.\n\nDữ liệu đầu vào là 3 bảng JSON:\n- data_region:\
+            \ cấp miền\n- data_province: cấp tỉnh\n- data_region_brand: cấp thương\
+            \ hiệu group theo miền \n- data_province_brand: cấp thương hiệu group\
+            \ theo tỉnh \n\nCác trường quan trọng:\n- gmv_* : doanh thu\n- gta_* :\
+            \ customer/ tạp hóa (GT: generate trace) active. Hiểu đơn giản là khách\
+            \ hàng đang hoạt động\n- dod_* : so với hôm qua\n- wow_* : so với cùng\
+            \ kì tuần trước (nếu hôm nay là thứ 7 thì đang so với thứ 7 của tuần trước)\n\
+            - gmv_avg: GMV trung bình 6 ngày gần nhất (không tính ngày hôm qua)\n\
+            - gta_avg: số GTA trung bình 6 ngày gần nhất  (không tính ngày hôm qua)\n\
+            - *_deviation: So sánh hôm qua với mức trung bình 6 ngày gần nhất (trạng\
+            \ thái chung của tuần)\n\nQuy ước thời gian: Các trường dạng _d0…_d7 là\
+            \ dữ liệu theo ngày:\nd1 = hôm qua\nd2 = hôm qua trừ đi 1 ngày\n…\nd7\
+            \ = hôm qua trừ đi 6 ngày\n\nLƯU Ý: KHÔNG được viết trực tiếp ký hiệu\
+            \ d1, d2, d7 trong output.\nHãy diễn đạt bằng ngôn ngữ báo chí như:\n\
+            “hôm qua”, “so với ngày liền trước”, “so với cùng kỳ tuần trước”, “trong\
+            \ tuần qua”, “những ngày gần đây”. \n\n\nQUY TẮC BẮT BUỘC\n1) KHÔNG ĐƯỢC\
+            \ BỊA SỐ, KHÔNG TỰ SUY DIỄN.\n  Chỉ sử dụng đúng dữ liệu có trong JSON.\n\
+            2) OUTPUT CHÍNH XÁC 4 INSIGHT:\n  - insight 1: header + summary (insight)\
+            \ + SVG chart\n  - insight 2: header + summary (insight) + SVG chart\n\
+              - insight 3: header + summary (insight)\n  - insight 4: header + summary\
+            \ (insight)\n\n3) CHART:\nLƯU Ý lựa chọn chart, biểu đồ PHÙ HỢP và ĐỒNG\
+            \ NHẤT với insight, KHÔNG lạc đề\nCăn chỉnh các thành phần, kích thước\
+            \ trong chart phù hợp, KHÔNG ĐƯỢC đè lên nhau \nNếu dữ liệu không phù\
+            \ hợp vẽ chart → KHÔNG tự nghĩ thêm dữ liệu.\nGiá trị chart lấy trong\
+            \ dữ liệu các bảng input → KHÔNG được bịa\nInsight 1 và insight 2 khác\
+            \ loại chart\nLưu ý bar chart cần có nhiều cột (thường vẽ top 5) nếu chỉ\
+            \ có 2 cột thì k vẽ\n\n4) QUY ĐỊNH SVG:\n- SVG inline, bắt đầu bằng <svg>...</svg>\n\
+            - Font Cambria\n- Không CSS ngoài, không JS, không table HTML\n- Có title\
+            \ chart ngắn gọn, trục, value label rõ ràng\n- Legend (nếu có) đặt BÊN\
+            \ DƯỚI biểu đồ\n- Chart dùng màu xám đen\n- Trục x, legend và title chart\
+            \ căn chỉnh phù hợp, không được chèn vào chart\n\nKích thước:\n- Chart\
+            \ Insight 1: width 500, height 270\n- Chart Insight 2: width 280, height\
+            \ 220\n\n- Tọa độ SVG phải dựa trực tiếp vào dữ liệu (không normalize\
+            \ tùy ý)\n- Dùng Font Cambria, opacity 0.85\n\n5) PHẠM VI & GÓC NHÌN (RẤT\
+            \ QUAN TRỌNG):\n- Đây là báo cáo CẤP MIỀN, không phải nhật ký biến động\
+            \ từng ngày.\n- Chọn ra những biến động lớn nhất để viết 4 insight\n-\
+            \ Không dùng outlier \n- Không kể lại diễn biến d1 → d7 theo kiểu máy\
+            \ móc.\n- Mỗi insight phải trả lời được câu hỏi “VÌ SAO”:\n  + Miền tăng\
+            \ hay giảm chủ yếu do tỉnh nào dẫn dắt?\n  + Tăng trưởng đến từ mở rộng\
+            \ GTA hay từ giá trị giao dịch?\n  + Có hay không sự lệch pha giữa GMV\
+            \ và GTA?\n  + Vai trò của các thương hiệu lớn trong xu hướng chung của\
+            \ miền là gì?\n\n\n6) CÁCH KỂ CHUYỆN:\n- Mỗi insight cần có:\n  + Bối\
+            \ cảnh ngắn của thị trường miền\n  + Diễn biến chính (tăng / giảm / nghịch\
+            \ lý)\n  + Giải thích động lực dựa trên mối liên hệ giữa GMV – GTA – tỉnh\
+            \ – thương hiệu\n- Phải có “luận điểm” rõ ràng, mang tính báo chí.\n-\
+            \ Không viết trung tính, không liệt kê số liệu khô khan.\n- Không dùng\
+            \ câu kết an toàn kiểu “cần theo dõi thêm” \"đặt câu hỏi\"\n\n7) QUY ĐỊNH\
+            \ ĐỊNH LƯỢNG:\n - mục header:\n+ insight stt 1 và 2: viết \"giật tít\"\
+            , báo chí/tạp chí, drama, căng, hoa mĩ, hình tượng hóa, nêu nghịch lý,\
+            \ xung đột hoặc điểm bất thường trong dữ liệu. Viết max 55 kí tự\n+ insight\
+            \ stt 3 và 4: viết đơn giản, ngắn gọn. Viết max 50 kí tự\n - mục summary:\n\
+            + insight stt 1 và 2: viết insight dài 3 đến 5 câu. Viết style báo chí,\
+            \ hoa mĩ, kịch tính. Viết max là 600 kí tự\n+ insight stt 3 và 4: viết\
+            \ 1 đến 2 câu, ngắn gọn, style báo chí, hoa mĩ. Viết max là 200 kí tự\n\
+              - không lặp lại ý giữa các insight\n\n8) FORMAT OUTPUT\n  Trả JSON thuần.\
+            \ KHÔNG markdown, KHÔNG ```json, KHÔNG giải thích thêm.\n"
+        - id: a5646b00-a1c3-4a65-bdc6-7c7cda4086b2
+          role: assistant
+          text: "{\n  \"insights\": [\n    {\n      \"stt\": 1,\n      \"header\"\
+            : \"GMV lao lên dữ dội, thổi bùng kỳ vọng tăng trưởng trong ngắn hạn\"\
+            ,\n      \"summary\": \"Tổng doanh thu (GMV) của Miền Bắc ghi nhận mức\
+            \ tăng trưởng mạnh 26,4% so với tuần trước, vươn lên 5,58 tỷ đồng, trong\
+            \ bối cảnh sức mua tại khu vực này đang có dấu hiệu phục hồi rõ nét. Song\
+            \ hành với đà tăng doanh thu, số lượng khách hàng hoạt động (GTA) cũng\
+            \ mở rộng 10,4%, đạt 1.020, phản ánh sự lan tỏa của nhu cầu tiêu dùng\
+            \ trên diện rộng. Động lực tăng trưởng đến chủ yếu từ các địa phương trọng\
+            \ điểm, trong đó TP. Hà Nội 1 tiếp tục giữ vai trò đầu tàu với GMV đạt\
+            \ 1,91 tỷ đồng. Đáng chú ý, tỉnh Hải Dương ghi nhận mức bứt phá mạnh mẽ\
+            \ nhất khi GMV tăng tới 103,8%, góp phần củng cố bức tranh tích cực của\
+            \ thị trường phía Bắc và cho thấy dư địa tăng trưởng vẫn còn rộng mở.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' viewBox='0 0 548 276'\
+            \ xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}.value-label{font-size:8px;fill:#333}</style><text\
+            \ x='274' y='18' class='title'>Xu hướng GMV tại Miền Bắc (7 ngày)</text><line\
+            \ x1='40' y1='28' x2='40' y2='215' stroke='#ccc'/><line x1='40' y1='215'\
+            \ x2='430' y2='215' stroke='#ccc'/><text x='40' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -7</text><text x='95' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -6</text><text x='150' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -5</text><text x='205' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -4</text><text x='260' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -3</text><text x='315' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -2</text><text x='370' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -1</text><text x='425' y='232' class='label'\
+            \ text-anchor='middle'>Hôm nay</text><polyline points='40,46 95,34 150,46\
+            \ 205,126 260,215 315,98 370,96 425,72' fill='none' stroke='#000' stroke-width='2'/><text\
+            \ x='40' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='95' y='29' class='value-label' text-anchor='middle'>6.4B</text><text\
+            \ x='150' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='205' y='121' class='value-label' text-anchor='middle'>4.0B</text><text\
+            \ x='260' y='210' class='value-label' text-anchor='middle'>1.6B</text><text\
+            \ x='315' y='93' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='370' y='91' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='425' y='67' class='value-label' text-anchor='middle'>5.6B</text></svg>\"\
+            \n   \n    },\n   {\n      \"stt\": 2,\n      \"header\": \"GMV của DANISA\
+            \ tại Bắc Ninh ghi nhận mức sụt giảm mạnh trong kỳ gần nhất\",\n     \
+            \ \"summary\": \"Tại Bắc Ninh, DANISA chứng kiến GMV lao dốc hơn 45% so\
+            \ với ngày trước, dù số lượng GT active vẫn duy trì xu hướng tăng. Sự\
+            \ lệch pha này cho thấy doanh thu sụt giảm không đến từ thiếu khách hàng,\
+            \ mà chủ yếu do giá trị đơn hàng bình quân giảm mạnh. Dữ liệu đơn hàng\
+            \ và GT self-order cho thấy GT vẫn hoạt động đều, nhưng xu hướng “mua\
+            \ nhỏ – mua dè” đang chi phối, khiến GMV suy yếu dù nền khách hàng chưa\
+            \ rút lui\",\n      \"svg\": \"<svg width='230' height='200' viewBox='0\
+            \ 0 230 200' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}</style><text\
+            \ x='115' y='18' class='title'><tspan x='115' dy='0'>Tỷ trọng GMV của\
+            \ G7 tại TP. Hà Nội</tspan><tspan x='115' dy='14'>(Hôm qua)</tspan></text><g\
+            \ transform='translate(98,100)'><path d='M0,0 L0,-65 A65,65 0 0,1 24.16,-60.34\
+            \ Z' fill='#444444'/><text x='10' y='-30' font-size='10' fill='#fff' text-anchor='middle'>6.06%</text><path\
+            \ d='M0,0 L24.16,-60.34 A65,65 0 1,1 0,-65 Z' fill='#D0D0D0'/><text x='-10'\
+            \ y='30' font-size='10' fill='#000' text-anchor='middle'>93.94%</text></g><g\
+            \ transform='translate(173,130)'><rect x='0' y='0' width='10' height='10'\
+            \ fill='#444444'/><text x='14' y='9' font-size='10'>G7 TP. Hà Nội</text><rect\
+            \ x='0' y='20' width='10' height='10' fill='#D0D0D0'/><text x='14' y='29'\
+            \ font-size='10'>Thị trường còn lại</text></g></svg>\n\"\n    },\n   \
+            \ {\n      \"stt\": 3,\n      \"header\": \"DANISA tại Bắc Ninh giảm sâu\
+            \ GMV\",\n      \"summary\": \"Tại Bắc Ninh, DANISA ghi nhận GMV giảm\
+            \ hơn 50% so với hôm qua. Trái ngược, GTA vẫn tăng nhẹ, cho thấy hoạt\
+            \ động bán hàng vẫn duy trì nhưng giá trị đơn hàng suy giảm rõ rệt.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:14px;font-weight:bold;text-anchor:middle}.label{font-size:10px;fill:#333}.value-label{font-size:9px;fill:#333}</style><text\
+            \ x='274' y='20' class='title'>GMV theo từng brand</text><text x='274'\
+            \ y='35' class='label' text-anchor='middle'>Đơn vị: tỷ VND</text><line\
+            \ x1='180' y1='50' x2='180' y2='245' stroke='#ccc'/><rect x='180' y='60'\
+            \ width='360' height='16' fill='#444444'/><text x='170' y='72' class='label'\
+            \ text-anchor='end'>G7</text><text x='545' y='72' class='value-label'>5.6</text><rect\
+            \ x='180' y='88' width='315' height='16' fill='#444444'/><text x='170'\
+            \ y='100' class='label' text-anchor='end'>Diana</text><text x='500' y='100'\
+            \ class='value-label'>4.9</text><rect x='180' y='116' width='241' height='16'\
+            \ fill='#444444'/><text x='170' y='128' class='label' text-anchor='end'>Cosy</text><text\
+            \ x='430' y='128' class='value-label'>3.8</text><rect x='180' y='144'\
+            \ width='234' height='16' fill='#444444'/><text x='170' y='156' class='label'\
+            \ text-anchor='end'>Omachi</text><text x='425' y='156' class='value-label'>3.7</text><rect\
+            \ x='180' y='172' width='228' height='16' fill='#444444'/><text x='170'\
+            \ y='184' class='label' text-anchor='end'>Chinsu</text><text x='420' y='184'\
+            \ class='value-label'>3.6</text><rect x='180' y='200' width='225' height='16'\
+            \ fill='#444444'/><text x='170' y='212' class='label' text-anchor='end'>Acecook</text><text\
+            \ x='415' y='212' class='value-label'>3.5</text></svg>\"\n    },\n   \
+            \ {\n      \"stt\": 4,\n      \"header\": \"Hải Phòng duy trì đà tăng\
+            \ trưởng ổn định\",\n      \"summary\": \"Hải Phòng tiếp tục thể hiện\
+            \ sự ổn định với GMV tăng 27.4% và GTA tăng nhẹ 1.3%. Đây là một trong\
+            \ số ít địa phương ghi nhận tăng trưởng đồng thời cả doanh thu và quy\
+            \ mô GT.\",\n      \"svg\": null\n    }\n  ]\n}\n"
+        - id: aa1add2a-4887-447d-9c96-bf4eadead223
+          role: user
+          text: Hãy đọc dữ liệu ở này và sinh insight theo đúng hướng dẫn ở SYSTEM  {{#1770182649052.data_mn#}}
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              insights:
+                additionalProperties: false
+                items:
+                  additionalProperties: false
+                  properties:
+                    header:
+                      type: string
+                    stt:
+                      type: string
+                    summary:
+                      type: string
+                    svg:
+                      type: string
+                  required:
+                  - stt
+                  - header
+                  - summary
+                  type: object
+                type: array
+            required:
+            - insights
+            type: object
+        structured_output_enabled: true
+        title: write content MN
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 118
+      id: '17692233992230'
+      position:
+        x: 2599.6411938625815
+        y: 211.38872982288052
+      positionAbsolute:
+        x: 2599.6411938625815
+        y: 211.38872982288052
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(parsed_json: dict):\n    if not parsed_json or \"insights\"\
+          \ not in parsed_json:\n        raise Exception(\"parsed_json không hợp lệ\
+          \ hoặc không có insights\")\n\n    insights = parsed_json.get(\"insights\"\
+          , [])\n\n    result = {}\n\n    # Tách 4 insight\n    for i in range(4):\n\
+          \        idx = i + 1\n        item = insights[i] if i < len(insights) else\
+          \ {}\n\n        result[f\"header_{idx}\"] = item.get(\"header\")\n     \
+          \   result[f\"summary_{idx}\"] = item.get(\"summary\")\n        result[f\"\
+          svg_{idx}\"] = item.get(\"svg\")\n\n    return result\n"
+        code_language: python3
+        desc: Toàn quốc
+        error_strategy: fail-branch
+        outputs:
+          header_1:
+            children: null
+            type: string
+          header_2:
+            children: null
+            type: string
+          header_3:
+            children: null
+            type: string
+          header_4:
+            children: null
+            type: string
+          summary_1:
+            children: null
+            type: string
+          summary_2:
+            children: null
+            type: string
+          summary_3:
+            children: null
+            type: string
+          summary_4:
+            children: null
+            type: string
+          svg_1:
+            children: null
+            type: string
+          svg_2:
+            children: null
+            type: string
+          svg_3:
+            children: null
+            type: string
+          svg_4:
+            children: null
+            type: string
+        selected: false
+        title: PARSE TQ
+        type: code
+        variables:
+        - value_selector:
+          - '17697451070860'
+          - structured_output
+          value_type: object
+          variable: parsed_json
+      height: 118
+      id: '17695681493550'
+      position:
+        x: 4405.276476066579
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 4405.276476066579
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(parsed_json: dict):\n    if not parsed_json or \"insights\"\
+          \ not in parsed_json:\n        raise Exception(\"parsed_json không hợp lệ\
+          \ hoặc không có insights\")\n\n    insights = parsed_json.get(\"insights\"\
+          , [])\n    result = {}\n\n    for i in range(4):\n        idx = i + 1\n\
+          \        item = insights[i] if i < len(insights) else {}\n\n        result[f\"\
+          header_{idx}\"] = item.get(\"header\")\n        result[f\"summary_{idx}\"\
+          ] = item.get(\"summary\")\n        result[f\"svg_{idx}\"] = item.get(\"\
+          svg\") or \"\"\n\n    return result\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          header_1:
+            children: null
+            type: string
+          header_2:
+            children: null
+            type: string
+          header_3:
+            children: null
+            type: string
+          header_4:
+            children: null
+            type: string
+          summary_1:
+            children: null
+            type: string
+          summary_2:
+            children: null
+            type: string
+          summary_3:
+            children: null
+            type: string
+          summary_4:
+            children: null
+            type: string
+          svg_1:
+            children: null
+            type: string
+          svg_2:
+            children: null
+            type: string
+          svg_3:
+            children: null
+            type: string
+          svg_4:
+            children: null
+            type: string
+        selected: false
+        title: PARSE MN
+        type: code
+        variables:
+        - value_selector:
+          - '17692233992230'
+          - structured_output
+          value_type: object
+          variable: parsed_json
+      height: 54
+      id: '17697419700060'
+      position:
+        x: 3337.932667893504
+        y: 211.38872982288052
+      positionAbsolute:
+        x: 3337.932667893504
+        y: 211.38872982288052
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(parsed_json: dict):\n    if not parsed_json or \"insights\"\
+          \ not in parsed_json:\n        raise Exception(\"parsed_json không hợp lệ\
+          \ hoặc không có insights\")\n\n    insights = parsed_json.get(\"insights\"\
+          , [])\n    result = {}\n\n    for i in range(4):\n        idx = i + 1\n\
+          \        item = insights[i] if i < len(insights) else {}\n\n        result[f\"\
+          header_{idx}\"] = item.get(\"header\")\n        result[f\"summary_{idx}\"\
+          ] = item.get(\"summary\")\n        result[f\"svg_{idx}\"] = item.get(\"\
+          svg\") or \"\"\n\n    return result\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          header_1:
+            children: null
+            type: string
+          header_2:
+            children: null
+            type: string
+          header_3:
+            children: null
+            type: string
+          header_4:
+            children: null
+            type: string
+          summary_1:
+            children: null
+            type: string
+          summary_2:
+            children: null
+            type: string
+          summary_3:
+            children: null
+            type: string
+          summary_4:
+            children: null
+            type: string
+          svg_1:
+            children: null
+            type: string
+          svg_2:
+            children: null
+            type: string
+          svg_3:
+            children: null
+            type: string
+          svg_4:
+            children: null
+            type: string
+        selected: false
+        title: PARSE MB
+        type: code
+        variables:
+        - value_selector:
+          - '1767759225403'
+          - structured_output
+          value_type: object
+          variable: parsed_json
+      height: 54
+      id: '17697420938040'
+      position:
+        x: 3337.932667893504
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 3337.932667893504
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: Viết header, body, vẽ chart. Tự viết insight vĩ mô
+        model:
+          completion_params:
+            temperature: 0.7
+          mode: chat
+          name: gemini-2.5-pro
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 71a2474b-5fac-4edf-9572-c1f22b066ac3
+          role: system
+          text: "Bạn là BI Journalist theo phong cách báo chí kinh tế – dữ liệu, vai\
+            \ trò Tổng biên tập.\n\nNhiệm vụ:\n- Viết báo cáo dạng tạp chí / báo kinh\
+            \ doanh về TOÀN QUỐC.\n- Không viết báo cáo phân tích BI thuần kỹ thuật.\n\
+            - Giọng văn giống các bài phân tích dữ liệu trên Bloomberg, The Economist,\
+            \ Nikkei Asia hoặc VNExpress Business (phiên bản dữ liệu).\n\nDữ liệu\
+            \ đầu vào gồm 3 bảng JSON:\n- data_region: cấp miền\n- data_province:\
+            \ cấp tỉnh\n- data_region_brand: cấp thương hiệu group theo miền \n- data_province_brand:\
+            \ cấp thương hiệu group theo tỉnh \n- data_brand: cấp brand \n\nCác trường\
+            \ quan trọng:\n- gmv_* : doanh thu\n- gta_* : customer/ tạp hóa (GT: generate\
+            \ trace) active. Hiểu đơn giản là khách hàng đang hoạt động\n- dod_* :\
+            \ so với hôm qua\n- wow_* : so với cùng kì tuần trước (nếu hôm nay là\
+            \ thứ 7 thì đang so với thứ 7 của tuần trước)\n- gmv_avg: GMV trung bình\
+            \ 6 ngày gần nhất (không tính ngày hôm qua)\n- gta_avg: số GTA trung bình\
+            \ 6 ngày gần nhất  (không tính ngày hôm qua)\n- *_deviation: So sánh hôm\
+            \ qua với mức trung bình 6 ngày gần nhất (trạng thái chung của tuần)\n\
+            \nQuy ước thời gian: Các trường dạng _d0…_d7 là dữ liệu theo ngày:\nd1\
+            \ = hôm qua\nd2 = hôm qua trừ đi 1 ngày\n…\nd7 = hôm qua trừ đi 6 ngày\n\
+            \nLƯU Ý: KHÔNG được viết trực tiếp ký hiệu d1, d2, d7 trong output.\n\
+            Hãy diễn đạt bằng ngôn ngữ báo chí như:\n“hôm qua”, “so với ngày liền\
+            \ trước”, “so với cùng kỳ tuần trước”, “trong tuần qua”, “những ngày gần\
+            \ đây”. \n\n\nQUY TẮC BẮT BUỘC\n1) KHÔNG ĐƯỢC BỊA SỐ, KHÔNG TỰ SUY DIỄN.\n\
+              Chỉ sử dụng đúng dữ liệu có trong JSON.\n2) OUTPUT CHÍNH XÁC 4 INSIGHT:\n\
+              - insight 1: header + summary (insight) + SVG chart\n  - insight 2:\
+            \ header + summary (insight) + SVG chart\n  - insight 3: header + summary\
+            \ (insight)\n  - insight 4: header + summary (insight)\n\n3) CHỌN LOẠI\
+            \ CHART:\nLƯU Ý lựa chọn chart, biểu đồ PHÙ HỢP và ĐỒNG NHẤT với insight,\
+            \ KHÔNG lạc đề\nCăn chỉnh các thành phần, kích thước, cỡ chữ trong chart\
+            \ cho phù hợp, KHÔNG ĐƯỢC đè lên nhau \nNếu dữ liệu không phù hợp vẽ chart\
+            \ → KHÔNG tự nghĩ thêm dữ liệu.\n- Mọi giá trị hiển thị trên chart (label,\
+            \ point, bar) PHẢI khớp  với số liệu đầu vào KHÔNG được bịa.  \nLưu ý\
+            \ bar chart cần có nhiều cột (thường vẽ top 5) nếu chỉ có 2 cột thì KHÔNG\
+            \ vẽ\nKHÔNG vẽ chart so sánh hôm qua và hôm trước, nếu vẽ cần vẽ từ 5\
+            \ ngày liên tiếp trở lên tính từ thời điểm hôm qua mới thấy được timeseries\n\
+            \n4) QUY ĐỊNH SVG:\n- SVG inline, bắt đầu bằng <svg>...</svg>\n- Font\
+            \ Cambria\n- Không CSS ngoài, không JS, không table HTML\n- Có title chart\
+            \ ngắn gọn, trục, value label rõ ràng\n- Legend (nếu có) đặt BÊN DƯỚI\
+            \ biểu đồ\n- Chart dùng màu xám đen\n- Trục x, legend và title chart căn\
+            \ chỉnh phù hợp, không được chèn vào chart \n\nKích thước:\n- Chart Insight\
+            \ 1: width 500, height 260\n- Chart Insight 2: width 280, height 220\n\
+            \n- Tọa độ SVG phải dựa trực tiếp vào dữ liệu (không normalize tùy ý)\n\
+            - Dùng Font Cambria, opacity 0.85\n\n5) PHẠM VI & GÓC NHÌN (RẤT QUAN TRỌNG):\n\
+            - Đây là báo cáo TOÀN QUỐC, KHÔNG phải tổng hợp cơ học các miền NÊN KHÔNG\
+            \ ĐƯỢC bias vào 1 miền.\n- CHÚ Ý Mỗi insight viết về 1 miền (có thể so\
+            \ sánh giữa các miền hoặc tổng quan GMV tăng trường toàn quốc,...) chủ\
+            \ đề không giới hạn và viết về 1 brand nổi bật  \n- Mọi nhận định phải\
+            \ ở cấp vĩ mô:\n  + Dòng chảy doanh thu toàn thị trường đang mở rộng hay\
+            \ co hẹp?\n  + Động lực tăng trưởng đến từ mở rộng GTA, tăng giá trị đơn\
+            \ hàng, hay sự dịch chuyển giữa các miền/tỉnh/brand?\n- Khi nhắc tới miền,\
+            \ tỉnh hoặc thương hiệu, chỉ dùng như bằng chứng để củng cố luận điểm\
+            \ toàn quốc.\n\n\n6) CÁCH KỂ CHUYỆN:\n- Toàn bộ 4 insight phải xoay quanh\
+            \ cùng một bức tranh chung của thị trường toàn quốc, cần có cái nhìn bao\
+            \ quát 4 insight, Không được tạo ra các insight rời rạc\n\n- Mỗi insight\
+            \ cần có:\n  + Bối cảnh ngắn của thị trường toàn quốc\n  + Diễn biến chính\
+            \ (tăng / giảm / nghịch lý)\n  + Giải thích động lực dựa trên mối liên\
+            \ hệ giữa GMV – GTA – miền - tỉnh – thương hiệu\n\n- Phải có “luận điểm”\
+            \ rõ ràng, mang tính báo chí.\n- Không viết trung tính, không liệt kê\
+            \ số liệu khô khan.\n- Không dùng câu kết an toàn kiểu “cần theo dõi thêm”\
+            \ \"đặt câu hỏi\"\n\n- NGUYÊN TẮC NHẤT QUÁN NHẬN THỨC:\nKhông được mô\
+            \ tả cùng một tỉnh, miền hoặc thương hiệu bằng hai trạng thái trái ngược\
+            \ nhau giữa các insight nếu không giải thích rõ bối cảnh thời gian.\n\
+            Nếu một đơn vị:\n- tăng theo ngày (DoD)\n- nhưng giảm theo tuần (WoW)\n\
+            \nThì phải diễn đạt theo hướng:\n“phục hồi ngắn hạn nhưng vẫn thấp hơn\
+            \ cùng kỳ tuần trước” hoặc “tăng trong ngày, nhưng xu hướng tuần vẫn suy\
+            \ yếu”\nKHÔNG được viết một insight gọi là “tăng mạnh”\nvà insight khác\
+            \ gọi là “tụt mạnh” cho cùng một đối tượng mà không có câu nối giải thích.\n\
+            \nNgoài ra cắn cứ vào chỉ số deviation để nắm bắt tình hình chung của\
+            \ tuần và đánh giá mức độ tăng giảm của ngày hôm qua có thật sự tăng trưởng\
+            \ hay suy yếu không\n\n7) QUY ĐỊNH ĐỊNH LƯỢNG:\n - mục header:\n+ insight\
+            \ stt 1 và 2: viết \"giật tít\", báo chí/tạp chí, drama, căng, hoa mĩ,\
+            \ hình tượng hóa, nêu nghịch lý, xung đột hoặc điểm bất thường trong dữ\
+            \ liệu. Viết max 55 kí tự\n+ insight stt 3 và 4: viết đơn giản, ngắn gọn.\
+            \ Viết max 50 kí tự\n - mục summary:\n+ insight stt 1 và 2: viết insight\
+            \ dài 3 đến 5 câu. Viết style báo chí, hoa mĩ, kịch tính. Viết max là\
+            \ 600 kí tự\n+ insight stt 3 và 4: viết 1 đến 2 câu, ngắn gọn, style báo\
+            \ chí, hoa mĩ. Viết max là 200 kí tự\n  - không lặp lại ý giữa các insight\n\
+            \n8) FORMAT OUTPUT\n  Trả JSON thuần. KHÔNG markdown, KHÔNG ```json, KHÔNG\
+            \ giải thích thêm.\n"
+        - id: aa1add2a-4887-447d-9c96-bf4eadead223
+          role: user
+          text: Hãy đọc dữ liệu ở này và sinh insight theo đúng hướng dẫn ở SYSTEM  {{#1770182649052.data_full#}}
+        - id: 788a5017-252a-4005-b7e6-c27b5c00c3e5
+          role: assistant
+          text: "{\n  \"insights\": [\n    {\n      \"stt\": 1,\n      \"header\"\
+            : \"GMV lao lên dữ dội, thổi bùng kỳ vọng tăng trưởng trong ngắn hạn\"\
+            ,\n      \"summary\": \"Tổng doanh thu (GMV) của Miền Bắc ghi nhận mức\
+            \ tăng trưởng mạnh 26,4% so với tuần trước, vươn lên 5,58 tỷ đồng, trong\
+            \ bối cảnh sức mua tại khu vực này đang có dấu hiệu phục hồi rõ nét. Song\
+            \ hành với đà tăng doanh thu, số lượng khách hàng hoạt động (GTA) cũng\
+            \ mở rộng 10,4%, đạt 1.020, phản ánh sự lan tỏa của nhu cầu tiêu dùng\
+            \ trên diện rộng. Động lực tăng trưởng đến chủ yếu từ các địa phương trọng\
+            \ điểm, trong đó TP. Hà Nội 1 tiếp tục giữ vai trò đầu tàu với GMV đạt\
+            \ 1,91 tỷ đồng. Đáng chú ý, tỉnh Hải Dương ghi nhận mức bứt phá mạnh mẽ\
+            \ nhất khi GMV tăng tới 103,8%, góp phần củng cố bức tranh tích cực của\
+            \ thị trường phía Bắc và cho thấy dư địa tăng trưởng vẫn còn rộng mở.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' viewBox='0 0 548 276'\
+            \ xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}.value-label{font-size:8px;fill:#333}</style><text\
+            \ x='274' y='18' class='title'>Xu hướng GMV tại Miền Bắc (7 ngày)</text><line\
+            \ x1='40' y1='28' x2='40' y2='215' stroke='#ccc'/><line x1='40' y1='215'\
+            \ x2='430' y2='215' stroke='#ccc'/><text x='40' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -7</text><text x='95' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -6</text><text x='150' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -5</text><text x='205' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -4</text><text x='260' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -3</text><text x='315' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -2</text><text x='370' y='232' class='label'\
+            \ text-anchor='middle'>Ngày -1</text><text x='425' y='232' class='label'\
+            \ text-anchor='middle'>Hôm nay</text><polyline points='40,46 95,34 150,46\
+            \ 205,126 260,215 315,98 370,96 425,72' fill='none' stroke='#000' stroke-width='2'/><text\
+            \ x='40' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='95' y='29' class='value-label' text-anchor='middle'>6.4B</text><text\
+            \ x='150' y='41' class='value-label' text-anchor='middle'>6.1B</text><text\
+            \ x='205' y='121' class='value-label' text-anchor='middle'>4.0B</text><text\
+            \ x='260' y='210' class='value-label' text-anchor='middle'>1.6B</text><text\
+            \ x='315' y='93' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='370' y='91' class='value-label' text-anchor='middle'>4.9B</text><text\
+            \ x='425' y='67' class='value-label' text-anchor='middle'>5.6B</text></svg>\"\
+            \n   \n    },\n   {\n      \"stt\": 2,\n      \"header\": \"GMV của DANISA\
+            \ tại Bắc Ninh ghi nhận mức sụt giảm mạnh trong kỳ gần nhất\",\n     \
+            \ \"summary\": \"Tại Bắc Ninh, DANISA chứng kiến GMV lao dốc hơn 45% so\
+            \ với ngày trước, dù số lượng GT active vẫn duy trì xu hướng tăng. Sự\
+            \ lệch pha này cho thấy doanh thu sụt giảm không đến từ thiếu khách hàng,\
+            \ mà chủ yếu do giá trị đơn hàng bình quân giảm mạnh. Dữ liệu đơn hàng\
+            \ và GT self-order cho thấy GT vẫn hoạt động đều, nhưng xu hướng “mua\
+            \ nhỏ – mua dè” đang chi phối, khiến GMV suy yếu dù nền khách hàng chưa\
+            \ rút lui\",\n      \"svg\": \"<svg width='230' height='200' viewBox='0\
+            \ 0 230 200' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:13px;font-weight:bold;text-anchor:middle}.label{font-size:9px}</style><text\
+            \ x='115' y='18' class='title'><tspan x='115' dy='0'>Tỷ trọng GMV của\
+            \ G7 tại TP. Hà Nội</tspan><tspan x='115' dy='14'>(Hôm qua)</tspan></text><g\
+            \ transform='translate(98,100)'><path d='M0,0 L0,-65 A65,65 0 0,1 24.16,-60.34\
+            \ Z' fill='#444444'/><text x='10' y='-30' font-size='10' fill='#fff' text-anchor='middle'>6.06%</text><path\
+            \ d='M0,0 L24.16,-60.34 A65,65 0 1,1 0,-65 Z' fill='#D0D0D0'/><text x='-10'\
+            \ y='30' font-size='10' fill='#000' text-anchor='middle'>93.94%</text></g><g\
+            \ transform='translate(173,130)'><rect x='0' y='0' width='10' height='10'\
+            \ fill='#444444'/><text x='14' y='9' font-size='10'>G7 TP. Hà Nội</text><rect\
+            \ x='0' y='20' width='10' height='10' fill='#D0D0D0'/><text x='14' y='29'\
+            \ font-size='10'>Thị trường còn lại</text></g></svg>\n\"\n    },\n   \
+            \ {\n      \"stt\": 3,\n      \"header\": \"DANISA tại Bắc Ninh giảm sâu\
+            \ GMV\",\n      \"summary\": \"Tại Bắc Ninh, DANISA ghi nhận GMV giảm\
+            \ hơn 50% so với hôm qua. Trái ngược, GTA vẫn tăng nhẹ, cho thấy hoạt\
+            \ động bán hàng vẫn duy trì nhưng giá trị đơn hàng suy giảm rõ rệt.\"\
+            ,\n      \"svg\": \"<svg width='548' height='276' xmlns='http://www.w3.org/2000/svg'><style>.title{font-size:14px;font-weight:bold;text-anchor:middle}.label{font-size:10px;fill:#333}.value-label{font-size:9px;fill:#333}</style><text\
+            \ x='274' y='20' class='title'>GMV theo từng brand</text><text x='274'\
+            \ y='35' class='label' text-anchor='middle'>Đơn vị: tỷ VND</text><line\
+            \ x1='180' y1='50' x2='180' y2='245' stroke='#ccc'/><rect x='180' y='60'\
+            \ width='360' height='16' fill='#444444'/><text x='170' y='72' class='label'\
+            \ text-anchor='end'>G7</text><text x='545' y='72' class='value-label'>5.6</text><rect\
+            \ x='180' y='88' width='315' height='16' fill='#444444'/><text x='170'\
+            \ y='100' class='label' text-anchor='end'>Diana</text><text x='500' y='100'\
+            \ class='value-label'>4.9</text><rect x='180' y='116' width='241' height='16'\
+            \ fill='#444444'/><text x='170' y='128' class='label' text-anchor='end'>Cosy</text><text\
+            \ x='430' y='128' class='value-label'>3.8</text><rect x='180' y='144'\
+            \ width='234' height='16' fill='#444444'/><text x='170' y='156' class='label'\
+            \ text-anchor='end'>Omachi</text><text x='425' y='156' class='value-label'>3.7</text><rect\
+            \ x='180' y='172' width='228' height='16' fill='#444444'/><text x='170'\
+            \ y='184' class='label' text-anchor='end'>Chinsu</text><text x='420' y='184'\
+            \ class='value-label'>3.6</text><rect x='180' y='200' width='225' height='16'\
+            \ fill='#444444'/><text x='170' y='212' class='label' text-anchor='end'>Acecook</text><text\
+            \ x='415' y='212' class='value-label'>3.5</text></svg>\"\n    },\n   \
+            \ {\n      \"stt\": 4,\n      \"header\": \"Hải Phòng duy trì đà tăng\
+            \ trưởng ổn định\",\n      \"summary\": \"Hải Phòng tiếp tục thể hiện\
+            \ sự ổn định với GMV tăng 27.4% và GTA tăng nhẹ 1.3%. Đây là một trong\
+            \ số ít địa phương ghi nhận tăng trưởng đồng thời cả doanh thu và quy\
+            \ mô GT.\",\n      \"svg\": null\n    }\n  ]\n}\n"
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              insights:
+                items:
+                  additionalProperties: false
+                  properties:
+                    header:
+                      type: string
+                    stt:
+                      type: string
+                    summary:
+                      type: string
+                    svg:
+                      type: string
+                  required:
+                  - stt
+                  - header
+                  - summary
+                  type: object
+                type: array
+            required:
+            - insights
+            type: object
+        structured_output_enabled: true
+        title: 'write content all region '
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 134
+      id: '17697451070860'
+      position:
+        x: 3743.2648815606058
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 3743.2648815606058
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        advanced_settings:
+          group_enabled: true
+          groups:
+          - groupId: b3784e64-3443-491d-9638-de403ed3ebfc
+            group_name: erorr
+            output_type: string
+            variables:
+            - - '1770095409391'
+              - error_message
+            - - '1770105501827'
+              - error_message
+            - - '1770105726211'
+              - error_message
+            - - '1767696550864'
+              - error_message
+        desc: ''
+        output_type: string
+        selected: false
+        title: Variable Aggregator
+        type: variable-aggregator
+        variables:
+        - - '1767692461629'
+          - error_message
+        - - '1767753778227'
+          - error_message
+        - - '17697419700060'
+          - error_message
+        - - '17697420938040'
+          - error_message
+        - - '17697421433900'
+          - error_message
+        - - '17695681493550'
+          - error_message
+      height: 188
+      id: '1770023676357'
+      position:
+        x: 4770.13178153779
+        y: 1553.267188208869
+      positionAbsolute:
+        x: 4770.13178153779
+        y: 1553.267188208869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import re\n\ndef main(error_message: str) -> dict:\n    \"\"\"\n  \
+          \  Normalize error message from multiple sources:\n    - Exception\n   \
+          \ - AttributeError\n    - HTTP / Request failed\n    \"\"\"\n\n    if not\
+          \ error_message:\n        return {\n            \"error_message\": \"Unknown\
+          \ error\"\n        }\n\n    # Pattern mở rộng\n    pattern = r\"(\" \\\n\
+          \              r\"Exception:.*|\" \\\n              r\"AttributeError:.*|\"\
+          \ \\\n              r\"HTTPResponseCodeError:.*|\" \\\n              r\"\
+          Request failed with status code.*\" \\\n              r\")\"\n\n    match\
+          \ = re.search(pattern, error_message, re.S)\n\n    # Nếu match được -> lấy\
+          \ message gọn\n    if match:\n        cleaned_message = match.group(1).strip()\n\
+          \    else:\n        # fallback: trả nguyên message (để không chết block)\n\
+          \        cleaned_message = error_message.strip()\n\n    return {\n     \
+          \   \"error_message\": cleaned_message\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          error_message:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Parse error message
+        type: code
+        variables:
+        - value_selector:
+          - '1770023676357'
+          - erorr
+          - output
+          value_type: object
+          variable: error_message
+      height: 54
+      id: '1770025782159'
+      position:
+        x: 5078.506544441811
+        y: 1553.267188208869
+      positionAbsolute:
+        x: 5078.506544441811
+        y: 1553.267188208869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-118
+            key: ''
+            type: text
+            value: "{\n  \"text\": {{#1770025782159.error_message#}}\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-Post Error Prod
+        type: http-request
+        url: '{{#env.ggchat_webhook#}}'
+        variables: []
+      height: 127
+      id: '1770025819928'
+      position:
+        x: 5458.446501892138
+        y: 1553.267188208869
+      positionAbsolute:
+        x: 5458.446501892138
+        y: 1553.267188208869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1770025782159'
+          - error_message
+          value_type: string
+          variable: error_message
+        selected: false
+        title: End erorr
+        type: end
+      height: 90
+      id: '1770028198505'
+      position:
+        x: 5855.712434833029
+        y: 1553.267188208869
+      positionAbsolute:
+        x: 5855.712434833029
+        y: 1553.267188208869
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef main(success_output: str) -> dict:\n    \n    #\
+          \ OUTPUT \n    if success_output:\n        body = json.loads(success_output)\n\
+          \n        # EMPTY DATA >> FAIL \n        if body.get(\"rowCount\") == 0:\n\
+          \            raise Exception(\"GET DATA EMPTY: không có dữ liệu trong bảng\"\
+          )\n\n        # VALID DATA \n        return {\n            \"normalized_output\"\
+          : \"VALID\"\n        }\n\n   "
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          normalized_output:
+            children: null
+            type: string
+        selected: false
+        title: Check output GET DATA
+        type: code
+        variables:
+        - value_selector:
+          - '1767696550864'
+          - body
+          value_type: string
+          variable: success_output
+      height: 90
+      id: '1770095409391'
+      position:
+        x: 1558.7549020001532
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 1558.7549020001532
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef _check_one(insight_text: str, node_name: str):\n\
+          \    # 1. Empty / whitespace\n    if not insight_text or insight_text.strip()\
+          \ == \"\":\n        raise Exception(f\"LLM {node_name} không trả nội dung\"\
+          )\n\n    # 2. Parse JSON\n    data = json.loads(insight_text)\n\n    # 3.\
+          \ Check insights\n    insights = data.get(\"insights\")\n    if not isinstance(insights,\
+          \ list) or len(insights) == 0:\n        raise Exception(f\"LLM {node_name}\
+          \ không sinh insight hợp lệ (insights rỗng)\")\n\n    return True\n\n\n\
+          def main(mn_text: dict, mb_text: dict) -> dict:\n\n    # adapter: object\
+          \ -> string (GIỮ NGUYÊN LOGIC CHECK)\n    mn_text = json.dumps(mn_text,\
+          \ ensure_ascii=False)\n    mb_text = json.dumps(mb_text, ensure_ascii=False)\n\
+          \n\n    _check_one(mn_text, \"MN\")\n    _check_one(mb_text, \"MB\")\n\n\
+          \n    # ALL REGION LLM OK\n    return {\n        \"status\": \"VALID\"\n\
+          \    }\n"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          status:
+            children: null
+            type: string
+        selected: false
+        title: CHECK LLM REGION
+        type: code
+        variables:
+        - value_selector:
+          - '17692233992230'
+          - structured_output
+          value_type: object
+          variable: mn_text
+        - value_selector:
+          - '1767759225403'
+          - structured_output
+          value_type: object
+          variable: mb_text
+      height: 90
+      id: '1770105501827'
+      position:
+        x: 2940.50847997473
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 2940.50847997473
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(tq_text: dict) -> dict:\n\n    # null\n    if tq_text is None:\n\
+          \        raise Exception(\"LLM TQ không trả nội dung\")\n\n    # convert\
+          \ object >> string \n    tq_text = json.dumps(tq_text, ensure_ascii=False)\n\
+          \n    # 1. Empty\n    if tq_text == \"\" or tq_text == \"\\n\":\n      \
+          \  raise Exception(\"LLM TQ không trả nội dung\")\n\n    # 2. Parse JSON\
+          \ \n    data = json.loads(tq_text)\n\n    # 3. Check insights \n    insights\
+          \ = data.get(\"insights\")\n    if not isinstance(insights, list) or len(insights)\
+          \ == 0:\n        raise Exception(\"LLM TQ không sinh insight hợp lệ (insights\
+          \ rỗng)\")\n\n    return {\n        \"status\": \"VALID\"\n    }\n"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          status:
+            children: null
+            type: string
+        selected: false
+        title: CHECK LLM TQ
+        type: code
+        variables:
+        - value_selector:
+          - '17697451070860'
+          - structured_output
+          value_type: object
+          variable: tq_text
+      height: 90
+      id: '1770105726211'
+      position:
+        x: 4089.6919063245814
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 4089.6919063245814
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef main(body: str) -> dict:\n\n    # Parse body JSON\n\
+          \    parsed = json.loads(body)\n    rows = parsed.get(\"rows\", [])\n\n\
+          \    def filter_region(region_name):\n        return [\n            r for\
+          \ r in rows\n            if r.get(\"geo_region_ops\") == region_name\n \
+          \       ]\n\n    data_mb = filter_region(\"Miền Bắc\")\n    data_mn = filter_region(\"\
+          Miền Nam\")\n    data_mt = filter_region(\"Miền Tây\")\n\n    return {\n\
+          \        \"data_full\": json.dumps(rows, ensure_ascii=False),\n        \"\
+          data_mb\": json.dumps(data_mb, ensure_ascii=False),\n        \"data_mn\"\
+          : json.dumps(data_mn, ensure_ascii=False),\n        \"data_mt\": json.dumps(data_mt,\
+          \ ensure_ascii=False),\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          data_full:
+            children: null
+            type: string
+          data_mb:
+            children: null
+            type: string
+          data_mn:
+            children: null
+            type: string
+          data_mt:
+            children: null
+            type: string
+        selected: false
+        title: Parse region
+        type: code
+        variables:
+        - value_selector:
+          - '1767696550864'
+          - body
+          value_type: string
+          variable: body
+      height: 54
+      id: '1770182649052'
+      position:
+        x: 2023.1224581903675
+        y: 383.0628662660415
+      positionAbsolute:
+        x: 2023.1224581903675
+        y: 383.0628662660415
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 930.9536084384561
+      y: 95.92662480802642
+      zoom: 0.43527528164806245

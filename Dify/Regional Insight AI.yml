@@ -1,0 +1,2094 @@
+app:
+  description: Regional performance summary and analysis for Oneshop Sales Team.
+  icon: 🌏
+  icon_background: '#D3F8DF'
+  mode: workflow
+  name: Regional Insight AI
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: agimaster/justwait:0.0.2@1cc2d5e7fbd6a829396c8a51947924f799f9566071bf8499c4e2a9f75ad3330f
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.20@de0063a630a6d1b2c025fb84f3462ba5151fb60618309cd595c3f4711b1df847
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables: []
+  environment_variables:
+  - description: ''
+    id: eca0cbc6-577f-4010-9157-d6027d1a9096
+    name: ggchat_webhook
+    selector:
+    - env
+    - ggchat_webhook
+    value: https://chat.googleapis.com/v1/spaces/AAQA2qzLg_I/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=Hmr2F0rP5ilJhOE4Y76xoD-0A7zcKpcnwcUaV7uCBwk
+    value_type: string
+  - description: ''
+    id: 8c43adc6-7cfe-4e04-82d1-4203d29bb3d7
+    name: dremio_api_key
+    selector:
+    - env
+    - dremio_api_key
+    value: Bearer el4xuV0WTDq3NMHafHF6djWsqDz7elaOPPwEpD/PDAC5Op8gPFjOq78wRFvZVw==
+    value_type: string
+  - description: ''
+    id: 4c2d92b4-39e4-421f-aed1-a1c4a4e7c201
+    name: ggchat_webhook_test
+    selector:
+    - env
+    - ggchat_webhook_test
+    value: https://chat.googleapis.com/v1/spaces/AAAAxiqkEDc/messages?key=AIzaSyDdI0hCZtE6vySjMm-WEfRq3CPzqKqqsHI&token=n8CY3bDurRAkvWivjGisHRJBSSS2U417EQAGkWe_MxY
+    value_type: string
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 50
+        image_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: loop
+      id: 1761190849139-source-1761280112217-target
+      selected: false
+      source: '1761190849139'
+      sourceHandle: source
+      target: '1761280112217'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        sourceType: loop-start
+        targetType: tool
+      id: 1761280112217start-source-1761298232234-target
+      selected: false
+      source: 1761280112217start
+      sourceHandle: source
+      target: '1761298232234'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1761303441331-source-1761303868122-target
+      selected: false
+      source: '1761303441331'
+      sourceHandle: source
+      target: '1761303868122'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1761630648871-source-1761637017603-target
+      selected: false
+      source: '1761630648871'
+      sourceHandle: source
+      target: '1761637017603'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 1761637017603-true-1761626665709-target
+      selected: false
+      source: '1761637017603'
+      sourceHandle: 'true'
+      target: '1761626665709'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1761298562585-source-1761303868122-target
+      selected: false
+      source: '1761298562585'
+      sourceHandle: source
+      target: '1761303868122'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: code
+      id: 1761125457862-source-1761303441331-target
+      selected: false
+      source: '1761125457862'
+      sourceHandle: source
+      target: '1761303441331'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 1761626665709-source-1761191457164-target
+      selected: false
+      source: '1761626665709'
+      sourceHandle: source
+      target: '1761191457164'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1762163413918-true-1762164110046-target
+      selected: false
+      source: '1762163413918'
+      sourceHandle: 'true'
+      target: '1762164110046'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: variable-aggregator
+      id: 1762164110046-source-1762165374366-target
+      selected: false
+      source: '1762164110046'
+      sourceHandle: source
+      target: '1762165374366'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: variable-aggregator
+      id: 1762163413918-false-1762165374366-target
+      selected: false
+      source: '1762163413918'
+      sourceHandle: 'false'
+      target: '1762165374366'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1761303868122-source-1762503347594-target
+      selected: false
+      source: '1761303868122'
+      sourceHandle: source
+      target: '1762503347594'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: http-request
+        targetType: end
+      id: 17625041293570-source-1762504224826-target
+      selected: false
+      source: '17625041293570'
+      sourceHandle: source
+      target: '1762504224826'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1762503347594-source-1761203615126-target
+      source: '1762503347594'
+      sourceHandle: source
+      target: '1761203615126'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1762503347594-fail-branch-1763098502889-target
+      selected: false
+      source: '1762503347594'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1763099005433-fail-branch-1763098502889-target
+      selected: false
+      source: '1763099005433'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1761298562585-fail-branch-1763098502889-target
+      selected: false
+      source: '1761298562585'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: variable-aggregator
+      id: 1761630648871-fail-branch-1763098502889-target
+      selected: false
+      source: '1761630648871'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1762165374366-source-1761630648871-target
+      source: '1762165374366'
+      sourceHandle: source
+      target: '1761630648871'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1761203615126-source-1763099005433-target
+      source: '1761203615126'
+      sourceHandle: source
+      target: '1763099005433'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: variable-aggregator
+        targetType: code
+      id: 1763098502889-source-1763464525010-target
+      source: '1763098502889'
+      sourceHandle: source
+      target: '1763464525010'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 1761637017603-933f219b-0832-4bbd-82b2-6a95f47c2418-1761191457164-target
+      source: '1761637017603'
+      sourceHandle: 933f219b-0832-4bbd-82b2-6a95f47c2418
+      target: '1761191457164'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1763464525010-source-17688950569980-target
+      source: '1763464525010'
+      sourceHandle: source
+      target: '17688950569980'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: http-request
+      id: 17688950569980-true-17625041293570-target
+      source: '17688950569980'
+      sourceHandle: 'true'
+      target: '17625041293570'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: end
+      id: 17688950569980-933f219b-0832-4bbd-82b2-6a95f47c2418-1762504224826-target
+      source: '17688950569980'
+      sourceHandle: 933f219b-0832-4bbd-82b2-6a95f47c2418
+      target: '1762504224826'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: if-else
+      id: 1763099005433-source-1762163413918-target
+      source: '1763099005433'
+      sourceHandle: source
+      target: '1762163413918'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: start
+        targetType: tool
+      id: 1761125457862-source-1779944205271-target
+      source: '1761125457862'
+      sourceHandle: source
+      target: '1779944205271'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1779944205271-source-1761190849139-target
+      source: '1779944205271'
+      sourceHandle: source
+      target: '1761190849139'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: variable-aggregator
+      id: 1779944205271-fail-branch-1763098502889-target
+      source: '1779944205271'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        sourceType: tool
+        targetType: tool
+      id: 1761298232234-source-1779944755168-target
+      source: '1761298232234'
+      sourceHandle: source
+      target: '1779944755168'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        sourceType: tool
+        targetType: loop-end
+      id: 1779944755168-fail-branch-1761365012072-target
+      source: '1779944755168'
+      sourceHandle: fail-branch
+      target: '1761365012072'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        sourceType: tool
+        targetType: code
+      id: 1779944755168-source-1761293380491-target
+      source: '1779944755168'
+      sourceHandle: source
+      target: '1761293380491'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: loop
+        targetType: tool
+      id: 1761280112217-source-1779944840656-target
+      source: '1761280112217'
+      sourceHandle: source
+      target: '1779944840656'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: code
+      id: 1779944840656-source-1761298562585-target
+      source: '1779944840656'
+      sourceHandle: source
+      target: '1761298562585'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: tool
+        targetType: variable-aggregator
+      id: 1779944840656-fail-branch-1763098502889-target
+      source: '1779944840656'
+      sourceHandle: fail-branch
+      target: '1763098502889'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        sourceType: code
+        targetType: assigner
+      id: 1761293380491-source-1780023281950-target
+      source: '1761293380491'
+      sourceHandle: source
+      target: '1780023281950'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables:
+        - allowed_file_extensions: []
+          allowed_file_types:
+          - image
+          allowed_file_upload_methods:
+          - local_file
+          - remote_url
+          default: run_only
+          label: options
+          max_length: 5
+          options:
+          - run_only
+          - run_send_gchat
+          - run_newspaper
+          required: true
+          type: select
+          variable: options
+      height: 90
+      id: '1761125457862'
+      position:
+        x: 541.3456584941849
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 541.3456584941849
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(http_response: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(http_response)\n    # Job chạy nhanh quá, đợi tí\
+          \ lấy cái query\n    time.sleep(8)\n    return {\n        # Note to declare\
+          \ 'result' in the output variables\n        'job_id': data['id']\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          job_id:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Get Job
+        type: code
+        variables:
+        - value_selector:
+          - '1761125474160'
+          - body
+          value_type: string
+          variable: http_response
+      height: 54
+      id: '1761190849139'
+      position:
+        x: 1328.739700773834
+        y: 299.13265155653335
+      positionAbsolute:
+        x: 1328.739700773834
+        y: 299.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1761630648871'
+          - insight_north
+          value_type: string
+          variable: insight_north
+        - value_selector:
+          - '1761630648871'
+          - insight_south
+          value_type: string
+          variable: insight_south
+        selected: false
+        title: END-Success
+        type: end
+      height: 116
+      id: '1761191457164'
+      position:
+        x: 7065.1542205724845
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 7065.1542205724845
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: gemini-2.5-pro
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 43ccaf39-f132-49df-a86f-1ca7a2abe331
+          role: system
+          text: "[ROLE]\nYou are an expert Data Analyst specializing in sales insights\
+            \ and trend analysis.\n\n[TASK]\n- Your task is to analyze data table\
+            \ and give a brief performance summary of GMV and PAVLC.\n- Then briefly\
+            \ give regional analysis showing key factors why GMV and PAVLC increase\
+            \ or decrease.\n- Then provide brief MES brand analysis of GMV and GT\
+            \ Active.\n\n[OUTPUT LOGIC]\n- First provide general remarks about performance\
+            \ of each region with title \"\U0001F4AC Nhận xét chung:\". \n- Then review\
+            \ metrics for \"Miền Bắc\" with title \"\U0001F3D4️ Miền Bắc:\".\n- Then\
+            \ review metrics for \"Miền Nam\" with title \"\U0001F334 Miền Nam:\"\
+            .\n- Finally review metrics for \"Miền Tây\" with title \"\U0001F33E Miền\
+            \ Tây:\".\n\nFor each GMV and PAVLC performance review\nUsing data {{#1761298562585.data_region_total#}}\n\
+            - Start with today total/total estimate.\n- Then compare with yesterday\
+            \ total (d-1).\n- Then compare with same day last week total (d-7).\n\
+            - Then compare with today total Forecast to show percentage achieved.\n\
+            - Only output one sentence for each GMV and PAVLC.\n- Each sentence is\
+            \ bulleted.\n\nFor section \"Nhận xét chung:\"\n- Provide general remarks\
+            \ about performance of each region.\n- Provide brief one sentence summary\
+            \ and general advice for each region.\n- Each region is bulleted in order\
+            \ Miền Bắc, Miền Nam, Miền Tây.\n- Do not use humorous language.\n\nFor\
+            \ each Regions\nUsing data {{#1761298562585.data_region_detail#}}\n- Highlight\
+            \ top 3 key contributors driving GMV or PAVLC up or down. Prioritize at\
+            \ least one up and one down.\n- For each key contributor, clarify Channels\
+            \ and Provinces that are the main contributors to GMV or PAVLC increase\
+            \ or decrease.\n- Sum up data but do not mention Brands.\n- Do not provide\
+            \ numbers.\n- Give maximum of 3 key contributors.\n- Ignore \"OTHERS\"\
+            \ channel and \"OTHERS\" brand. \n- Each key contributor is a sentence\
+            \ in a new line.\n- Start each sentence with \"\U0001F4CD\".\n- Specifically\
+            \ use humorous language for this section.\n\nFor each Region\nUsing data\
+            \ {{#1761298562585.data_mes_detail#}}\n- Briefly list the main contributing\
+            \ Brands, maximum of 3 brands. \n- Each brand is bulleted.\n- Clarify\
+            \ Provinces that are the main contributors to GMV and GTA increase or\
+            \ decrease.\n- Analyze whether GMV or GTA is good or bad.\n- Do not provide\
+            \ numbers.\n- Do not mention brands without data.\n- Start section with\
+            \ \"\U0001F9FC Hàng MES:\".\n- Use humorous language for this section.\n\
+            \n[RULE]\n- Use \"tăng\" for increases and \"giảm\" for decreases.\n-\
+            \ Do not use transition words like \"chuyển từ dương sang âm\".\n- Avoid\
+            \ raw data or technical details.\n- Keep the summary concise, engaging,\
+            \ and brief.\n- Must output all sections for each regions.\n\n[FORMAT]\n\
+            - Output language: Vietnamese\n- Use B for billions, M for millions, and\
+            \ K for thousands.\n- Keep maximum of 1 decimal place only.\n- Use \"\
+            -\" for bullets.\n- Do not format bold.\n\n [LIMITATION]\n- Do not include\
+            \ code, raw data or technical formatting.\n- Do not discuss data limitations\
+            \ or methodological details.\n- Do not invent numbers or make unsupported\
+            \ assumptions.\n- Do not exceed 6 sentences per region in output.\n- Never\
+            \ include vague or generic statements without calculations.\n- Never omit\
+            \ format rules. \n- Never use lengthy or redundant language."
+        - id: 992ca34f-0340-47ec-9802-f5f0d1173763
+          role: assistant
+          text: "#Example\n\U0001F4AC Nhận xét chung:\n- Miền Bắc ổn định.\n- Miền\
+            \ Nam gặp khó khăn về GMV, nhưng PAVLC cải thiện.\n- Miền Tây vẫn đầu\
+            \ tàu về GMV, dù hụt với FC, nhưng tăng trưởng tốt so với cùng kỳ tuần\
+            \ trước.\n\U0001F3D4️ Miền Bắc:\n- GMV dự kiến đạt 3.5B, giảm 23.9% so\
+            \ với hôm qua, giảm nhẹ 2.5% so với cùng kỳ tuần trước, đạt 61.4% FC.\n\
+            - PAVLC dự kiến đạt 85.7M, giảm 12.5% so với hôm qua nhưng tăng vọt 74.5%\
+            \ so với cùng kỳ tuần trước, đạt 61.4% FC.\n\U0001F4CD Điểm sáng: GMV/PAVLC\
+            \ tăng trưởng hôm nay được kéo bởi Marketplace tại Hải Phòng & Hà Nội\
+            \ 1.\n\U0001F4CD Cùng với Retail tại Hải Phòng. Đúng là \"anh em Hải Phòng,\
+            \ Hà Nội không lòng vòng\"!\n\U0001F9FC Hàng MES:\n- C&S: Tình hình \"\
+            tụt dốc không phanh\" ở hầu hết các tỉnh thành, GT active và GMV đều giảm\
+            \ mạnh.\n- INDOMIE: Tươi sáng hơn với GT active và GMV tăng trưởng ở nhiều\
+            \ tỉnh, đặc biệt là T. Bắc Giang, T. Bắc Ninh, T. Hưng Yên.\n- LIBY: Tín\
+            \ hiệu trái chiều, một số tỉnh tăng, một số tỉnh giảm cả GT active lẫn\
+            \ GMV.\n\U0001F334 Miền Nam:\n- GMV dự kiến đạt 2.7B, lao dốc 49.7% so\
+            \ với hôm qua và giảm mạnh 48.1% so với cùng kỳ tuần trước, đạt 76.2%\
+            \ FC.\n- PAVLC dự kiến đạt 42.3M, giảm 7.2% so với hôm qua và giảm 22.3%\
+            \ so với cùng kỳ tuần trước, đạt 76.2% FC.\n\U0001F4CD \"Gỡ điểm\" được\
+            \ chút xíu nhờ Marketplace tại TP.HCM và Retail tại TP.HCM.\n\U0001F4CD\
+            \ Nhưng \"tạ\" thì vẫn là Wholesale tại TP.HCM và T.Đồng Nai.\n\U0001F9FC\
+            \ Hàng MES:\n- C&S: GT active và GMV đều \"lao dốc\" so với tháng trước\
+            \ tại các tỉnh. Buồn!\n- LIBY: Tín hiệu trái chiều. T.Bình Dương, T.Đồng\
+            \ Nai, TP.HCM tăng trưởng GT active và GMV. Riêng T.Bà Rịa - Vũng Tàu\
+            \ thì giảm.\n- S-BEE: GT active và GMV đều giảm so với tháng trước tại\
+            \ các tỉnh. Ong chăm chỉ nay lười rồi sao?\n\U0001F33E Miền Tây:\n- GMV\
+            \ dự kiến chỉ đạt 696.5M, giảm 28.8% so với hôm qua và rơi tự do 75.5%\
+            \ so với cùng kỳ tuần trước, mới đạt 19.1% FC. Ít quá sếp ơi!\n- PAVLC\
+            \ dự kiến còn 7.1M, giảm sâu 56.5% so với hôm qua và giảm 51.7% so với\
+            \ cùng kỳ tuần trước, cũng chỉ đạt 19.1% FC.\n\U0001F4CD Động lực tăng\
+            \ trưởng GMV chủ yếu đến từ kênh Wholesale tại Đồng Tháp (nhờ Saigon Lager)\
+            \ và Retail tại Vĩnh Long (cũng nhờ Saigon Lager). \n\U0001F4CD PAVLC\
+            \ thì được Retail tại Cần Thơ và Vĩnh Long \"cứu cánh\".\n\U0001F9FC Hàng\
+            \ MES:\n- LIBY: Tín hiệu trái chiều. An Giang và Cần Thơ tăng trưởng tốt\
+            \ cả về GT active và GMV so với tháng trước. Tuy nhiên, các tỉnh còn lại\
+            \ (Tiền Giang, Trà Vinh, Vĩnh Long, Đồng Tháp) đều giảm.\n- S-BEE: Bức\
+            \ tranh sáng sủa hơn với GT active và GMV đều tăng so với tháng trước\
+            \ tại Tiền Giang, Vĩnh Long và Cần Thơ. An Giang và Đồng Tháp cũng tăng\
+            \ GT active, nhưng GMV lại giảm nhẹ. Riêng Trà Vinh thì cả GT active và\
+            \ GMV đều \"đi lùi\".\n---\n#Now generate based on the actual input "
+        - id: b5112247-3aa3-4e78-87fd-0d1ac9d644b7
+          role: user
+          text: 'Base on metric definitions within: {{#1761303868122.Dict#}} to understand
+            metric names.'
+        selected: false
+        title: LLM-Generate Insight
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1761203615126'
+      position:
+        x: 4387.753001769998
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 4387.753001769998
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        break_conditions:
+        - comparison_operator: is
+          id: 46b5aa1d-6c06-4e0c-af09-4abc9f9543c9
+          value: COMPLETED
+          varType: string
+          variable_selector:
+          - '1761293380491'
+          - jobstate
+        - comparison_operator: is
+          id: a3e6c152-a0e0-4e1c-97d7-ad57eb1e6216
+          value: FAILED
+          varType: string
+          variable_selector:
+          - '1761293380491'
+          - jobstate
+        desc: ''
+        error_handle_mode: terminated
+        height: 408
+        logical_operator: or
+        loop_count: 10
+        loop_variables:
+        - id: 8c0f305a-f31d-455f-af16-0ab33bddd54b
+          label: test
+          value_type: variable
+          var_type: string
+        selected: true
+        start_node_id: 1761280112217start
+        title: LOOP-Check Job status
+        type: loop
+        width: 1296
+      height: 408
+      id: '1761280112217'
+      position:
+        x: 1597.337389848946
+        y: 299.13265155653335
+      positionAbsolute:
+        x: 1597.337389848946
+        y: 299.13265155653335
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 1296
+      zIndex: 1
+    - data:
+        desc: ''
+        isInLoop: true
+        selected: false
+        title: ''
+        type: loop-start
+      draggable: false
+      height: 48
+      id: 1761280112217start
+      parentId: '1761280112217'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 1621.337389848946
+        y: 367.13265155653335
+      selectable: false
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-loop-start
+      width: 44
+      zIndex: 1002
+    - data:
+        code: "import json\n\ndef main(body: str) -> dict:\n    body = json.loads(body)\n\
+          \    jobstate = body.get(\"jobState\", \"UNKNOWN\")\n\n    return {\n  \
+          \      \"jobstate\": jobstate\n        }\n"
+        code_language: python3
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        outputs:
+          jobstate:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Parse job status
+        type: code
+        variables:
+        - value_selector:
+          - '1761280900741'
+          - body
+          value_type: string
+          variable: body
+      height: 54
+      id: '1761293380491'
+      parentId: '1761280112217'
+      position:
+        x: 732
+        y: 65
+      positionAbsolute:
+        x: 2329.3373898489463
+        y: 364.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        is_team_authorization: true
+        loop_id: '1761280112217'
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The number of seconds to wait
+            ja_JP: The number of seconds to wait
+            pt_BR: The number of seconds to wait
+            zh_Hans: 等待的秒数
+          label:
+            en_US: Seconds
+            ja_JP: Seconds
+            pt_BR: Seconds
+            zh_Hans: 秒数
+          llm_description: The number of seconds to pause execution
+          max: null
+          min: null
+          name: seconds
+          options: []
+          placeholder: null
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: number
+        params:
+          seconds: ''
+        provider_id: agimaster/justwait/justwait
+        provider_name: agimaster/justwait/justwait
+        provider_type: builtin
+        selected: false
+        title: Wait
+        tool_configurations: {}
+        tool_description: Wait for a specified number of seconds, similar to Python's
+          time.sleep() function
+        tool_label: Wait
+        tool_name: wait
+        tool_node_version: '2'
+        tool_parameters:
+          seconds:
+            type: constant
+            value: 30
+        type: tool
+      height: 54
+      id: '1761298232234'
+      parentId: '1761280112217'
+      position:
+        x: 146.47311075082007
+        y: 65
+      positionAbsolute:
+        x: 1743.810500599766
+        y: 364.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        code: "from datetime import datetime\nimport json\n\ndef main(body: str) ->\
+          \ dict:\n    body = json.loads(body)\n    rows = body[\"rows\"]\n\n    ###\
+          \ Latest Order Created ###\n    list_time = [r.get(\"latest_order_created_time\"\
+          ) for r in rows if r.get(\"latest_order_created_time\")]\n    latest_order_at\
+          \ = max(list_time) if list_time else None\n    latest_order_date = datetime.strptime(latest_order_at,\
+          \ \"%Y-%m-%d %H:%M:%S\").strftime(\"%Y-%m-%d\")\n\n    ### Total ###\n \
+          \   rows_total = [r for r in rows if r.get(\"datagroup\") == \"Total\"]\n\
+          \    cols_total = [\n        \"geo_region_ops\",\n        \"gmv_rr_today\"\
+          , \"%dod_gmv\", \"%wow_gmv_by_day\", \"%gmv_on_fc\",\n        \"pavlc_rr_today\"\
+          , \"%dod_pavlc\", \"%wow_pavlc_by_day\", \"%pavlc_on_fc\"\n    ]\n    data_region_total\
+          \ = [{col: r.get(col) for col in cols_total} for r in rows_total]\n    data_region_total\
+          \ = json.dumps(data_region_total, ensure_ascii=False)\n\n    ### Region\
+          \ detail ###\n    rows_region_detail = [r for r in rows if r.get(\"datagroup\"\
+          ) == \"Region\"]\n    cols_region_detail = [\n        \"geo_region_ops\"\
+          , \"sales_channel\", \"sub_province_name\", \"brand_name\",\n        \"\
+          gmv_rr_today\", \"%dod_gmv\", \"%wow_gmv_by_day\", \"%gmv_on_fc\",\n   \
+          \     \"pavlc_rr_today\", \"%dod_pavlc\", \"%wow_pavlc_by_day\", \"%pavlc_on_fc\"\
+          \n    ]\n    data_region_detail = [{col: r.get(col) for col in cols_region_detail}\
+          \ for r in rows_region_detail]\n    data_region_detail = json.dumps(data_region_detail,\
+          \ ensure_ascii=False)\n\n    ### MES detail ###\n    rows_mes_detail = [r\
+          \ for r in rows if r.get(\"datagroup\") == \"MES\"]\n    cols_mes_detail\
+          \ = [\n        \"geo_region_ops\", \"sub_province_name\", \"brand_name\"\
+          ,\n        \"gmv_rr_today\", \"%dod_gmv\", \"%wow_gmv_by_day\", \"%gmv_on_fc\"\
+          ,\n        \"pavlc_rr_today\", \"%dod_pavlc\", \"%wow_pavlc_by_day\", \"\
+          %pavlc_on_fc\"\n    ]\n    data_mes_detail = [{col: r.get(col) for col in\
+          \ cols_mes_detail} for r in rows_mes_detail]\n    data_mes_detail = json.dumps(data_mes_detail,\
+          \ ensure_ascii=False)\n\n    ### Log Data Input ###\n    log_data = data_region_total.replace('\"\
+          ',\"\").replace(\"}, {\",\"\\n\").replace(\"[{\",\"\").replace(\"}]\",\"\
+          \")\n    log_data = f\"\"\"LOG:\\n```{log_data}```\"\"\"\n\n    return {\n\
+          \        \"latest_order_at\": latest_order_at,\n        \"latest_order_date\"\
+          : latest_order_date,\n        \"data_region_total\": data_region_total,\n\
+          \        \"data_region_detail\": data_region_detail,\n        \"data_mes_detail\"\
+          : data_mes_detail,\n        \"log_data\": log_data,\n    }"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          data_mes_detail:
+            children: null
+            type: string
+          data_region_detail:
+            children: null
+            type: string
+          data_region_total:
+            children: null
+            type: string
+          latest_order_at:
+            children: null
+            type: string
+          latest_order_date:
+            children: null
+            type: string
+          log_data:
+            children: null
+            type: string
+        retry_config:
+          max_retries: 3
+          retry_enabled: false
+          retry_interval: 5000
+        selected: false
+        title: CODE-Parse Data
+        type: code
+        variables:
+        - value_selector:
+          - '17612825466520'
+          - body
+          value_type: string
+          variable: body
+      height: 90
+      id: '1761298562585'
+      position:
+        x: 3296.2135970852523
+        y: 200.6798937544567
+      positionAbsolute:
+        x: 3296.2135970852523
+        y: 200.6798937544567
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "from datetime import datetime, timedelta, timezone\n\ndef main() ->\
+          \ dict:\n    tz_utc_plus7 = timezone(timedelta(hours=7))\n    now = datetime.now(tz_utc_plus7)\n\
+          \    hour = now.hour\n    current_time = now.strftime(\"%Y-%m-%d %H:%M:%S\"\
+          )\n    current_date = now.strftime(\"%Y-%m-%d\")\n\n    metric_definition\
+          \ = \"\"\"\n    {\n        \"geo_region_ops\": \"Regions  for business operation\"\
+          ,\n        \"sales_channel\": \"Channel route to market of products sold\"\
+          ,\n        \"sub_province_name\": \"Provinces for business operation\",\n\
+          \        \"brand_name\": \"Brands of products sold\",\n\n        \"GMV\"\
+          : \"Gross Merchandize Value\",\n        \"PAVLC\": \"Profit after Variable\
+          \ Logistic Cost\",\n        \"FC\": \"Forecast\",\n        \"GT\": \"General\
+          \ Trader\",\n        \"GTA\": \"GT Active - GT ordered this period\",\n\n\
+          \        \"gmv_rr_today\": \"Estimate total GMV wholeday today\",\n    \
+          \    \"gmv_d1\": \"Total GMV of yesterday (gmv day-1)\",\n        \"gmv_d7\"\
+          : \"Total GMV of sameday last week (gmv day-7)\",\n        \"%dod_gmv\"\
+          : \"Percentage change between gmv_rr_today and gmv_d1 (gmv_rr_today/gmv_d1)\"\
+          ,\n        \"%wow_gmv_by_day\": \"Percentage change between gmv_rr_today\
+          \ and gmv_d7 (gmv_rr_today/gmv_d7)\",\n        \"gmv_fc\": \"Total GMV forecast\
+          \ of wholeday today\",\n        \"gap_gmv_fc\": \"Difference between gmv_rr_today\
+          \ and gmv_fc (gmv_rr_today - gmv_fc)\",\n        \"%gmv_on_fc\": \"Percentage\
+          \ of gmv_rr_today on gmv_fc (gmv_rr_today/gmv_fc)\",\n        \n       \
+          \ \"pavlc_rr_today\": \"Estimate total PAVLC wholeday today\",\n       \
+          \ \"pavlc_d1\": \"Total PAVLC of yesterday (pavlc day-1)\",\n        \"\
+          pavlc_d7\": \"Total PAVLC of sameday last week (pavlc day-7)\",\n      \
+          \  \"%dod_pavlc\": \"Percentage change between pavlc_rr_today and pavlc_d1\
+          \ (pavlc_rr_today/pavlc_d1)\",\n        \"%wow_pavlc_by_day\": \"Percentage\
+          \ change between pavlc_rr_today and pavlc_d7 (pavlc_rr_today/pavlc_d7)\"\
+          ,\n        \"pavlc_fc\": \"Total PAVLC forecast of wholeday today\",\n \
+          \       \"gap_pavlc_fc\": \"Difference between pavlc_rr_today and pavlc_fc\
+          \ (pavlc_rr_today - pavlc_fc)\",\n        \"%pavlc_on_fc\": \"Percentage\
+          \ of pavlc_rr_today on pavlc_fc (pavlc_rr_today/pavlc_fc)\",\n        \n\
+          \        \"gta_rr_today\": \"Estimate total GTA wholeday today\",\n    \
+          \    \"gta_d1\": \"Total GTA of yesterday (GTA day-1)\",\n        \"gta_d7\"\
+          : \"Total GTA of sameday last week (GTA day-7)\",\n        \"%dod_gta\"\
+          : \"Percentage change between gta_rr_today and gta_d1 (gta_rr_today/gta_d1)\"\
+          ,\n        \"%wow_gta_by_day\": \"Percentage change between gta_rr_today\
+          \ and gta_d7 (gta_rr_today/gta_d7)\",\n        \"gta_fc\": \"Total GTA forecast\
+          \ of wholeday today\",\n        \"gap_gta_fc\": \"Difference between gta_rr_today\
+          \ and gta_fc (gta_rr_today - gta_fc)\",\n        \"%gta_on_fc\": \"Percentage\
+          \ of gta_rr_today on gta_fc (gta_rr_today/gta_fc)\",\n    }\n    \"\"\"\n\
+          \    return {\n        \"metric_definition\": metric_definition,\n     \
+          \   \"current_time\": current_time,\n        \"current_date\": current_date\n\
+          \    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          current_date:
+            children: null
+            type: string
+          current_time:
+            children: null
+            type: string
+          metric_definition:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Metric Definition
+        type: code
+        variables: []
+      height: 54
+      id: '1761303441331'
+      position:
+        x: 1022.4205738281073
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 1022.4205738281073
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        advanced_settings:
+          group_enabled: true
+          groups:
+          - groupId: 3b97b21d-31cb-4d11-9e6a-e4f272397468
+            group_name: Dict
+            output_type: string
+            variables:
+            - - '1761303441331'
+              - metric_definition
+          - groupId: f886ffbf-42ed-4f3a-adf5-9b1fcb87e8b9
+            group_name: Data
+            output_type: string
+            variables:
+            - - '1761298562585'
+              - latest_order_at
+            - - '1761298562585'
+              - data_region_total
+            - - '1761298562585'
+              - data_region_detail
+            - - '1761298562585'
+              - data_mes_detail
+          - groupId: f23ec326-3983-4906-8b29-d4803ada4e92
+            group_name: Date
+            output_type: string
+            variables:
+            - - '1761303441331'
+              - current_time
+            - - '1761298562585'
+              - latest_order_at
+            - - '1761303441331'
+              - current_date
+            - - '1761298562585'
+              - latest_order_date
+        desc: ''
+        output_type: string
+        selected: false
+        title: AGG-Input Data
+        type: variable-aggregator
+        variables:
+        - - '1761303441331'
+          - metric_definition
+      height: 374
+      id: '1761303868122'
+      position:
+        x: 3680.204108821766
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 3680.204108821766
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        loop_id: '1761280112217'
+        selected: false
+        title: Exit Loop
+        type: loop-end
+      height: 54
+      id: '1761365012072'
+      parentId: '1761280112217'
+      position:
+        x: 730.5177977468156
+        y: 205
+      positionAbsolute:
+        x: 2327.855187595762
+        y: 504.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-simple
+      width: 244
+      zIndex: 1002
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-1049
+            key: ''
+            type: text
+            value: "{\n  \"text\": \"{{#1761630648871.insight_all#}}\"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-Post GGchat Prod
+        type: http-request
+        url: '{{#env.ggchat_webhook#}}'
+        variables: []
+      height: 127
+      id: '1761626665709'
+      position:
+        x: 6716.775998490297
+        y: -109.35110309309951
+      positionAbsolute:
+        x: 6716.775998490297
+        y: -109.35110309309951
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "from datetime import datetime\nimport random\nimport re\n\ndef main(insight_text:\
+          \ str, latest_order_at: str, current_time: str) -> dict:\n    ### Header\
+          \ Format ###\n    current_time = datetime.strptime(current_time, \"%Y-%m-%d\
+          \ %H:%M:%S\")\n    current_date = current_time.date()\n    current_hour\
+          \ = current_time.hour\n\n    latest_order_at = datetime.strptime(latest_order_at,\
+          \ \"%Y-%m-%d %H:%M:%S\")\n    latest_order_date = latest_order_at.date()\n\
+          \    latest_order_date_f = datetime.strftime(latest_order_at, \"%-d/%-m\"\
+          )\n\n    if current_date > latest_order_date:\n        list_greetings =\
+          \ [\"Ace cùng Oneshop nhìn lại performance hôm qua nhé!\"]\n    elif current_hour\
+          \ < 17:\n        list_greetings = [\"Ace đã nghỉ ngơi sẵn sàng cho buổi\
+          \ chiều năng suất chưa ạ?\", \"Ace cùng check qua số sáng nay nhé!\"]\n\
+          \    else:\n        list_greetings = [\"Chào buổi chiều tốt lành!\"]\n \
+          \   greeting_text = random.choice(list_greetings)\n    header_text = f\"\
+          \U0001F30F Báo cáo ngày {latest_order_date_f}\\n{greeting_text}\"\n\n  \
+          \  tt_summary = \"\U0001F4AC Nhận xét chung:\"\n    tt_north = \"\U0001F3D4\
+          ️ Miền Bắc:\"\n    tt_south = \"\U0001F334 Miền Nam:\"\n\n    pattern_summary\
+          \ = rf\"{tt_summary}(.*?){re.escape(tt_north)}\"\n    sect_summary = re.search(pattern_summary,\
+          \ insight_text, re.S).group(1).rstrip()\n    sect_summary_north = re.search(r\"\
+          (-\\s+Miền Bắc.*?\\.)\", sect_summary, re.S).group(1).rstrip()\n    sect_summary_north\
+          \ = \"\\n\".join([tt_summary, sect_summary_north])\n    sect_summary_south\
+          \ = re.search(r\"(-\\s+Miền Nam.*?\\.)\", sect_summary, re.S).group(1).rstrip()\n\
+          \    sect_summary_south = \"\\n\".join([tt_summary, sect_summary_south])\n\
+          \n    pattern_detail_north = rf\"({tt_north}.*?){re.escape(tt_south)}\"\n\
+          \    sect_detail_north = re.search(pattern_detail_north, insight_text, re.S).group(1).rstrip()\n\
+          \n    pattern_detail_south = rf\"({tt_south}.*?)$\"\n    sect_detail_south\
+          \ = re.search(pattern_detail_south, insight_text, re.S).group(1).rstrip()\n\
+          \n    insight_north = \"\\n\\n\".join([header_text, sect_summary_north,\
+          \ sect_detail_north])\n    insight_south = \"\\n\\n\".join([header_text,\
+          \ sect_summary_south, sect_detail_south])\n    insight_all = \"\\n\\n---\\\
+          n\\n\".join([insight_north, insight_south])\n\n    return {\n        \"\
+          insight_all\": insight_all,\n        \"insight_north\": insight_north,\n\
+          \        \"insight_south\": insight_south,\n    }"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          insight_all:
+            children: null
+            type: string
+          insight_north:
+            children: null
+            type: string
+          insight_south:
+            children: null
+            type: string
+        retry_config:
+          max_retries: 3
+          retry_enabled: false
+          retry_interval: 5000
+        selected: false
+        title: CODE-Format output
+        type: code
+        variables:
+        - value_selector:
+          - '1762165374366'
+          - output
+          value_type: string
+          variable: insight_text
+        - value_selector:
+          - '1761298562585'
+          - latest_order_at
+          value_type: string
+          variable: latest_order_at
+        - value_selector:
+          - '1761303441331'
+          - current_time
+          value_type: string
+          variable: current_time
+      height: 90
+      id: '1761630648871'
+      position:
+        x: 6017.061895996788
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 6017.061895996788
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 301baa9f-76e2-4f35-8eaa-edfa2e94a40e
+            value: run_send_gchat
+            varType: string
+            variable_selector:
+            - '1761125457862'
+            - options
+          id: 'true'
+          logical_operator: and
+        - case_id: 933f219b-0832-4bbd-82b2-6a95f47c2418
+          conditions:
+          - comparison_operator: is
+            id: b8be8cb3-67c6-4c8e-9f5e-c3c709bffc85
+            value: run_only
+            varType: string
+            variable_selector:
+            - '1761125457862'
+            - options
+          id: 933f219b-0832-4bbd-82b2-6a95f47c2418
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: COND-Check send output
+        type: if-else
+      height: 174
+      id: '1761637017603'
+      position:
+        x: 6366.229078405658
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 6366.229078405658
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is not
+            id: beec27b0-638f-426d-b3d4-18950663fbe7
+            value: '{{#1761298562585.latest_order_date#}}'
+            varType: string
+            variable_selector:
+            - '1761303441331'
+            - current_date
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: COND-Check date
+        type: if-else
+      height: 126
+      id: '1762163413918'
+      position:
+        x: 5061.053986137914
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 5061.053986137914
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: false
+          variable_selector: []
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0.5
+          mode: chat
+          name: gemini-2.5-flash-lite
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: 8ae9b826-4dab-4ead-836a-2f4d85fe8064
+          role: system
+          text: "[ROLE]\nYou are an expert business writer.\nI will give you a performance\
+            \ analysis text that is currently written as if it’s describing estimated\
+            \ performance for the end of today.\n\n[TASK]\nRewrite the following text\
+            \ so that it describes performance for the end of day yesterday instead\
+            \ of estimated performance for the end of today.\n\n[LOGIC]\n- Make only\
+            \ minor wording changes , only adjust time references and tense.\n(e.g.,\
+            \ “dự kiến đạt” → “đạt”, “hôm nay” → “hôm qua”, \"hôm qua\" → \"hôm trước\
+            \ đó\", “dự kiến” → remove it).\n- Do not modify any numbers, data, or\
+            \ statistics. \n- Keep all facts, values, and structure exactly the same.\n\
+            - Keep tone, emojis, and humor intact.\n- Do not change or add additional\
+            \ formatting.\n- Language: Vietnamese."
+        - id: dcd90bd5-faaa-4fd0-931e-04e190758b07
+          role: user
+          text: 'Rewrite the following text so that it describes performance for the
+            end of day yesterday instead of estimated performance for the end of today.
+            Here’s the text: {{#1761203615126.text#}}'
+        selected: false
+        title: LLM-Insight for Yesterday
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1762164110046'
+      position:
+        x: 5361.0170673380035
+        y: -109.35110309309951
+      positionAbsolute:
+        x: 5361.0170673380035
+        y: -109.35110309309951
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        output_type: string
+        selected: false
+        title: AGG-Coalesce Insight Text
+        type: variable-aggregator
+        variables:
+        - - '1762164110046'
+          - text
+        - - '1761203615126'
+          - text
+      height: 136
+      id: '1762165374366'
+      position:
+        x: 5671.574347555088
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 5671.574347555088
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "from datetime import datetime\n\ndef main(current_time: str, latest_order_at:\
+          \ str) -> dict:\n    # Use %Y for 4-digit year\n    current_time = datetime.strptime(current_time,\
+          \ \"%Y-%m-%d %H:%M:%S\")\n    latest_order_at = datetime.strptime(latest_order_at,\
+          \ \"%Y-%m-%d %H:%M:%S\")\n\n    # Calculate hour difference\n    if current_time.date()\
+          \ != latest_order_at.date():\n        current_time = current_time.replace(hour=0,\
+          \ minute=0, second=0)\n    diff = current_time - latest_order_at\n    hour_diff\
+          \ = round(diff.total_seconds() / 3600, 2)\n    \n    if hour_diff > 4:\n\
+          \        raise Exception(f\"Lỗi dữ liệu được cập nhật {hour_diff} tiếng\
+          \ trước {current_time}.\")\n\n    return {\n        \"hour_diff\": hour_diff\n\
+          \    }"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          hour_diff:
+            children: null
+            type: number
+        selected: false
+        title: CODE-Check data update
+        type: code
+        variables:
+        - value_selector:
+          - '1761303441331'
+          - current_time
+          value_type: string
+          variable: current_time
+        - value_selector:
+          - '1761298562585'
+          - latest_order_at
+          value_type: string
+          variable: latest_order_at
+      height: 90
+      id: '1762503347594'
+      position:
+        x: 4036.5586805949815
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 4036.5586805949815
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config: null
+          type: no-auth
+        body:
+          data:
+          - id: key-value-1049
+            key: ''
+            type: text
+            value: "{\n  \"text\": \"{{#1763464525010.error_message#}}\"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 5000
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: REQUEST-Post Error Prod
+        type: http-request
+        url: '{{#env.ggchat_webhook#}}'
+        variables: []
+      height: 127
+      id: '17625041293570'
+      position:
+        x: 7360.333098813439
+        y: 614.055372246474
+      positionAbsolute:
+        x: 7360.333098813439
+        y: 614.055372246474
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        outputs:
+        - value_selector:
+          - '1763464525010'
+          - error_message
+          value_type: string
+          variable: error_message
+        selected: false
+        title: END-Error
+        type: end
+      height: 90
+      id: '1762504224826'
+      position:
+        x: 7709.842525180229
+        y: 766.5274535944583
+      positionAbsolute:
+        x: 7709.842525180229
+        y: 766.5274535944583
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        advanced_settings:
+          group_enabled: true
+          groups:
+          - groupId: c0f4360c-9f1d-488c-8f4b-588f15589212
+            group_name: errors
+            output_type: string
+            variables:
+            - - '1761125474160'
+              - error_message
+            - - '17612825466520'
+              - error_message
+            - - '1761298562585'
+              - error_message
+            - - '1762503347594'
+              - error_message
+            - - '1763099005433'
+              - error_message
+            - - '1761630648871'
+              - error_message
+        desc: ''
+        output_type: string
+        selected: false
+        title: AGG-Coalesce error messages
+        type: variable-aggregator
+        variables:
+        - - '1761125474160'
+          - error_message
+      height: 242
+      id: '1763098502889'
+      position:
+        x: 6366.229078405658
+        y: 766.5274535944583
+      positionAbsolute:
+        x: 6366.229078405658
+        y: 766.5274535944583
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "\ndef main(insight_text: str) -> dict:\n    if insight_text == \"\"\
+          \ or insight_text == \"\\n\":\n        raise Exception(f\"Lỗi node LLM không\
+          \ trả kết quả thành công.\")\n    \n    return {\n        \"insight_text\"\
+          : insight_text\n    }"
+        code_language: python3
+        desc: ''
+        error_strategy: fail-branch
+        outputs:
+          insight_text:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Check LLM output
+        type: code
+        variables:
+        - value_selector:
+          - '1761203615126'
+          - text
+          value_type: string
+          variable: insight_text
+      height: 90
+      id: '1763099005433'
+      position:
+        x: 4716.697154224944
+        y: 39.48696565976542
+      positionAbsolute:
+        x: 4716.697154224944
+        y: 39.48696565976542
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import re\n\ndef main(error_message: str) -> dict:\n    pattern_exception\
+          \ = r\"(Exception:.*|AttributeError:.*)\"\n    error_message = re.search(pattern_exception,\
+          \ error_message, re.S).group(1).strip()\n\n    return {\n        \"error_message\"\
+          : error_message,\n    }\n"
+        code_language: python3
+        desc: ''
+        outputs:
+          error_message:
+            children: null
+            type: string
+        selected: false
+        title: CODE-Parse error message
+        type: code
+        variables:
+        - value_selector:
+          - '1763098502889'
+          - errors
+          - output
+          value_type: object
+          variable: error_message
+      height: 54
+      id: '1763464525010'
+      position:
+        x: 6687.177279338229
+        y: 766.5274535944583
+      positionAbsolute:
+        x: 6687.177279338229
+        y: 766.5274535944583
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 301baa9f-76e2-4f35-8eaa-edfa2e94a40e
+            value: run_send_gchat
+            varType: string
+            variable_selector:
+            - '1761125457862'
+            - options
+          id: 'true'
+          logical_operator: and
+        - case_id: 933f219b-0832-4bbd-82b2-6a95f47c2418
+          conditions:
+          - comparison_operator: is
+            id: b8be8cb3-67c6-4c8e-9f5e-c3c709bffc85
+            value: run_only
+            varType: string
+            variable_selector:
+            - '1761125457862'
+            - options
+          id: 933f219b-0832-4bbd-82b2-6a95f47c2418
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: COND-Check send error
+        type: if-else
+      height: 174
+      id: '17688950569980'
+      position:
+        x: 7025.41979665307
+        y: 766.5274535944583
+      positionAbsolute:
+        x: 7025.41979665307
+        y: 766.5274535944583
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        error_strategy: fail-branch
+        is_team_authorization: true
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            ja_JP: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            pt_BR: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            zh_Hans: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+          label:
+            en_US: Authorization
+            ja_JP: Authorization
+            pt_BR: Authorization
+            zh_Hans: Authorization
+          llm_description: 'Your Dremio Personal Access Token formatted exactly as:
+            Bearer <TOKEN>'
+          max: null
+          min: null
+          name: Authorization
+          options: []
+          placeholder:
+            en_US: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            ja_JP: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            pt_BR: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+            zh_Hans: 'Your Dremio Personal Access Token formatted exactly as: Bearer
+              <TOKEN>'
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The clean SELECT query statement to run.
+            ja_JP: The clean SELECT query statement to run.
+            pt_BR: The clean SELECT query statement to run.
+            zh_Hans: The clean SELECT query statement to run.
+          label:
+            en_US: sql
+            ja_JP: sql
+            pt_BR: sql
+            zh_Hans: sql
+          llm_description: The clean SELECT query statement to run.
+          max: null
+          min: null
+          name: sql
+          options: []
+          placeholder:
+            en_US: The clean SELECT query statement to run.
+            ja_JP: The clean SELECT query statement to run.
+            pt_BR: The clean SELECT query statement to run.
+            zh_Hans: The clean SELECT query statement to run.
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        params:
+          Authorization: ''
+          sql: ''
+        provider_id: fea06a85-eb1b-4f03-b1f6-82a1f2a34f48
+        provider_name: Dremio
+        provider_type: api
+        selected: false
+        title: run_sql
+        tool_configurations: {}
+        tool_description: Submits a SELECT statement to Dremio and immediately returns
+          a compilation Job ID. Does not wait for query execution.
+        tool_label: run_sql
+        tool_name: run_sql
+        tool_node_version: '2'
+        tool_parameters:
+          Authorization:
+            type: mixed
+            value: '{{#env.dremio_api_key#}}'
+          sql:
+            type: mixed
+            value: "SELECT * \nFROM dp.omd.application.\"dbt_dremio\".\"knowledge_bot_daily_insight\"\
+              \nWHERE 1=1\nAND coalesce(gmv_rr_today, pavlc_rr_today, gmv_fc, pavlc_fc,\
+              \ gta_rr_today, gta_fc) is not null"
+        type: tool
+      height: 90
+      id: '1779944205271'
+      position:
+        x: 1022.4205738281073
+        y: 299.13265155653335
+      positionAbsolute:
+        x: 1022.4205738281073
+        y: 299.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        error_strategy: fail-branch
+        isInIteration: false
+        isInLoop: true
+        is_team_authorization: true
+        loop_id: '1761280112217'
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Bearer <TOKEN>
+            ja_JP: Bearer <TOKEN>
+            pt_BR: Bearer <TOKEN>
+            zh_Hans: Bearer <TOKEN>
+          label:
+            en_US: Authorization
+            ja_JP: Authorization
+            pt_BR: Authorization
+            zh_Hans: Authorization
+          llm_description: Bearer <TOKEN>
+          max: null
+          min: null
+          name: Authorization
+          options: []
+          placeholder:
+            en_US: Bearer <TOKEN>
+            ja_JP: Bearer <TOKEN>
+            pt_BR: Bearer <TOKEN>
+            zh_Hans: Bearer <TOKEN>
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The unique Job ID returned by the run_sql operation.
+            ja_JP: The unique Job ID returned by the run_sql operation.
+            pt_BR: The unique Job ID returned by the run_sql operation.
+            zh_Hans: The unique Job ID returned by the run_sql operation.
+          label:
+            en_US: id
+            ja_JP: id
+            pt_BR: id
+            zh_Hans: id
+          llm_description: The unique Job ID returned by the run_sql operation.
+          max: null
+          min: null
+          name: id
+          options: []
+          placeholder:
+            en_US: The unique Job ID returned by the run_sql operation.
+            ja_JP: The unique Job ID returned by the run_sql operation.
+            pt_BR: The unique Job ID returned by the run_sql operation.
+            zh_Hans: The unique Job ID returned by the run_sql operation.
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        params:
+          Authorization: ''
+          id: ''
+        provider_id: fea06a85-eb1b-4f03-b1f6-82a1f2a34f48
+        provider_name: Dremio
+        provider_type: api
+        selected: false
+        title: get_job_status
+        tool_configurations: {}
+        tool_description: Retrieves the current execution lifecycle state of a submitted
+          job using its unique ID.
+        tool_label: get_job_status
+        tool_name: get_job_status
+        tool_node_version: '2'
+        tool_parameters:
+          Authorization:
+            type: mixed
+            value: '{{#env.dremio_api_key#}}'
+          id:
+            type: mixed
+            value: '{{#1761190849139.job_id#}}'
+        type: tool
+      height: 90
+      id: '1779944755168'
+      parentId: '1761280112217'
+      position:
+        x: 431.7320096242279
+        y: 65
+      positionAbsolute:
+        x: 2029.069399473174
+        y: 364.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        desc: ''
+        error_strategy: fail-branch
+        is_team_authorization: true
+        output_schema: null
+        paramSchemas:
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: Bearer <TOKEN>
+            ja_JP: Bearer <TOKEN>
+            pt_BR: Bearer <TOKEN>
+            zh_Hans: Bearer <TOKEN>
+          label:
+            en_US: Authorization
+            ja_JP: Authorization
+            pt_BR: Authorization
+            zh_Hans: Authorization
+          llm_description: Bearer <TOKEN>
+          max: null
+          min: null
+          name: Authorization
+          options: []
+          placeholder:
+            en_US: Bearer <TOKEN>
+            ja_JP: Bearer <TOKEN>
+            pt_BR: Bearer <TOKEN>
+            zh_Hans: Bearer <TOKEN>
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: null
+          form: llm
+          human_description:
+            en_US: The unique Job ID matching a completed query.
+            ja_JP: The unique Job ID matching a completed query.
+            pt_BR: The unique Job ID matching a completed query.
+            zh_Hans: The unique Job ID matching a completed query.
+          label:
+            en_US: id
+            ja_JP: id
+            pt_BR: id
+            zh_Hans: id
+          llm_description: The unique Job ID matching a completed query.
+          max: null
+          min: null
+          name: id
+          options: []
+          placeholder:
+            en_US: The unique Job ID matching a completed query.
+            ja_JP: The unique Job ID matching a completed query.
+            pt_BR: The unique Job ID matching a completed query.
+            zh_Hans: The unique Job ID matching a completed query.
+          precision: null
+          required: true
+          scope: null
+          template: null
+          type: string
+        - auto_generate: null
+          default: 100
+          form: llm
+          human_description:
+            en_US: Number of records to fetch in this batch. Max setting is typically
+              500.
+            ja_JP: Number of records to fetch in this batch. Max setting is typically
+              500.
+            pt_BR: Number of records to fetch in this batch. Max setting is typically
+              500.
+            zh_Hans: Number of records to fetch in this batch. Max setting is typically
+              500.
+          label:
+            en_US: limit
+            ja_JP: limit
+            pt_BR: limit
+            zh_Hans: limit
+          llm_description: Number of records to fetch in this batch. Max setting is
+            typically 500.
+          max: null
+          min: null
+          name: limit
+          options: []
+          placeholder:
+            en_US: Number of records to fetch in this batch. Max setting is typically
+              500.
+            ja_JP: Number of records to fetch in this batch. Max setting is typically
+              500.
+            pt_BR: Number of records to fetch in this batch. Max setting is typically
+              500.
+            zh_Hans: Number of records to fetch in this batch. Max setting is typically
+              500.
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        - auto_generate: null
+          default: 0
+          form: llm
+          human_description:
+            en_US: The row starting point record coordinate index for pagination loops.
+            ja_JP: The row starting point record coordinate index for pagination loops.
+            pt_BR: The row starting point record coordinate index for pagination loops.
+            zh_Hans: The row starting point record coordinate index for pagination
+              loops.
+          label:
+            en_US: offset
+            ja_JP: offset
+            pt_BR: offset
+            zh_Hans: offset
+          llm_description: The row starting point record coordinate index for pagination
+            loops.
+          max: null
+          min: null
+          name: offset
+          options: []
+          placeholder:
+            en_US: The row starting point record coordinate index for pagination loops.
+            ja_JP: The row starting point record coordinate index for pagination loops.
+            pt_BR: The row starting point record coordinate index for pagination loops.
+            zh_Hans: The row starting point record coordinate index for pagination
+              loops.
+          precision: null
+          required: false
+          scope: null
+          template: null
+          type: number
+        params:
+          Authorization: ''
+          id: ''
+          limit: ''
+          offset: ''
+        provider_id: fea06a85-eb1b-4f03-b1f6-82a1f2a34f48
+        provider_name: Dremio
+        provider_type: api
+        selected: false
+        title: get_job_results
+        tool_configurations: {}
+        tool_description: Retrieves the actual data records for a specific Job ID.
+          Query status must be COMPLETED before invoking.
+        tool_label: get_job_results
+        tool_name: get_job_results
+        tool_node_version: '2'
+        tool_parameters:
+          Authorization:
+            type: mixed
+            value: '{{#env.dremio_api_key#}}'
+          id:
+            type: mixed
+            value: '{{#1761190849139.job_id#}}/'
+          limit:
+            type: constant
+            value: 100
+          offset:
+            type: constant
+            value: 0
+        type: tool
+      height: 90
+      id: '1779944840656'
+      position:
+        x: 2973.435127257465
+        y: 324.9587688713593
+      positionAbsolute:
+        x: 2973.435127257465
+        y: 324.9587688713593
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        isInIteration: false
+        isInLoop: true
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1779944755168'
+          - text
+          variable_selector:
+          - '1761280112217'
+          - test
+          write_mode: over-write
+        loop_id: '1761280112217'
+        selected: false
+        title: Variable Assigner
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1780023281950'
+      parentId: '1761280112217'
+      position:
+        x: 1036
+        y: 65
+      positionAbsolute:
+        x: 2633.3373898489463
+        y: 364.13265155653335
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    viewport:
+      x: -20.437011030359145
+      y: 204.62202701351856
+      zoom: 0.25

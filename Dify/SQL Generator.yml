@@ -1,0 +1,2713 @@
+app:
+  description: ''
+  icon: 🤖
+  icon_background: '#FFEAD5'
+  mode: advanced-chat
+  name: SQL Generator
+  use_icon_as_answer_icon: false
+dependencies:
+- current_identifier: null
+  type: marketplace
+  value:
+    marketplace_plugin_unique_identifier: langgenius/gemini:0.7.20@de0063a630a6d1b2c025fb84f3462ba5151fb60618309cd595c3f4711b1df847
+kind: app
+version: 0.3.1
+workflow:
+  conversation_variables:
+  - description: Câu SQL nháp trước khi chỉnh sửa
+    id: 25eb5c9d-2672-40d4-a76c-72d4c00b6eaf
+    name: draft_sql
+    selector:
+    - conversation
+    - draft_sql
+    value: ''
+    value_type: string
+  - description: Lưu toàn bộ phần hiệu chỉnh SQL
+    id: b2e5f785-01cb-4ae5-9d6d-7e7a90c20843
+    name: last_adjustment_sql
+    selector:
+    - conversation
+    - last_adjustment_sql
+    value: ''
+    value_type: string
+  - description: Lưu danh sách bảng và cột (kết quả từ node Code all dim/fact)
+    id: 91eda325-f856-4a47-be71-63babb097cbb
+    name: last_metadata
+    selector:
+    - conversation
+    - last_metadata
+    value: ''
+    value_type: string
+  - description: Lưu thông tin filter và giá trị thực tế (kết quả từ node Code Final
+      thông tin lưu ý)
+    id: 3c43961b-8eb0-4d86-8867-0d529767c7fa
+    name: last_contextual_data
+    selector:
+    - conversation
+    - last_contextual_data
+    value: ''
+    value_type: string
+  - description: Lưu toàn bộ kết quả của của node LLM FINAL SQL
+    id: 58dd4032-ff4e-4fa3-ba5c-b16b24aab40d
+    name: last_generated_sql
+    selector:
+    - conversation
+    - last_generated_sql
+    value: ''
+    value_type: string
+  environment_variables: []
+  features:
+    file_upload:
+      allowed_file_extensions:
+      - .JPG
+      - .JPEG
+      - .PNG
+      - .GIF
+      - .WEBP
+      - .SVG
+      allowed_file_types:
+      - image
+      allowed_file_upload_methods:
+      - local_file
+      - remote_url
+      enabled: false
+      fileUploadConfig:
+        audio_file_size_limit: 50
+        batch_count_limit: 5
+        file_size_limit: 50
+        image_file_size_limit: 50
+        video_file_size_limit: 100
+        workflow_file_upload_limit: 10
+      image:
+        enabled: false
+        number_limits: 3
+        transfer_methods:
+        - local_file
+        - remote_url
+      number_limits: 3
+    opening_statement: ''
+    retriever_resource:
+      enabled: true
+    sensitive_word_avoidance:
+      enabled: false
+    speech_to_text:
+      enabled: false
+    suggested_questions: []
+    suggested_questions_after_answer:
+      enabled: false
+    text_to_speech:
+      enabled: false
+      language: ''
+      voice: ''
+  graph:
+    edges:
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: start
+        targetType: llm
+      id: 1775470011042-source-1775639010068-target
+      selected: false
+      source: '1775470011042'
+      sourceHandle: source
+      target: '1775639010068'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: iteration
+      id: 1775640902364-source-1775642666796-target
+      selected: false
+      source: '1775640902364'
+      sourceHandle: source
+      target: '1775642666796'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: iteration-start
+        targetType: code
+      id: 1775642666796start-source-1775643479612-target
+      selected: false
+      source: 1775642666796start
+      sourceHandle: source
+      target: '1775643479612'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: 1775643871789-source-1775644143014-target
+      selected: false
+      source: '1775643871789'
+      sourceHandle: source
+      target: '1775644143014'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1775876315133-source-1775876792229-target
+      selected: false
+      source: '1775876315133'
+      sourceHandle: source
+      target: '1775876792229'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1775876792229-source-1775876846726-target
+      selected: false
+      source: '1775876792229'
+      sourceHandle: source
+      target: '1775876846726'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1775558756615-source-1775721641149-target
+      selected: false
+      source: '1775558756615'
+      sourceHandle: source
+      target: '1775721641149'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: http-request
+        targetType: code
+      id: 1775876846726-source-1775878938933-target
+      selected: false
+      source: '1775876846726'
+      sourceHandle: source
+      target: '1775878938933'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1775878938933-source-1775721641149-target
+      selected: false
+      source: '1775878938933'
+      sourceHandle: source
+      target: '1775721641149'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: iteration
+        targetType: code
+      id: 1775642666796-source-1775645431838-target
+      selected: false
+      source: '1775642666796'
+      sourceHandle: source
+      target: '1775645431838'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1775721641149-source-1776161545578-target
+      selected: false
+      source: '1775721641149'
+      sourceHandle: source
+      target: '1776161545578'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: code
+        targetType: if-else
+      id: 1775643479612-source-1776313681768-target
+      selected: false
+      source: '1775643479612'
+      sourceHandle: source
+      target: '1776313681768'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1776313681768-true-1775643871789-target
+      selected: false
+      source: '1776313681768'
+      sourceHandle: 'true'
+      target: '1775643871789'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: if-else
+        targetType: knowledge-retrieval
+      id: 1776313681768-false-1776313844160-target
+      selected: false
+      source: '1776313681768'
+      sourceHandle: 'false'
+      target: '1776313844160'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: 1776313844160-source-1775644143014-target
+      selected: false
+      source: '1776313844160'
+      sourceHandle: source
+      target: '1775644143014'
+      targetHandle: target
+      type: custom
+      zIndex: 1002
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: http-request
+      id: 1775645431838-source-1775876315133-target
+      selected: false
+      source: '1775645431838'
+      sourceHandle: source
+      target: '1775876315133'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1775645431838-source-1775558756615-target
+      selected: false
+      source: '1775645431838'
+      sourceHandle: source
+      target: '1775558756615'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1775721641149-source-1776314865129-target
+      selected: false
+      source: '1775721641149'
+      sourceHandle: source
+      target: '1776314865129'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: code
+      id: 1776314865129-source-1776317061272-target
+      selected: false
+      source: '1776314865129'
+      sourceHandle: source
+      target: '1776317061272'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1776317061272-source-1776318200799-target
+      selected: false
+      source: '1776317061272'
+      sourceHandle: source
+      target: '1776318200799'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: code
+      id: 1776161545578-source-1776318200799-target
+      selected: false
+      source: '1776161545578'
+      sourceHandle: source
+      target: '1776318200799'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: if-else
+      id: 1775639010068-source-1776392355119-target
+      selected: false
+      source: '1775639010068'
+      sourceHandle: source
+      target: '1776392355119'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 1775721641149-source-1776393925309-target
+      selected: false
+      source: '1775721641149'
+      sourceHandle: source
+      target: '1776393925309'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1776392593494-source-1776394678333-target
+      selected: false
+      source: '1776392593494'
+      sourceHandle: source
+      target: '1776394678333'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: code
+        targetType: knowledge-retrieval
+      id: 1776318200799-source-1778647631556-target
+      selected: false
+      source: '1776318200799'
+      sourceHandle: source
+      target: '1778647631556'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: knowledge-retrieval
+        targetType: code
+      id: 1778647631556-source-1778648172125-target
+      selected: false
+      source: '1778647631556'
+      sourceHandle: source
+      target: '1778648172125'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: assigner
+      id: 1778648172125-source-1776393896909-target
+      source: '1778648172125'
+      sourceHandle: source
+      target: '1776393896909'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: code
+        targetType: llm
+      id: 1778648172125-source-1776315329376-target
+      source: '1778648172125'
+      sourceHandle: source
+      target: '1776315329376'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: answer
+        targetType: assigner
+      id: 1776394678333-source-1778750081046-target
+      source: '1776394678333'
+      sourceHandle: source
+      target: '1778750081046'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: answer
+      id: 1776315329376-source-1775558811791-target
+      source: '1776315329376'
+      sourceHandle: source
+      target: '1775558811791'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 1776315329376-source-1778758913768-target
+      source: '1776315329376'
+      sourceHandle: source
+      target: '1778758913768'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: code
+      id: 1776392355119-true-1775640902364-target
+      source: '1776392355119'
+      sourceHandle: 'true'
+      target: '1775640902364'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInLoop: false
+        sourceType: if-else
+        targetType: llm
+      id: 1776392355119-false-1776392593494-target
+      source: '1776392355119'
+      sourceHandle: 'false'
+      target: '1776392593494'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    - data:
+        isInIteration: false
+        isInLoop: false
+        sourceType: llm
+        targetType: assigner
+      id: 1776315329376-source-1778821350572-target
+      source: '1776315329376'
+      sourceHandle: source
+      target: '1778821350572'
+      targetHandle: target
+      type: custom
+      zIndex: 0
+    nodes:
+    - data:
+        desc: ''
+        selected: false
+        title: Start
+        type: start
+        variables: []
+      height: 54
+      id: '1775470011042'
+      position:
+        x: -864.1706832989162
+        y: 520.317850943079
+      positionAbsolute:
+        x: -864.1706832989162
+        y: 520.317850943079
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1775645431838'
+          - final_list
+        desc: ''
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: cf8048c5-cb26-4a54-bd6c-20a478aaa495
+          role: system
+          text: "\U0001F3AF **ROLE**\nBạn là một chuyên gia Data Architect cao cấp.\
+            \ Nhiệm vụ của bạn là phân tích yêu cầu của người dùng, lập kế hoạch truy\
+            \ xuất dữ liệu bằng cách chọn các bảng FACT/DIM phù hợp và định nghĩa\
+            \ logic tính toán chỉ số (metrics) để đảm bảo tính chính xác tuyệt đối.\n\
+            \n\U0001F6E0 **LOGIC XỬ LÝ CHI TIẾT**\n1. **Phân tích thực thể**: Xác\
+            \ định các Metrics (chỉ số cần tính) và Dimensions (chiều phân loại, lọc)\
+            \ từ câu hỏi.\n2. **Lập bản đồ Metric (Metric Mapping)**: \n   - Với mỗi\
+            \ Metric, tìm bảng FACT phù hợp nhất chứa dữ liệu gốc. \n   - Xác định\
+            \ chính xác tên cột và hàm tổng hợp (SUM, COUNT,...) cần dùng.\n   - **QUAN\
+            \ TRỌNG**: Nếu một Metric có thể hiểu theo nhiều cách hoặc xuất hiện ở\
+            \ nhiều bảng, hãy chọn bảng chuyên biệt nhất.\n   - Phân rã Công thức\
+            \ (Formula Decomposition): Nếu Metric nằm trong danh sách formulas của\
+            \ Metadata: BẮT BUỘC phân rã và liệt kê tất cả các cột thành phần cấu\
+            \ thành nên công thức đó vào danh sách columns của JSON.\n3. **Trích xuất\
+            \ Cột & Quan hệ**:\n   - Liệt kê các cột liên quan đến Metrics, Dimensions.\n\
+            \   - BẮT BUỘC liệt kê tất cả các cột khóa (PK, FK) để phục vụ việc JOIN.\n\
+            4. **Xác định Exploration Mode**:\n   - \"strict\": Khi xác định được\
+            \ chính xác bảng DIM chứa Dimension yêu cầu trong Context.\n   - \"expand\"\
+            : Khi Dimension mập mờ hoặc không thấy cột Dimension trực tiếp trong các\
+            \ bảng đã chọn (cần hệ thống tự động truy vết thêm).\n\n\U0001F4CB **QUY\
+            \ TẮC HIỂN THỊ CỘT LỌC (CONTEXTUAL FILTER)**\nNếu cột có ghi chú \"Lưu\
+            \ ý người dùng cần filter phù hợp ngữ cảnh\":\n- Trả ra đoạn lưu ý Markdown\
+            \ phía trên khối SQL (nếu có output text).\n- Cấu trúc: * **Bảng <tên_bảng>**\
+            \ -> * **<tên_cột>** : <Mô tả>.\n\n\U0001F4E4 **OUTPUT FORMAT**\nChỉ trả\
+            \ về duy nhất định dạng JSON theo Schema yêu cầu. Không giải thích thêm.\n\
+            \n\U0001F6AB **QUY TẮC CẤM**\n- KHÔNG tự ý gộp nhiều cột thành một chỉ\
+            \ số nếu Metadata đã cung cấp một cột chuyên biệt.\n- KHÔNG trả về văn\
+            \ bản ngoài khối JSON.\n- `reason` và `summary_reason` viết tối đa 2 câu."
+        - id: c97d1109-b88e-4166-b905-4f33f116e934
+          role: user
+          text: 'Dựa trên danh sách các bảng trong {{#context#}} hãy thực hiện yêu
+            cầu:
+
+
+            ### Câu hỏi gốc:
+
+            {{#sys.query#}}
+
+
+            Hãy phân tích và trả ra JSON kết quả chính xác theo Schema.'
+        selected: false
+        structured_output:
+          schema:
+            properties:
+              exploration_mode:
+                description: Chọn 'strict' nếu đủ bảng DIM. Chọn 'expand' nếu cần
+                  truy vết thêm Dimension ẩn.
+                enum:
+                - strict
+                - expand
+                type: string
+              metric_logic:
+                description: 'BẮT BUỘC: Định nghĩa logic tính toán cho từng chỉ số
+                  để LLM sau không tính sai.'
+                items:
+                  properties:
+                    aggregation:
+                      description: 'Hàm tổng hợp: SUM, COUNT, DISTINCT_COUNT, v.v.'
+                      type: string
+                    column_expression:
+                      description: 'Tên cột hoặc biểu thức tính toán (ví dụ: sponsor_appliedvalue).'
+                      type: string
+                    metric_name:
+                      description: 'Tên chỉ số (ví dụ: Promotion Cost).'
+                      type: string
+                    source_table:
+                      description: Bảng chứa dữ liệu gốc cho chỉ số này.
+                      type: string
+                  required:
+                  - metric_name
+                  - source_table
+                  - column_expression
+                  - aggregation
+                  type: object
+                type: array
+              relationships:
+                items:
+                  properties:
+                    is_dim_relation:
+                      description: true/false
+                      type: string
+                    join_on:
+                      type: string
+                    source_table:
+                      type: string
+                    target_table:
+                      type: string
+                  required:
+                  - source_table
+                  - target_table
+                  - join_on
+                  - is_dim_relation
+                  type: object
+                type: array
+              selected_facts:
+                items:
+                  properties:
+                    reason:
+                      description: Lý do chọn bảng.
+                      type: string
+                    relevant_columns:
+                      description: Cột chỉ số, dimension và PK/FK.
+                      items:
+                        type: string
+                      type: array
+                    table_name:
+                      description: Tên đầy đủ của bảng.
+                      type: string
+                  required:
+                  - table_name
+                  - relevant_columns
+                  - reason
+                  type: object
+                type: array
+              summary_reason:
+                type: string
+            required:
+            - exploration_mode
+            - selected_facts
+            - metric_logic
+            - relationships
+            - summary_reason
+            type: object
+        structured_output_enabled: true
+        title: LLM most relevant facts
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1775558756615'
+      position:
+        x: 2812.5420370676125
+        y: 361.64645567669123
+      positionAbsolute:
+        x: 2812.5420370676125
+        y: 361.64645567669123
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '
+
+
+          {{#1776315329376.text#}}'
+        desc: ''
+        selected: false
+        title: Answer final SQL
+        type: answer
+        variables: []
+      height: 104
+      id: '1775558811791'
+      position:
+        x: 5412.997746635268
+        y: 625.7214613197373
+      positionAbsolute:
+        x: 5412.997746635268
+        y: 625.7214613197373
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - sys
+          - query
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}//'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: ffdf57ba-29fe-4c7a-9c8b-546dc6fb944e
+          role: system
+          text: " {{#context#}}\nNhiệm vụ: Trích xuất Metadata (không lấy giá trị\
+            \ cụ thể) từ yêu cầu BI và phân loại loại câu hỏi.\n1. QUY TẮC PHÂN LOẠI\
+            \ (question_type):\nNew SQL: Khi người dùng đưa ra yêu cầu mới hoàn toàn,\
+            \ không liên quan đến ngữ cảnh trước đó.\nUpdate SQL: Khi người dùng yêu\
+            \ cầu chỉnh sửa câu lệnh vừa tạo, thêm điều kiện, lọc lại dữ liệu, hoặc\
+            \ đặt câu hỏi dựa trên kết quả/bảng vừa hiển thị.\nOthers: Các câu chào\
+            \ hỏi, cảm ơn, hoặc nội dung không liên quan đến truy vấn dữ liệu.\n2.\
+            \ QUY TẮC TRÍCH XUẤT METADATA:\nQUY TẮC \"SAU TỪ KHÓA\":\nCó từ khóa (theo,\
+            \ by, group by): Trước từ khóa là metrics, sau từ khóa là dimensions.\n\
+            Không có từ khóa: Tất cả thuộc về dimensions. Mảng metrics để rỗng [].\n\
+            QUY TẮC LÀM SẠCH:\nBỎ từ định lượng: \"số lượng\", \"số ngày\", \"tổng\"\
+            , \"tỷ lệ\"... (Ví dụ: \"số lượng đơn\" -> \"đơn\").\nBỎ giá trị cụ thể:\
+            \ \"Hà Nội\", \"tháng 3\", \"Samsung\"... (Chuyển thành: \"tỉnh\", \"\
+            tháng\", \"nhãn hàng\").\nBỎ hành động: \"tính\", \"lấy\", \"hiển thị\"\
+            , \"vẽ biểu đồ\"...\n3. ĐỊNH DẠNG ĐẦU RA (JSON):\nJSON\n{\n  \"question_type\"\
+            : \"New SQL | Update SQL | Others\",\n  \"metrics\": [],\n  \"dimensions\"\
+            : []\n}"
+        selected: false
+        structured_output:
+          schema:
+            additionalProperties: false
+            properties:
+              dimensions:
+                description: Danh sách các chiều dữ liệu sau khi đã làm sạch.
+                items:
+                  type: string
+                type: array
+              metrics:
+                description: Danh sách các thông số đo lường sau khi đã làm sạch.
+                items:
+                  type: string
+                type: array
+              question_type:
+                description: Phân loại mục đích của câu hỏi người dùng.
+                enum:
+                - New SQL
+                - Update SQL
+                - Others
+                type: string
+            required:
+            - question_type
+            - metrics
+            - dimensions
+            type: object
+        structured_output_enabled: true
+        title: LLM metric/dim
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1775639010068'
+      position:
+        x: -559.7702467110811
+        y: 520.317850943079
+      positionAbsolute:
+        x: -559.7702467110811
+        y: 520.317850943079
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(metrics: list, dimensions: list) -> dict:\n    \"\"\"\n  \
+          \  Logic:\n    - Nếu metrics rỗng (empty) -> lấy dimensions để xử lý.\n\
+          \    - Nếu metrics có dữ liệu -> chỉ lấy metrics để xử lý.\n    \"\"\"\n\
+          \n    def chunk_array(data, size=5):\n        if not data or not isinstance(data,\
+          \ list):\n            return []\n        # Loại bỏ null/rỗng\n        clean_data\
+          \ = [str(x).strip() for x in data if x]\n        \n        result = []\n\
+          \        for i in range(0, len(clean_data), size):\n            chunk =\
+          \ clean_data[i:i + size]\n            result.append(\", \".join(chunk))\n\
+          \        return result\n\n    iteration_tasks = []\n    \n    # 1. Xác định\
+          \ tập dữ liệu mục tiêu dựa trên logic yêu cầu\n    # Nếu metrics không rỗng\
+          \ thì chọn metrics, ngược lại chọn dimensions\n    if metrics and len(metrics)\
+          \ > 0:\n        target_data = metrics\n        task_type = \"fact\"    \
+          \  # Loại là fact khi xử lý metrics\n    else:\n        target_data = dimensions\n\
+          \        task_type = \"dimension\" # Loại là dimension khi xử lý dims\n\n\
+          \    # 2. Gom nhóm dữ liệu đã chọn (mỗi nhóm tối đa 5 phần tử)\n    chunks\
+          \ = chunk_array(target_data, 5)\n\n    # 3. Tạo danh sách task cho Node\
+          \ Iteration\n    for q in chunks:\n        iteration_tasks.append({\n  \
+          \          \"type\": task_type,\n            \"query\": q\n        })\n\n\
+          \    # Trả về biến 'tasks' cho node tiếp theo\n    return {\n        \"\
+          tasks\": iteration_tasks\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          tasks:
+            children: null
+            type: array[object]
+        selected: false
+        title: Code extract me
+        type: code
+        variables:
+        - value_selector:
+          - '1775639010068'
+          - structured_output
+          - metrics
+          value_type: object
+          variable: metrics
+        - value_selector:
+          - '1775639010068'
+          - structured_output
+          - dimensions
+          value_type: object
+          variable: dimensions
+      height: 54
+      id: '1775640902364'
+      position:
+        x: 341.979029778896
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 341.979029778896
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        error_handle_mode: terminated
+        height: 324
+        is_parallel: false
+        iterator_input_type: array[object]
+        iterator_selector:
+        - '1775640902364'
+        - tasks
+        output_selector:
+        - '1775644143014'
+        - out
+        output_type: array[object]
+        parallel_nums: 10
+        selected: false
+        start_node_id: 1775642666796start
+        title: item find dim_fact
+        type: iteration
+        width: 1314
+      height: 324
+      id: '1775642666796'
+      position:
+        x: 616.3616813773635
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 616.3616813773635
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 1314
+      zIndex: 1
+    - data:
+        desc: ''
+        isInIteration: true
+        selected: false
+        title: ''
+        type: iteration-start
+      draggable: false
+      height: 48
+      id: 1775642666796start
+      parentId: '1775642666796'
+      position:
+        x: 24
+        y: 68
+      positionAbsolute:
+        x: 640.3616813773635
+        y: 620.5952140028629
+      selectable: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom-iteration-start
+      width: 44
+      zIndex: 1002
+    - data:
+        code: "def main(item: dict) -> dict:\n    # Đảm bảo không có khoảng trắng\
+          \ nào ở đầu dòng này\n    return {\n        \"type\": item.get(\"type\"\
+          , \"\"),\n        \"query\": item.get(\"query\", \"\")\n    }\n"
+        code_language: python3
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        outputs:
+          query:
+            children: null
+            type: string
+          type:
+            children: null
+            type: string
+        selected: false
+        title: Code extract group 5
+        type: code
+        variables:
+        - value_selector:
+          - '1775642666796'
+          - item
+          value_type: object
+          variable: item
+      height: 54
+      id: '1775643479612'
+      parentId: '1775642666796'
+      position:
+        x: 92.37328640913188
+        y: 65
+      positionAbsolute:
+        x: 708.7349677864954
+        y: 617.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        dataset_ids:
+        - wwxP8Q6ZfXIJULdnnC7f+h1Ib5dLTbjo7RFd3kaRqTU1+WZNwYeGSYzaBk7+0BGO
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: ''
+            provider: ''
+          score_threshold: 0
+          top_k: 10
+          weights:
+            keyword_setting:
+              keyword_weight: 0.4
+            vector_setting:
+              embedding_model_name: gemini-embedding-2-preview
+              embedding_provider_name: langgenius/gemini/google
+              vector_weight: 0.6
+        query_variable_selector:
+        - '1775643479612'
+        - query
+        retrieval_mode: multiple
+        selected: false
+        title: knowledge fact
+        type: knowledge-retrieval
+      height: 92
+      id: '1775643871789'
+      parentId: '1775642666796'
+      position:
+        x: 722.9742873253397
+        y: 65
+      positionAbsolute:
+        x: 1339.3359687027032
+        y: 617.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        code: "def main(f_res: list, f_dim: list, metrics: list) -> dict:\n    \"\"\
+          \"\n    Logic:\n    - Nếu metrics rỗng (empty) -> lấy dữ liệu từ f_dim.\n\
+          \    - Ngược lại (metrics có dữ liệu) -> lấy dữ liệu từ f_res (f_fact).\n\
+          \    \"\"\"\n    \n    # Kiểm tra metrics có dữ liệu hay không\n    if metrics\
+          \ and len(metrics) > 0:\n        res = f_res if f_res is not None else []\n\
+          \    else:\n        res = f_dim if f_dim is not None else []\n\n    return\
+          \ {\n        \"out\": res\n    }"
+        code_language: python3
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        outputs:
+          out:
+            children: null
+            type: array[object]
+        selected: false
+        title: Code merge dim_or_fact
+        type: code
+        variables:
+        - value_selector:
+          - '1775643871789'
+          - result
+          value_type: array[object]
+          variable: f_res
+        - value_selector:
+          - '1776313844160'
+          - result
+          value_type: array[object]
+          variable: f_dim
+        - value_selector:
+          - '1775639010068'
+          - structured_output
+          - metrics
+          value_type: object
+          variable: metrics
+      height: 54
+      id: '1775644143014'
+      parentId: '1775642666796'
+      position:
+        x: 1027.1400501390883
+        y: 126.25757592677411
+      positionAbsolute:
+        x: 1643.5017315164519
+        y: 678.8527899296371
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        code: "import json\nimport re\n\ndef main(iteration_results: list) -> dict:\n\
+          \    all_content = []\n\n    # 1. Trích xuất text thô\n    def extract_text(data):\n\
+          \        if isinstance(data, list):\n            for item in data: extract_text(item)\n\
+          \        elif isinstance(data, dict):\n            content = data.get('content')\
+          \ or data.get('text') or data.get('output')\n            if content: all_content.append(str(content))\n\
+          \    \n    extract_text(iteration_results)\n    \n    merged_tables = {}\n\
+          \n    for raw_text in all_content:\n        # Chuẩn hóa các ký tự escape\
+          \ để đếm dấu ngoặc kép chính xác\n        # Biến \\\" thành \" để xử lý\
+          \ đồng nhất\n        text = raw_text.replace('\\\\\"', '\"')\n        \n\
+          \        # Tìm dấu { đầu tiên (điểm bắt đầu của bảng)\n        first_brace\
+          \ = text.find('{')\n        if first_brace == -1: continue\n        \n \
+          \       # Lấy phần header trước dấu {\n        header = text[:first_brace]\n\
+          \        \n        # Bóc tên bảng: Ký tự giữa hai dấu \" cuối cùng trước\
+          \ dấu {\n        quote_indices = [i for i, char in enumerate(header) if\
+          \ char == '\"']\n        if len(quote_indices) < 2: continue\n        \n\
+          \        table_name = header[quote_indices[-2] + 1 : quote_indices[-1]]\n\
+          \        \n        if table_name not in merged_tables:\n            merged_tables[table_name]\
+          \ = {\n                \"type\": \"fact\",\n                \"description\"\
+          : \"\",\n                \"columns\": [],\n                \"conditions\"\
+          : [],\n                \"relationships\": [],\n                \"formulas\"\
+          : []\n            }\n        \n        target = merged_tables[table_name]\n\
+          \n        # 2. Logic bóc tách dữ liệu tổng quát (Không dùng json.loads)\n\
+          \        # Tìm và Union các mảng: columns, conditions, relationships, formulas\n\
+          \        for key in [\"columns\", \"conditions\", \"relationships\", \"\
+          formulas\"]:\n            # Regex tìm khối \"key\": [ ... ] kể cả khi bị\
+          \ cắt nát\n            # Tìm nội dung bên trong dấu ngoặc vuông sau tên\
+          \ key\n            list_pattern = rf'\"{key}\"\\s*:\\s*\\[(.*?)\\]'\n  \
+          \          list_matches = re.findall(list_pattern, text, re.DOTALL)\n  \
+          \          \n            for block in list_matches:\n                # Bóc\
+          \ từng phần tử nằm trong ngoặc kép \"item\"\n                # Handle cả\
+          \ trường hợp có dấu ngoặc kép lồng nhau bên trong\n                items\
+          \ = re.findall(r'\"((?:[^\"\\\\]|\\\\.)*)\"', block)\n                for\
+          \ it in items:\n                    val = it.strip().replace('\\\\\"', '\"\
+          ')\n                    if val and val not in target[key]:\n           \
+          \             target[key].append(val)\n\n        # Bóc description và type\
+          \ (nếu target chưa có)\n        if not target[\"description\"]:\n      \
+          \      desc_match = re.search(r'\"description\"\\s*:\\s*\"((?:[^\"\\\\]|\\\
+          \\.)*)\"', text)\n            if desc_match: target[\"description\"] = desc_match.group(1).replace('\\\
+          \\\"', '\"')\n            \n        if not target[\"type\"]:\n         \
+          \   type_match = re.search(r'\"type\"\\s*:\\s*\"((?:[^\"\\\\]|\\\\.)*)\"\
+          ', text)\n            if type_match: target[\"type\"] = type_match.group(1)\n\
+          \n    # 3. Gom lại thành kết quả cuối cùng\n    final_list = []\n    for\
+          \ t_name, t_data in merged_tables.items():\n        # Chỉ giữ lại các key\
+          \ có dữ liệu để giảm Token cho BOT\n        clean_entry = {k: v for k, v\
+          \ in t_data.items() if v}\n        final_list.append(json.dumps({t_name:\
+          \ clean_entry}, ensure_ascii=False, indent=2))\n\n    return {\n       \
+          \ \"final_list\": final_list,\n        \"count\": len(final_list)\n    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          count:
+            children: null
+            type: number
+          final_list:
+            children: null
+            type: array[string]
+        selected: false
+        title: Code optimize dim or fact
+        type: code
+        variables:
+        - value_selector:
+          - '1775642666796'
+          - output
+          value_type: array[object]
+          variable: iteration_results
+      height: 54
+      id: '1775645431838'
+      position:
+        x: 1971.6888789902791
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 1971.6888789902791
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\nimport re\n\ndef main(selected_facts_json: str, all_schema_json:\
+          \ dict) -> dict:\n    # 1. Kiểm tra đầu vào null\n    if not selected_facts_json\
+          \ or not all_schema_json:\n        return {\n            \"result\": \"\
+          ⚠️ Error: Input data is null.\",\n            \"strict_logic_block\": \"\
+          ⚠️ Error: Input data is null.\",\n            \"unique_relationships\":\
+          \ \"\"\n        }\n\n    try:\n        # SỬA LỖI 1: Bóc tách layer \"data\"\
+          \ nếu có trong all_schema_json\n        schema_data = all_schema_json.get(\"\
+          data\", all_schema_json) if isinstance(all_schema_json, dict) else all_schema_json\n\
+          \n        # 2. Parse JSON từ LLM\n        if isinstance(selected_facts_json,\
+          \ dict):\n            facts_data = selected_facts_json\n        else:\n\
+          \            raw_input = selected_facts_json.strip()\n            if \"\
+          ```json\" in raw_input:\n                raw_input = raw_input.split(\"\
+          ```json\")[1].split(\"```\")[0].strip()\n            facts_data = json.loads(raw_input)\n\
+          \n        exploration_mode = facts_data.get(\"exploration_mode\", \"expand\"\
+          ).lower()\n        llm_selected_facts = facts_data.get(\"selected_facts\"\
+          , [])\n        llm_metrics = facts_data.get(\"metric_logic\", [])\n    \
+          \    llm_joins = facts_data.get(\"relationships\", [])\n\n        # 3. Mapping\
+          \ đường dẫn bảng\n        path_map = {fp.lower(): fp for fp in schema_data.keys()}\n\
+          \        for fp in schema_data.keys():\n            path_map[fp.split('.')[-1].lower()]\
+          \ = fp\n\n        # --- HELPER: LOGIC TÌM CỘT THỰC TẾ ---\n        def find_actual_column(table_path,\
+          \ target_col_name):\n            table_info = schema_data.get(table_path)\n\
+          \            if not table_info: return None\n            \n            if\
+          \ '.' in target_col_name:\n                target_col_name = target_col_name.split('.')[-1]\n\
+          \                \n            target_clean = target_col_name.lower().strip()\n\
+          \            all_cols = table_info.get('columns', [])\n            for c\
+          \ in all_cols:\n                actual_name = c.split(':')[0].strip().lower()\n\
+          \                if actual_name == target_clean: return actual_name\n  \
+          \          for c in all_cols:\n                if target_clean in c.lower():\
+          \ return c.split(':')[0].strip().lower()\n            return None\n\n  \
+          \      # 4. Thu thập các cột \"STRICT\" cho FACT tables\n        required_cols_map\
+          \ = {} \n        for f in llm_selected_facts:\n            fp = path_map.get(f.get(\"\
+          table_name\", \"\").lower())\n            if fp:\n                for col_req\
+          \ in f.get(\"relevant_columns\", []):\n                    actual = find_actual_column(fp,\
+          \ col_req)\n                    if actual: required_cols_map.setdefault(fp,\
+          \ set()).add(actual)\n\n        sql_keywords = {'sum', 'count', 'distinct',\
+          \ 'avg', 'min', 'max', 'case', 'when', 'then', 'else', 'end', 'and', 'or',\
+          \ 'in'}\n        for m in llm_metrics:\n            fp = path_map.get(m.get(\"\
+          source_table\", \"\").lower())\n            if fp:\n                potential_cols\
+          \ = re.findall(r'\\b[a-z_0-9\\.]+\\b', m.get(\"column_expression\", \"\"\
+          ).lower())\n                for c_req in potential_cols:\n             \
+          \       if c_req not in sql_keywords and not c_req.replace('.', '').isdigit():\n\
+          \                        actual = find_actual_column(fp, c_req)\n      \
+          \                  if actual: required_cols_map.setdefault(fp, set()).add(actual)\n\
+          \n        for r in llm_joins:\n            join_matches = re.findall(r'([a-z0-9_\\\
+          .]+)\\.([a-z0-9_]+)', r.get(\"join_on\", \"\").lower())\n            for\
+          \ t_path, c_name in join_matches:\n                fp = path_map.get(t_path)\
+          \ or path_map.get(t_path.split('.')[-1])\n                if fp:\n     \
+          \               actual = find_actual_column(fp, c_name)\n              \
+          \      if actual: required_cols_map.setdefault(fp, set()).add(actual)\n\n\
+          \        # 5. BFS TRUY VẾT BẢNG\n        initial_tables = set()\n      \
+          \  for f in llm_selected_facts:\n            name = f.get(\"table_name\"\
+          , \"\").strip().lower()\n            if name: initial_tables.add(name)\n\
+          \        for rel in llm_joins:\n            if rel.get(\"source_table\"\
+          ): initial_tables.add(rel[\"source_table\"].lower())\n            if rel.get(\"\
+          target_table\"): initial_tables.add(rel[\"target_table\"].lower())\n\n \
+          \       queue = list(initial_tables)\n        relevant_full_paths = {}\n\
+          \        visited_paths = set()\n        while queue:\n            curr =\
+          \ queue.pop(0)\n            fp = path_map.get(curr) or path_map.get(curr.split('.')[-1])\n\
+          \            if not fp or fp in visited_paths: continue\n            visited_paths.add(fp)\n\
+          \            info = schema_data[fp]\n            relevant_full_paths[fp]\
+          \ = info\n            for r_str in info.get(\"relationships\", []):\n  \
+          \              if \"->\" in r_str:\n                    target_full = r_str.split(\"\
+          ->\")[1].split(\"|\")[0].strip()\n                    target_table_path\
+          \ = \".\".join(target_full.split(\".\")[:-1])\n                    t_name_short\
+          \ = target_table_path.split('.')[-1].lower()\n                    if t_name_short\
+          \ in path_map: queue.append(t_name_short)\n\n        # 6. XỬ LÝ strict_logic_block\
+          \ & ĐỒNG THỜI TRÍCH XUẤT UNIQUE RELATIONSHIPS CHI TIẾT CỘT\n        strict_logic_lines\
+          \ = [\"## \U0001F4CC REQUIRED JOIN LOGIC (STRICT)\"]\n        join_level_warnings\
+          \ = []\n        unique_relationships_set = set() \n\n        for current_table_path,\
+          \ table_info in relevant_full_paths.items():\n            for r in table_info.get('relationships',\
+          \ []):\n                if \"->\" in r:\n                    try:\n    \
+          \                    # Tách lấy phần logic join trước ký tự ghi chú '|'\
+          \ (nếu có)\n                        join_def = r.split(\"|\")[0].strip()\n\
+          \                        source_col = join_def.split(\"->\")[0].strip()\n\
+          \                        target_full_path_with_col = join_def.split(\"->\"\
+          )[1].strip()\n                        \n                        # Bóc tách\
+          \ tên cột đích và cụm tên bảng đích ban đầu\n                        parts\
+          \ = target_full_path_with_col.split(\".\")\n                        target_col\
+          \ = parts[-1]\n                        target_table_raw = \".\".join(parts[:-1])\n\
+          \                        \n                        # Chuẩn hóa tên bảng\
+          \ đích qua path_map\n                        matched_target_table_path =\
+          \ path_map.get(target_table_raw.lower()) or path_map.get(target_table_raw.split('.')[-1].lower())\n\
+          \                        final_target_table = matched_target_table_path\
+          \ if matched_target_table_path else target_table_raw\n                 \
+          \       \n                        # Tạo format chi tiết: - bang_goc.cot_goc\
+          \ -> bang_dich.cot_dich\n                        unique_relationships_set.add(f\"\
+          - {current_table_path}.{source_col} -> {final_target_table}.{target_col}\"\
+          )\n                        \n                        # Xử lý cảnh báo level\
+          \ join (CTE)\n                        if \"ghi chú: lưu ý\" in r.lower():\n\
+          \                            warning = (f\"- ⚠️ **QUY TẮC JOIN**: Phải CTE\
+          \ bảng `{current_table_path}` và bảng `{final_target_table}` \"\n      \
+          \                                 f\"về cùng level `{target_col}` (GROUP\
+          \ BY) trước khi thực hiện JOIN qua `{target_col}` \"\n                 \
+          \                      f\"để tránh duplicate số liệu.\")\n             \
+          \               if warning not in join_level_warnings:\n               \
+          \                 join_level_warnings.append(warning)\n                \
+          \    except:\n                        continue\n\n        strict_logic_lines.extend(join_level_warnings)\n\
+          \        if len(join_level_warnings) == 0:\n            strict_logic_block\
+          \ = \"## \U0001F4CC REQUIRED JOIN LOGIC (STRICT)\\n- Không có quy tắc join\
+          \ đặc biệt.\"\n        else:\n            strict_logic_block = \"\\n\".join(strict_logic_lines)\n\
+          \n        # Chuyển đổi sang chuỗi phân dòng\n        if unique_relationships_set:\n\
+          \            unique_relationships_str = \"\\n\".join(sorted(list(unique_relationships_set)))\n\
+          \        else:\n            unique_relationships_str = \"Không phát hiện\
+          \ quan hệ nào.\"\n\n        # 7. Build Final result (Metadata Details)\n\
+          \        output_result = [f\"# METADATA (MODE: {exploration_mode.upper()})\\\
+          n\"]\n        output_result.append(\"## \U0001F4CC REQUIRED METRIC LOGIC\
+          \ (STRICT)\")\n        for m in llm_metrics:\n            output_result.append(f\"\
+          - **{m['metric_name']}**: `{m['aggregation']}({m['column_expression']})`\
+          \ from `{m['source_table']}`\")\n        \n        output_result.append(\"\
+          \\n---\\n\")\n\n        for path in relevant_full_paths.keys():\n      \
+          \      table_info = relevant_full_paths[path]\n            table_type =\
+          \ str(table_info.get('type', 'DIM')).upper()\n            output_result.append(f\"\
+          ### TABLE: {path}\")\n            output_result.append(f\"**Type**: {table_type}\
+          \ | **Description**: {str(table_info.get('description', ''))}\")\n     \
+          \       \n            if table_info.get('conditions'):\n               \
+          \ output_result.append(\"**Conditions (Bat buoc)**:\")\n               \
+          \ for cond in table_info['conditions']: output_result.append(f\"  - {cond}\"\
+          )\n            \n            all_cols = table_info.get('columns', [])\n\
+          \            if table_type == 'DIM':\n                final_cols_to_show\
+          \ = all_cols\n                output_result.append(\"Columns (Full - DIM\
+          \ table):\")\n            else:\n                req_cols = required_cols_map.get(path,\
+          \ set())\n                filtered_cols = [\n                    c for c\
+          \ in all_cols \n                    if c.split(':')[0].strip().lower() in\
+          \ req_cols \n                    or any(key in c.lower() for key in ['pk',\
+          \ 'code', 'time', 'partition', 'date'])\n                ]\n           \
+          \     final_cols_to_show = filtered_cols if filtered_cols else all_cols\n\
+          \                output_result.append(\"Columns (Strict - FACT table):\"\
+          )\n            \n            for c in final_cols_to_show: output_result.append(f\"\
+          \  - {c}\")\n\n            output_result.append(\"Relationships:\")\n  \
+          \          final_rels = []\n            for r in table_info.get('relationships',\
+          \ []):\n                if \"ghi chú: lưu ý\" in r.lower():\n          \
+          \          try:\n                        join_def = r.split(\"|\")[0].strip()\n\
+          \                        source_col = join_def.split(\"->\")[0].strip()\n\
+          \                        target_full_path_with_col = join_def.split(\"->\"\
+          )[1].strip()\n                        parts = target_full_path_with_col.split(\"\
+          .\")\n                        target_col = parts[-1]\n                 \
+          \       target_table_full_path = \".\".join(parts[:-1])\n              \
+          \          target_table_name = parts[-2]\n                        \n   \
+          \                     enhanced_rel = (\n                            f\"\
+          {source_col} -> Cần phải quy bảng {target_table_name} về level {target_col}\
+          \ (GROUP BY) trước khi thực hiện JOIN để tránh duplicate số liệu.\\n\"\n\
+          \                            f\"    \U0001F449 Hướng dẫn SQL mẫu: \\n\"\n\
+          \                            f\"    ```sql\\n\"\n                      \
+          \      f\"    SELECT ... FROM {path} a \\n\"\n                         \
+          \   f\"    LEFT JOIN (SELECT {target_col}, [metric_columns] FROM {target_table_full_path}\
+          \ GROUP BY {target_col}) b \\n\"\n                            f\"    ON\
+          \ a.{source_col} = b.{target_col}\\n\"\n                            f\"\
+          \    ```\"\n                        )\n                        final_rels.append(enhanced_rel)\n\
+          \                    except:\n                        final_rels.append(r)\n\
+          \                else:\n                    final_rels.append(r)\n     \
+          \       \n            seen_rels = set()\n            for r in final_rels:\n\
+          \                if r not in seen_rels:\n                    output_result.append(f\"\
+          \  - {r}\")\n                    seen_rels.add(r)\n            output_result.append(\"\
+          \\n---\\n\")\n\n        return {\n            \"result\": \"\\n\".join(output_result),\n\
+          \            \"strict_logic_block\": strict_logic_block,\n            \"\
+          unique_relationships\": unique_relationships_str\n        }\n\n    except\
+          \ Exception as e:\n        import traceback\n        return {\n        \
+          \    \"result\": f\"⚠️ System Error: {str(e)}\",\n            \"strict_logic_block\"\
+          : f\"⚠️ Error trace: {traceback.format_exc()}\",\n            \"unique_relationships\"\
+          : \"\"\n        }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+          strict_logic_block:
+            children: null
+            type: string
+          unique_relationships:
+            children: null
+            type: string
+        selected: false
+        title: Code all dim/fact
+        type: code
+        variables:
+        - value_selector:
+          - '1775558756615'
+          - text
+          value_type: string
+          variable: selected_facts_json
+        - value_selector:
+          - '1775878938933'
+          - final_metadata
+          value_type: object
+          variable: all_schema_json
+      height: 54
+      id: '1775721641149'
+      position:
+        x: 3376.934689222826
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 3376.934689222826
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: WXmnnN3uQMuxKlTDKY6MzQRIt7NqvyqX83v/m5aJc4fBT2HBA6H+9i2AsPnkMQ==
+            type: bearer
+          type: api-key
+        body:
+          data:
+          - id: key-value-145
+            key: ''
+            type: text
+            value: "{ \"sql\": \n\"\nselect * from dp.omd.application.\"omd_bi_workspace\"\
+              .\"allschema_test\"\n\"\n}"
+          type: json
+        desc: ''
+        headers: Content-Type:application/json
+        method: post
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: DB - Query
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/sql
+        variables: []
+      height: 140
+      id: '1775876315133'
+      position:
+        x: 2252.7988586255183
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 2252.7988586255183
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(query_id: str) -> str:\n    import json\n    import time\n\
+          \    data = json.loads(query_id)\n    # Job chạy nhanh quá, đợi tí lấy cái\
+          \ query\n    time.sleep(5)\n    return {\n        'result': data['id']\n\
+          \    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          result:
+            children: null
+            type: string
+        selected: false
+        title: DB - Extract Job ID
+        type: code
+        variables:
+        - value_selector:
+          - '1775876315133'
+          - body
+          value_type: string
+          variable: query_id
+      height: 54
+      id: '1775876792229'
+      position:
+        x: 2536.5016560746717
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 2536.5016560746717
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        authorization:
+          config:
+            api_key: WXmnnN3uQMuxKlTDKY6MzQRIt7NqvyqX83v/m5aJc4fBT2HBA6H+9i2AsPnkMQ==
+            type: bearer
+          type: api-key
+        body:
+          data: []
+          type: none
+        desc: ''
+        headers: Content-Type:application/json
+        method: get
+        params: ''
+        retry_config:
+          max_retries: 3
+          retry_enabled: true
+          retry_interval: 100
+        selected: false
+        ssl_verify: true
+        timeout:
+          max_connect_timeout: 0
+          max_read_timeout: 0
+          max_write_timeout: 0
+        title: DB - Get result
+        type: http-request
+        url: https://dremio.int.onemount.com/api/v3/job/{{#1775876792229.result#}}/results
+        variables: []
+      height: 174
+      id: '1775876846726'
+      position:
+        x: 2812.5420370676125
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 2812.5420370676125
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "def main(dremio_response: str):\n    import json\n    \n    out = {\n\
+          \        'final_metadata': {},\n        'status': 'failed',\n        'error':\
+          \ ''\n    }\n    \n    if not dremio_response:\n        out['error'] = 'Dữ\
+          \ liệu dremio_response trống.'\n        return out\n\n    try:\n       \
+          \ # Bước 1: Parse lớp vỏ ngoài của Dremio\n        resp_obj = json.loads(dremio_response)\n\
+          \        \n        # Kiểm tra nếu 'rows' tồn tại và không rỗng\n       \
+          \ if 'rows' in resp_obj and len(resp_obj['rows']) > 0:\n            # Lấy\
+          \ đối tượng metadata trực tiếp từ phần tử đầu tiên của 'rows'\n        \
+          \    # Thay vì tìm kiếm trong 'all_schema', chúng ta lấy trực tiếp đối tượng\n\
+          \            # JSON chứa metadata của các bảng.\n            out['final_metadata']\
+          \ = resp_obj['rows'][0]\n            out['status'] = 'success'\n       \
+          \ else:\n            out['error'] = 'Dremio response không chứa hàng dữ\
+          \ liệu (rows) hoặc hàng rỗng.'\n            \n    except json.JSONDecodeError\
+          \ as e:\n        out['error'] = f'Lỗi parse JSON chính của dremio_response:\
+          \ {str(e)}'\n    except Exception as e:\n        out['error'] = f'Lỗi xử\
+          \ lý tổng quát: {str(e)}'\n        \n    return out"
+        code_language: python3
+        desc: ''
+        outputs:
+          error:
+            children: null
+            type: string
+          final_metadata:
+            children: null
+            type: object
+          status:
+            children: null
+            type: string
+        selected: false
+        title: DB - Code to json
+        type: code
+        variables:
+        - value_selector:
+          - '1775876846726'
+          - body
+          value_type: string
+          variable: dremio_response
+      height: 54
+      id: '1775878938933'
+      position:
+        x: 3078.7274802009993
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 3078.7274802009993
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import re\n\ndef main(result: str) -> dict:\n    if not result or not\
+          \ isinstance(result, str):\n        return {\"columns_to_check\": []}\n\n\
+          \    table_blocks = result.split(\"### TABLE:\")\n    extracted_data = []\n\
+          \    \n    for block in table_blocks:\n        block = block.strip()\n \
+          \       if not block: continue\n            \n        lines = block.split('\\\
+          n')\n        full_table_name = lines[0].strip()\n        \n        # Tìm\
+          \ phần Conditions\n        conditions_match = re.search(\n            r\"\
+          (?:#+ |\\*\\*?)Conditions.*?\\n(.*?)(?=(?:#+ |\\*\\*?)Relationships|---|$)\"\
+          , \n            block, re.DOTALL | re.IGNORECASE\n        )\n        \n\
+          \        if conditions_match:\n            content = conditions_match.group(1).strip()\n\
+          \            for line in content.split('\\n'):\n                if \"Lưu\
+          \ ý\" in line:\n                    column_match = re.search(r\"-\\s*([^:]+)\\\
+          s*:\", line)\n                    if column_match:\n                   \
+          \     column_name = column_match.group(1).strip()\n                    \
+          \    extracted_data.append({\n                            \"table\": full_table_name,\n\
+          \                            \"column\": column_name\n                 \
+          \       })\n\n    return {\"sync_sql\": json.dumps(extracted_data)}"
+        code_language: python3
+        desc: ''
+        outputs:
+          sync_sql:
+            children: null
+            type: string
+        selected: false
+        title: Code sql - thông tin Lưu ý
+        type: code
+        variables:
+        - value_selector:
+          - '1775721641149'
+          - result
+          value_type: string
+          variable: result
+      height: 54
+      id: '1776161545578'
+      position:
+        x: 3938.649209326691
+        y: 552.5952140028629
+      positionAbsolute:
+        x: 3938.649209326691
+        y: 552.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: not empty
+            id: 0cb21697-f87a-4c94-8eae-9da89059815e
+            value: ''
+            varType: object
+            variable_selector:
+            - '1775639010068'
+            - structured_output
+            - metrics
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        selected: false
+        title: IF/ELSE dim_fact
+        type: if-else
+      height: 126
+      id: '1776313681768'
+      parentId: '1775642666796'
+      position:
+        x: 366.7131220669954
+        y: 65
+      positionAbsolute:
+        x: 983.074803444359
+        y: 617.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        dataset_ids:
+        - meMe2SbaM1hATZnasKafOYQYMIg4GoqXSrV8eTz0VOLxqou8G9cWBuwZgCGieVoU
+        desc: ''
+        isInIteration: true
+        isInLoop: false
+        iteration_id: '1775642666796'
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: ''
+            provider: ''
+          score_threshold: 0
+          top_k: 10
+          weights:
+            keyword_setting:
+              keyword_weight: 0.4
+            vector_setting:
+              embedding_model_name: gemini-embedding-2-preview
+              embedding_provider_name: langgenius/gemini/google
+              vector_weight: 0.6
+        query_variable_selector:
+        - '1775470011042'
+        - sys.query
+        retrieval_mode: multiple
+        selected: false
+        title: Knowledge DB
+        type: knowledge-retrieval
+      height: 92
+      id: '1776313844160'
+      parentId: '1775642666796'
+      position:
+        x: 722.9742873253397
+        y: 196
+      positionAbsolute:
+        x: 1339.3359687027032
+        y: 748.5952140028629
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+      zIndex: 1002
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1775721641149'
+          - result
+        desc: ''
+        memory:
+          query_prompt_template: 'Yêu cầu của người dùng: {{#sys.query#}}
+
+            Nhiệm vụ: Dựa trên Metadata hệ thống và Dữ liệu thực tế ở trên, hãy viết
+            câu lệnh SQL hoàn chỉnh'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: f2758b7d-e3c6-419a-981c-8d43a4d92466
+          role: system
+          text: '{{#context#}}
+
+            # 🎯 ROLE
+
+            Bạn là một chuyên gia SQL Dremio cao cấp. Nhiệm vụ của bạn là chuyển đổi
+            yêu cầu người dùng thành mã SQL chính xác 100% dựa trên Metadata.
+
+
+
+            ---
+
+
+
+            # 🧠 BƯỚC 1: QUY TRÌNH TƯ DUY (TRUY VẾT QUAN HỆ BẮT BUỘC)
+
+            Trước khi viết mã, hãy thực hiện phân tích **"Pathfinding"** theo trình
+            tự:
+
+
+
+            1. **Phân loại bảng**: Xác định bảng **FACT** và **DIM**.
+
+            2. **Xác thực Quan hệ (Strict Relationship Adherence)**:
+
+                * **BẮT BUỘC**: Chỉ sử dụng các liên kết (Join Keys) được định nghĩa
+            cụ thể trong phần `Relationships` của Metadata.
+
+                * **CẤM TỰ SUY DIỄN**: Không được tự ý đoán cột Join nếu Metadata
+            không khai báo. Nếu Table A cần Table C nhưng không có quan hệ trực tiếp,
+            phải tìm bảng trung gian B có trong Metadata để nối (A -> B -> C). Nếu
+            không tìm thấy lộ trình trong Metadata, chuyển ngay sang **BƯỚC 3**.
+
+            3. **Chiến lược Join Fact-to-Fact**:
+
+                * Nếu các Measure đến từ các bảng Fact khác nhau mà không join qua
+            Key (PK) duy nhất của bảng:
+
+                * **BẮT BUỘC**: Phải tính toán (Aggregate) Measure trong từng CTE
+            (WITH clause) riêng biệt cho mỗi bảng Fact trước khi thực hiện JOIN.
+
+                * Đảm bảo sau CTE, mỗi Join Key là duy nhất (Unique).
+
+
+
+            ---
+
+
+
+            # 🛠 BƯỚC 2: CÁC QUY TẮC THIẾT KẾ SQL (STRICT)
+
+
+
+            ### 1. Ưu tiên Logic Metric & Cấu trúc SELECT
+
+            * Tuân thủ tuyệt đối công thức và relationship trong mục **## 📌 REQUIRED
+            METRIC LOGIC**.
+
+            * **Thứ tự**: Liệt kê Dimension trước, Aggregation (SUM, COUNT...) sau.
+
+            * **Chú thích**: Mỗi cột trong SELECT phải có mô tả phía sau dấu `--`.
+
+            * **Group By**: Luôn sử dụng vị trí cột `GROUP BY 1, 2, 3...`.
+
+            * **SUM at Source**: Khi quy bảng về một level nhất định (CTE), bắt buộc
+            dùng hàm tập hợp (SUM, COUNT, MAX...) cho các cột metrics để đảm bảo mỗi
+            Join Key là duy nhất (Unique) trước khi JOIN.
+
+            * **Không được đưa ra bất kỳ giả định nào, lấy chính xác theo kiến thức
+            được cung cấp**
+
+
+
+            ### 2. Xử lý NULL (COALESCE) & Phép tính
+
+            * Chỉ sử dụng `COALESCE()` cho các cột:
+
+              - dùng để SO SÁNH (`=`, `<>`, `IN`, `NOT IN`, `LIKE`, `CASE WHEN`...)
+
+              - dùng trong JOIN
+
+              - dùng trong phép tính (`+`, `-`, `*`, `/`)
+
+              - dùng trong Aggregation (`SUM`, `COUNT`, `AVG`, `MIN`, `MAX`...)
+
+
+
+            * KHÔNG sử dụng `COALESCE()` cho:
+
+              - cột dimension chỉ dùng để SELECT hoặc GROUP BY
+
+              - cột không tham gia logic xử lý
+
+
+
+            * Giá trị mặc định:
+
+              - Chuỗi dùng `''na''`
+
+              - Số dùng `0` hoặc `-1` tùy ngữ cảnh
+
+
+
+            * Với phép cộng/trừ:
+
+              - phải `COALESCE()` từng thành phần trước khi tính
+
+
+
+              Ví dụ:
+
+              ```sql
+
+              COALESCE(a, 0) + COALESCE(b, 0)
+
+
+
+            ### 3. Điều kiện lọc (WHERE)
+
+            * `WHERE` luôn bắt đầu bằng `1=1`. Mỗi điều kiện `AND` nằm trên một dòng
+            riêng biệt.
+
+            * **BẮT BUỘC**: Áp dụng triệt để `Conditions (Bat buoc)` từ Metadata kèm
+            theo `COALESCE`. Comment là -- Điều kiện bắt buộc
+
+
+
+            ### 4. 🚫 QUY TẮC "GIỮ NGUYÊN BẢN" (MỨC ĐỘ ƯU TIÊN CAO NHẤT)
+
+            * Giữ chính xác tuyệt đối hoa/thường/khoảng trắng của các giá trị Literal
+            từ người dùng. **CẤM** tự ý chuẩn hóa dữ liệu.
+
+
+
+            ### 5. Quy tắc đặt Alias
+
+
+
+            * Alias phải rõ nghĩa, dễ đọc và phản ánh đúng business meaning.
+
+            * Không đặt alias trùng với:
+
+              - tên function SQL
+
+              - keyword SQL
+
+              - hàm built-in của Dremio
+
+
+
+            Ví dụ cần tránh:
+
+            `count`, `sum`, `date`, `rank`, `order`, `group`, `timestamp`, `current_date`...
+
+
+
+            * Ưu tiên alias dạng snake_case.
+
+
+
+            ✅ Đúng:
+
+            ```sql
+
+            SUM(gmv) AS total_gmv
+
+            COUNT(DISTINCT gt_code) AS total_gt
+
+
+
+            # ⚠️ BƯỚC 3: XỬ LÝ NGOẠI LỆ (MISSING INFO / NO RELATIONSHIP)
+
+
+
+            * Nếu một phần thông tin người dùng yêu cầu không có trong Metadata, hoặc
+            không có đường dẫn quan hệ (Relationship path):
+
+
+
+              - Vẫn phải tiếp tục viết SQL cho các phần thông tin hợp lệ còn lại.
+
+              - Không được tự suy diễn column, table hoặc join relationship không
+            tồn tại trong Metadata.
+
+              - Bỏ qua phần thông tin không hợp lệ trong SQL.
+
+
+
+            * Sau khối SQL, trả về danh sách thông tin bị thiếu theo format:
+
+
+
+            ```plaintext
+
+            ⚠️ Thông tin `<tên thông tin / quan hệ bảng>` không được khai báo trong
+            kiến thức.
+
+            Vui lòng liên hệ tien.dang@onemount.com để được bổ sung.
+
+
+
+            ---
+
+
+
+            # 🪶 BƯỚC 4: CẤU TRÚC KẾT QUẢ ĐẦU RA (CHỈ TRẢ VỀ PHẦN NÀY)
+
+            1. **Khối SQL**: Nằm trong khối mã `sql ...`. (Không thêm dấu `;`).
+
+            2. **Metadata Check (Máy đọc)**: Sau khối SQL, in danh sách các cột filter
+            giá trị cụ thể (loại trừ các cột trong Conditions bắt buộc và cột dữ liệu
+            thời gian):
+
+
+
+            ```plaintext
+
+            CHECK_START
+
+            table: [tên_bảng_vật_lý] | column: [tên_cột] | definition: [định_nghĩa]
+
+            CHECK_END'
+        selected: true
+        title: LLM SQL draft
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1776314865129'
+      position:
+        x: 3641.4790191616275
+        y: 662.8125773334853
+      positionAbsolute:
+        x: 3641.4790191616275
+        y: 662.8125773334853
+      selected: true
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - '1778648172125'
+          - organized_json
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: bd24b52b-d9b6-44db-9d86-f550f6eb1753
+          role: system
+          text: "{{#context#}}\n# \U0001F3AF VAI TRÒ\nBạn là chuyên gia tối ưu hóa\
+            \ **SQL Dremio**. Nhiệm vụ của bạn là đối soát, hiệu chỉnh câu \"SQL nháp\"\
+            \ {{#1776314865129.text#}} và đưa ra các gợi ý ngữ cảnh dựa trên \"Dữ\
+            \ liệu thực tế\" {{#1778648172125.organized_json#}}.\n\n---\n\n# \U0001F6D1\
+            \ NGUYÊN TẮC KIỂM SOÁT DỮ LIỆU (CRITICAL)\n\n* Trường hợp \"SQL nháp\"\
+            \ không chứa câu SQL hợp lệ mà chỉ chứa cảnh báo (`⚠️`):\n  - Hiển thị\
+            \ nguyên bản toàn bộ nội dung cảnh báo.\n  - Không sinh thêm gợi ý ngữ\
+            \ cảnh.\n  - Không sinh khối SQL giả.\n  - Không tự suy diễn hoặc tạo\
+            \ SQL mới.\n\n* Trường hợp không có dữ liệu trong \"Dữ liệu thực tế\"\
+            :\n  - Tuyệt đối KHÔNG đưa ra bất kỳ gợi ý ngữ cảnh nào.\n  - Chỉ trả\
+            \ về câu SQL nháp sau khi đã dọn dẹp format.\n\n* Không tự suy diễn:\n\
+            \  - Chỉ gợi ý những cột và giá trị xuất hiện trực tiếp trong \"Dữ liệu\
+            \ thực tế\".\n  - Nếu không tìm thấy cột đó trong context, coi như cột\
+            \ đó không có lưu ý.\n  - Không được suy diễn cột A tương đương với cột\
+            \ B. Ví dụ PK tương đương với consignment_entry_pk là SAI\n\n---\n\n#\
+            \ \U0001F6E0 NHIỆM VỤ TRỌNG TÂM\n\n1. **Rà soát SQL Audit & Rewrite**\
+            \ BẮC BUỘC\n\n1.1 Hãy rà soát câu SQL \"SQL nháp\" dựa trên {{#1775721641149.strict_logic_block#}}\
+            \ (Ưu tiên 1) và {{#1776317061272.warning_relationship#}} (Ưu tiên 2).\
+            \   BẮC BUỘC\n\n**Yêu cầu xử lý:**\n   - Tự động sửa lỗi JOIN nếu phát\
+            \ hiện vi phạm quy tắc duplicate (phải đưa về cùng level CTE trước khi\
+            \ JOIN).\n   - Tự động sửa lỗi JOIN nếu phát hiện vi phạm relationship\
+            \ được cung cấp. Đặc biệt CẤM không được suy diễn ý nghĩa cột A tương\
+            \ đương với cột B nếu nằm ngoài kiến thức được cung cấp.\n\n1.2 Xác định\
+            \ Grain Level: Phân tích mức độ chi tiết (Grain) của từng CTE. Nếu các\
+            \ CTE có Grain khác nhau, việc JOIN trực tiếp sẽ gây duplicate. BẮC BUỘC\n\
+            \n**Yêu cầu xử lý:**\n   - Tự động sửa lỗi JOIN nếu phát hiện vi phạm\
+            \ quy tắc duplicate (phải đưa về cùng level CTE trước khi JOIN)\n   -\
+            \ Cảnh báo mâu thuẫn: Nếu logic JOIN giữa các CTE dẫn đến việc dữ liệu\
+            \ bị sai lệch nghiêm trọng về dữ liệu so với nhu cầu của user, hãy giữ\
+            \ nguyên SQL gốc nhưng thêm cảnh báo ⚠️ lên đầu phản hồi để User làm rõ\
+            \ nhu cầu\n\n1.3. **Xác định Aggregation**: Nếu một CTE truy vấn từ bảng\
+            \ Fact nhưng không bao gồm cột định danh duy nhất (PK) trong danh sách\
+            \ SELECT. BẮC BUỘC\n\n**Yêu cầu xử lý:**\n   - Tự động thực hiện các hàm\
+            \ gộp (SUM, COUNT,...) cho các cột số liệu (metrics) và thực hiện GROUP\
+            \ BY theo các Dimensions còn lại\n\n1.4 Chỉnh template. BẮC BUỘC\n   -\
+            \ Đưa các cột định danh (Dimensions) lên trước và các cột tính toán (Measures)\
+            \ ra sau trong câu lệnh SELECT.\n   - Thực hiện `GROUP BY` theo số thứ\
+            \ tự (1, 2, 3...).\n   - Không Order by\n\n2. **Phân tích nội dung \"\
+            SQL nháp\"**\n   - \"SQL nháp\" có thể chứa:\n     - câu SQL hợp lệ\n\
+            \     - cảnh báo (`⚠️`)\n     - hoặc đồng thời cả hai\n   - Cảnh báo phải\
+            \ được giữ nguyên nội dung và hiển thị trước khối SQL.\n   - Chỉ thực\
+            \ hiện các bước xử lý SQL nếu tồn tại câu SQL hợp lệ.\n\n3. **Gợi ý ngữ\
+            \ cảnh (Ưu tiên hàng đầu)**\n   - Nhận diện các cột thuộc mục **\U0001F6A9\
+            \ CÁC CỘT CẦN LƯU Ý** chưa được sử dụng trong SQL để đưa ra gợi ý giúp\
+            \ người dùng tối ưu bộ lọc.\n   - Không sinh gợi ý ngữ cảnh nếu:\n   \
+            \  - không có SQL hợp lệ\n     - hoặc \"Dữ liệu thực tế\" không có dữ\
+            \ liệu\n\n4. **Định danh & Đối soát**\n   - Tìm kiếm tất cả các giá trị\
+            \ literal (chuỗi ký tự trong dấu nháy đơn) giữa CHECK_START và CHECK_END\
+            \ trong phần SQL hợp lệ của \"SQL nháp\". \n   - Chỉ đối soát với các\
+            \ cột có xuất hiện trong \"Dữ liệu thực tế\".\n\n5. **Hiệu chỉnh Chính\
+            \ xác**\n   - Trường hợp khớp: Thay thế giá trị sai lệch bằng giá trị\
+            \ thực tế chính xác tuyệt đối (ví dụ: Hồ Chí Minh -> TP. Hồ Chí Minh).\
+            \ Xóa bỏ các comment nhắc nhở (-- Cần check lại...) sau khi sửa.\n   -\
+            \ Trường hợp KHÔNG khớp (Giá trị không tồn tại trong metadata): - Giữ\
+            \ nguyên giá trị của User. \n     - Thêm comment cảnh báo ngay phía sau\
+            \ dòng đó theo format: -- ⚠️ Cảnh báo: Giá trị này không tìm thấy trong\
+            \ DB mẫu, vui lòng kiểm tra chính xác định dạng hoa/thường/word.\n   \
+            \ - Không chỉnh sửa nội dung cảnh báo (⚠️) có sẵn từ hệ thống.\n\n6. **Xác\
+            \ định SQL hợp lệ**\n   - Một câu SQL hợp lệ phải chứa ít nhất một trong\
+            \ các keyword:\n     `SELECT`, `WITH`, `INSERT`, `UPDATE`, `DELETE`\n\n\
+            ---\n\n# \U0001F9E9 QUY TẮC HIỆU CHỈNH (CRITICAL)\n* **Phạm vi:** Hiệu\
+            \ chỉnh giá trị trên **TOÀN BỘ** câu lệnh SQL.\n* **Giữ nguyên logic:**\
+            \ Không thay đổi cấu trúc `JOIN`, `GROUP BY`, `ALIAS` trừ khi sai cú pháp.\n\
+            * **Xử lý NULL (Bắt buộc):** Đảm bảo mọi cột tham chiếu từ Metadata khi\
+            \ so sánh phải được bọc bởi `COALESCE(column, <giá_trị_mặc_định>)`.\n\
+            * **Khử trùng lặp gợi ý:** Nếu một cột đã xuất hiện trong SQL sau khi\
+            \ hiệu chỉnh, **KHÔNG** liệt kê cột đó vào phần \"Gợi ý ngữ cảnh\" nữa.\n\
+            \n---\n\n# \U0001F4CB QUY TẮC HIỂN THỊ (THEO THỨ TỰ BẮT BUỘC)\n\n### 1.\
+            \ XỬ LÝ GỢI Ý NGỮ CẢNH (CHỈ HIỂN THỊ KHI CÓ CỘT CHƯA DÙNG)\n* **Điều kiện:**\
+            \ Nếu có cột thuộc mục **\U0001F6A9 CÁC CỘT CẦN LƯU Ý** chưa có mặt trong\
+            \ SQL nháp, mới hiển thị phần này. Nếu tất cả các cột đã có trong SQL,\
+            \ bỏ qua hoàn toàn và chỉ hiển thị khối SQL.\n* **Cấu trúc hiển thị:**\n\
+            \    * Câu mở đầu: *\"Tôi thấy có vài cột có thể ảnh hưởng đến nhu cầu\
+            \ của bạn, bạn có muốn cập nhật thêm điều kiện lọc không?\"*\n    * **Gom\
+            \ nhóm theo bảng:**\n        * **Bảng <tên_đầy_đủ_của_bảng (viết thường,\
+            \ in đậm)>**:\n            * Thụt lề 1 cấp: `* **<tên_cột (viết thường,\
+            \ in đậm)>**: <Mô tả từ Metadata - Chỉ lấy phần ý nghĩa, LOẠI BỎ toàn\
+            \ bộ các cụm từ như \"(Giá trị hiện có: ...)\" hay \"(Giá trị mẫu: ...)\"\
+            >.`\n            * Thụt lề 2 cấp: `Giá trị khả thi: <giá_trị_1>, <giá_trị_2>...\
+            \ (Lấy từ thực tế, bọc từng giá trị trong dấu backtick).`\n    * **Lưu\
+            \ ý:** Giữa các khối bảng cách nhau 1 dòng trống. Không hiển thị tiêu\
+            \ đề \"PHẦN 1\".\n\n### 2. XỬ LÝ KHỐI CODE SQL\n* **Cấu trúc hiển thị:**\
+            \ Hiển thị trực tiếp khối code, không kèm tiêu đề \"PHẦN 2\" hay \"CÂU\
+            \ LỆNH SQL\".\n* **Từ khóa viết hoa:** `SELECT`, `FROM`, `WHERE`, `JOIN`,\
+            \ `UNION ALL`, `AS`, `AND`, `OR`, `GROUP BY`, `ORDER BY`, `COALESCE`...\n\
+            * **Định dạng SELECT:** Mỗi cột nằm trên một dòng, căn lề các alias `AS`\
+            \ thẳng hàng nhau.\n* **Định dạng WHERE:**\n    * Luôn bắt đầu bằng `WHERE\
+            \ 1 = 1`.\n    * Mỗi điều kiện lọc nằm trên một dòng riêng biệt, bắt đầu\
+            \ bằng `AND`.\n    * Thụt lề đúng 4 khoảng trắng cho mỗi dòng điều kiện.\n\
+            * **Tuyệt đối KHÔNG thêm dấu chấm phẩy (;)** ở cuối câu lệnh."
+        - id: aee32588-4a8f-4a80-b50f-8e7d53274dd6
+          role: user
+          text: '{{#sys.query#}}
+
+            Draft SQL
+
+            {{#1776314865129.text#}}'
+        selected: false
+        title: LLM final SQL
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1776315329376'
+      position:
+        x: 5124.332138839495
+        y: 625.7214613197373
+      positionAbsolute:
+        x: 5124.332138839495
+        y: 625.7214613197373
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import re\nimport json\n\ndef main(sql_input: str, unique_relationships:\
+          \ str) -> dict:\n    output = {\n        \"sync_sql\": \"[]\",\n       \
+          \ \"warning_relationship\": \"\"\n    }\n    \n    if not sql_input:\n \
+          \       return output\n\n    # --- PHẦN 1: XỬ LÝ SYNC_SQL (Giữ nguyên logic\
+          \ của bạn) ---\n    EXCLUDED_COLUMNS = {'order_is_test', 'order_is_fake',\
+          \ 'is_test', 'pk'}\n    extracted_data = []\n    \n    content_match = re.search(r'CHECK_START(.*?)CHECK_END',\
+          \ sql_input, re.DOTALL)\n    if not content_match:\n        content_match\
+          \ = re.search(r'CHECK_START(.*)', sql_input, re.DOTALL)\n\n    if content_match:\n\
+          \        raw_content = content_match.group(1)\n        matches = re.findall(r'table:\\\
+          s*([\\w\\d\\._]+)\\s*\\|\\s*column:\\s*([\\w\\d_]+)', raw_content)\n   \
+          \     for table_path, col_name in matches:\n            table_path = table_path.strip()\n\
+          \            col_name = col_name.strip()\n            if col_name.lower()\
+          \ not in EXCLUDED_COLUMNS:\n                extracted_data.append({\n  \
+          \                  \"table\": table_path,\n                    \"column\"\
+          : col_name\n                })\n    output[\"sync_sql\"] = json.dumps(extracted_data)\n\
+          \n    # --- PHẦN 2: XỬ LÝ WARNING_RELATIONSHIP ---\n    \n    # 2.1. Chuẩn\
+          \ hóa SQL: Xóa comment từng dòng và gộp lại\n    sql_block_match = re.search(r'```sql\\\
+          s*(.*?)\\s*```', sql_input, re.DOTALL)\n    raw_sql = sql_block_match.group(1)\
+          \ if sql_block_match else sql_input\n    \n    clean_lines = []\n    for\
+          \ line in raw_sql.split('\\n'):\n        line = re.sub(r'--.*', '', line).strip()\n\
+          \        if line:\n            clean_lines.append(line)\n    \n    sql_text\
+          \ = \" \".join(clean_lines).lower()\n    sql_text = re.sub(r'\\s+', ' ',\
+          \ sql_text)\n\n    # 2.2. Parse master data unique_relationships (lowercase)\n\
+          \    valid_relations = set()\n    table_to_allowed_relations = {} \n   \
+          \ \n    if unique_relationships:\n        rel_matches = re.findall(r'([\\\
+          w\\d\\._]+)\\.([\\w\\d_]+)\\s*->\\s*([\\w\\d\\._]+)\\.([\\w\\d_]+)', unique_relationships)\n\
+          \        for t1, c1, t2, c2 in rel_matches:\n            t1, t2, c1, c2\
+          \ = t1.strip().lower(), t2.strip().lower(), c1.strip().lower(), c2.strip().lower()\n\
+          \            key = tuple(sorted([(t1, c1), (t2, c2)]))\n            valid_relations.add(key)\n\
+          \            \n            t_pair = tuple(sorted([t1, t2]))\n          \
+          \  if t_pair not in table_to_allowed_relations:\n                table_to_allowed_relations[t_pair]\
+          \ = []\n            table_to_allowed_relations[t_pair].append(f\"{t1}.{c1}\
+          \ -> {t2}.{c2}\")\n\n    # 2.3. Thu thập định nghĩa CTE bằng cách quét dấu\
+          \ ngoặc cân bằng\n    cte_contents = {}\n    start_pos = 0\n    while True:\n\
+          \        match = re.search(r'([\\w\\d_]+)\\s+as\\s*\\(', sql_text[start_pos:])\n\
+          \        if not match: break\n        \n        cte_name = match.group(1)\n\
+          \        abs_start = start_pos + match.end()\n        \n        bracket_level\
+          \ = 1\n        pos = abs_start\n        while bracket_level > 0 and pos\
+          \ < len(sql_text):\n            if sql_text[pos] == '(': bracket_level +=\
+          \ 1\n            elif sql_text[pos] == ')': bracket_level -= 1\n       \
+          \     pos += 1\n        \n        cte_contents[cte_name] = sql_text[abs_start:pos-1].strip()\n\
+          \        start_pos = pos\n    \n    main_query_content = sql_text[start_pos:].strip()\n\
+          \n    # Hàm trích xuất Alias cục bộ cho một đoạn text SQL\n    def get_local_alias_map(content):\n\
+          \        l_map = {}\n        # Tìm tất cả các Alias từ FROM và JOIN\n  \
+          \      alias_matches = re.findall(r'(?:from|join)\\s+([\\w\\d\\._]+)\\s+(?:as\\\
+          s+)?([\\w\\d_]+)', content)\n        for target, alias in alias_matches:\n\
+          \            if alias not in ('on', 'where', 'left', 'inner', 'right', 'full',\
+          \ 'join', 'select', 'and', 'or', 'order', 'group', 'union', 'all', 'distinct'):\n\
+          \                l_map[alias] = target\n        return l_map\n\n    # 2.4.\
+          \ Trích xuất mapping cột cho từng CTE (Xử lý Alias nội bộ trong mỗi CTE)\n\
+          \    cte_column_trace = {} \n    \n    for cte_name, content in cte_contents.items():\n\
+          \        cte_column_trace[cte_name] = {}\n        l_map = get_local_alias_map(content)\n\
+          \        \n        select_match = re.search(r'select\\s+(.*)\\s+from', content)\n\
+          \        if select_match:\n            select_clause = select_match.group(1)\n\
+          \            cols = []\n            bracket_level = 0\n            current_col\
+          \ = \"\"\n            for char in select_clause:\n                if char\
+          \ == '(': bracket_level += 1\n                elif char == ')': bracket_level\
+          \ -= 1\n                if char == ',' and bracket_level == 0:\n       \
+          \             cols.append(current_col.strip())\n                    current_col\
+          \ = \"\"\n                else:\n                    current_col += char\n\
+          \            cols.append(current_col.strip())\n\n            for col_expr\
+          \ in cols:\n                if not col_expr: continue\n                parts\
+          \ = re.split(r'\\s+(?:as\\s+)?', col_expr)\n                final_alias\
+          \ = parts[-1]\n                expr = \" \".join(parts[:-1]) if len(parts)\
+          \ > 1 else parts[0]\n                if '.' in final_alias and len(parts)\
+          \ == 1:\n                    final_alias = final_alias.split('.')[-1]\n\n\
+          \                origin_matches = re.findall(r'([\\w\\d_]+)\\.([\\w\\d_]+)',\
+          \ expr)\n                if origin_matches:\n                    src_alias,\
+          \ src_col = origin_matches[-1]\n                    # Lưu lại nguồn dựa\
+          \ trên Alias nội bộ của CTE\n                    real_src_table = l_map.get(src_alias,\
+          \ src_alias)\n                    cte_column_trace[cte_name][final_alias]\
+          \ = (real_src_table, src_col)\n\n    # 2.5. Hàm quy đổi đệ quy về Table\
+          \ vật lý (kèm lịch sử truy vết)\n    def trace_to_physical(name, col, current_l_map,\
+          \ history=None):\n        if history is None: history = []\n        \n \
+          \       # 1. Tìm bảng/CTE thật từ alias trong ngữ cảnh hiện tại\n      \
+          \  real_target = current_l_map.get(name, name)\n        \n        if real_target\
+          \ != name:\n            history.append({\"alias\": name, \"real\": real_target,\
+          \ \"col\": col})\n            \n        # 2. Nếu là CTE, tìm tiếp nguồn\
+          \ của cột bên trong nó\n        if real_target in cte_column_trace and col\
+          \ in cte_column_trace[real_target]:\n            src_table_or_alias, src_col\
+          \ = cte_column_trace[real_target][col]\n            # Khi vào trong CTE,\
+          \ ta không còn dùng local_map bên ngoài nữa \n            # (Vì CTE đã được\
+          \ resolve về bảng vật lý hoặc CTE cha trong bước 2.4)\n            return\
+          \ trace_to_physical(src_table_or_alias, src_col, {}, history)\n        \n\
+          \        return (real_target, col, history)\n\n    # 2.6. Quét các biểu\
+          \ thức JOIN trong từng khối\n    warnings = []\n    seen_keys = set()\n\n\
+          \    # Danh sách các khối cần quét JOIN: các CTE và Main Query\n    blocks\
+          \ = []\n    for name, content in cte_contents.items():\n        blocks.append({\"\
+          name\": f\"CTE `{name}`\", \"content\": content})\n    if main_query_content:\n\
+          \        blocks.append({\"name\": \"Main Query\", \"content\": main_query_content})\n\
+          \n    for block in blocks:\n        content = block[\"content\"]\n     \
+          \   l_map = get_local_alias_map(content)\n        \n        equal_pairs\
+          \ = re.findall(r'([\\w\\d_]+)\\.([\\w\\d_]+)\\s*=\\s*([\\w\\d_]+)\\.([\\\
+          w\\d_]+)', content)\n        \n        for a1, c1, a2, c2 in equal_pairs:\n\
+          \            original_expr = f\"{a1}.{c1} = {a2}.{c2}\"\n            \n\
+          \            t1, col1, hist1 = trace_to_physical(a1, c1, l_map)\n      \
+          \      t2, col2, hist2 = trace_to_physical(a2, c2, l_map)\n            \n\
+          \            if t1.startswith('dp.') and t2.startswith('dp.'):\n       \
+          \         if t1 == t2: continue\n                \n                rel_key\
+          \ = tuple(sorted([(t1, col1), (t2, col2)]))\n                if rel_key\
+          \ in seen_keys: continue\n                seen_keys.add(rel_key)\n     \
+          \           \n                t_pair = tuple(sorted([t1, t2]))\n       \
+          \         if rel_key not in valid_relations:\n                    trace_details\
+          \ = []\n                    for h in (hist1 + hist2):\n                \
+          \        if h['real'] in cte_column_trace:\n                           \
+          \ src = cte_column_trace[h['real']].get(h['col'])\n                    \
+          \        if src:\n                                trace_details.append(f\"\
+          \      * Tại CTE `{h['real']}`: Cột `{src[1]}` được lấy ra với tên `{h['col']}`\"\
+          )\n\n                    detail_msg = \"\\n\".join(trace_details)\n    \
+          \                if detail_msg: detail_msg = \"   + Chi tiết truy vết:\\\
+          n\" + detail_msg\n\n                    if t_pair in table_to_allowed_relations:\n\
+          \                        sug = \" HOẶC \".join(table_to_allowed_relations[t_pair])\n\
+          \                        warnings.append(\n                            f\"\
+          [LỖI CỘT] Khối `{block['name']}` | Vị trí: `{original_expr}`\\n\"\n    \
+          \                        f\"   + Phân tích: `{t1}` nối với `{t2}` qua `{col1}`\
+          \ = `{col2}`.\\n\"\n                            f\"{detail_msg}\\n\"\n \
+          \                           f\"   + Tại sao sai: Master Data yêu cầu nối\
+          \ qua: {sug}.\"\n                        )\n                    else:\n\
+          \                        warnings.append(\n                            f\"\
+          [LIÊN KẾT LẠ] Khối `{block['name']}` | Vị trí: `{original_expr}`\\n\"\n\
+          \                            f\"   + Phân tích: Phát hiện liên kết giữa\
+          \ `{t1}` và `{t2}`.\\n\"\n                            f\"{detail_msg}\\\
+          n\"\n                            f\"   + Tại sao sai: Cặp bảng này chưa\
+          \ có quy tắc liên kết chuẩn.\"\n                        )\n\n    # 2.7.\
+          \ Xuất báo cáo Warning\n    report = []\n    if warnings:\n        report.append(\"\
+          === PHÂN TÍCH CHI TIẾT LỖI LIÊN KẾT (JOIN) ===\")\n        report.extend(warnings)\n\
+          \    else:\n        report.append(\"Không phát hiện sai sót dữ liệu liên\
+          \ kết quan hệ (JOIN).\")\n        \n    output[\"warning_relationship\"\
+          ] = \"\\n\\n\".join(report)\n    return output"
+        code_language: python3
+        desc: ''
+        outputs:
+          sync_sql:
+            children: null
+            type: string
+          warning_relationship:
+            children: null
+            type: string
+        selected: false
+        title: Code Check giá trị
+        type: code
+        variables:
+        - value_selector:
+          - '1776314865129'
+          - text
+          value_type: string
+          variable: sql_input
+        - value_selector:
+          - '1775721641149'
+          - unique_relationships
+          value_type: string
+          variable: unique_relationships
+      height: 54
+      id: '1776317061272'
+      position:
+        x: 3938.649209326691
+        y: 693.126908663693
+      positionAbsolute:
+        x: 3938.649209326691
+        y: 693.126908663693
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\n\ndef main(data1: str, data2: str) -> dict:\n    try:\n\
+          \        # data1: từ node \"Cột lưu ý\"\n        # data2: từ node \"Check\
+          \ giá trị\"\n        list1 = json.loads(data1) if data1 and data1 != \"\
+          null\" else []\n        list2 = json.loads(data2) if data2 and data2 !=\
+          \ \"null\" else []\n    except:\n        list1, list2 = [], []\n\n    #\
+          \ Gán nhãn để phân biệt nguồn gốc nếu node trước chưa có\n    for item in\
+          \ list1: item['type'] = 'Lưu ý từ định nghĩa'\n    for item in list2: item['type']\
+          \ = 'Check giá trị User'\n\n    combined = list1 + list2\n    if not combined:\n\
+          \        return {\"search_query\": \"\", \"has_data\": \"false\", \"check_list\"\
+          : \"[]\"}\n\n    # 1. Distinct để tạo search_query (vẫn gom nhóm theo table\
+          \ để RAG hiệu quả)\n    table_map = {}\n    unique_check_list = []\n   \
+          \ seen = set()\n\n    for item in combined:\n        t, c, tp = item.get('table'),\
+          \ item.get('column'), item.get('type')\n        if t and c:\n          \
+          \  # Tạo key để distinct cặp table-column\n            key = (t, c)\n  \
+          \          if key not in seen:\n                seen.add(key)\n        \
+          \        unique_check_list.append(item)\n            \n            # Gom\
+          \ nhóm cho search_query\n            if t not in table_map: table_map[t]\
+          \ = set()\n            table_map[t].add(c)\n\n    # 2. Tạo search_query\n\
+          \    search_fragments = [f'TABLE_START: \"{t}\" columns: {\", \".join(cols)}'\
+          \ for t, cols in table_map.items()]\n    search_query = \" \".join(search_fragments)\n\
+          \n    return {\n        \"search_query\": search_query,\n        \"has_data\"\
+          : \"true\",\n        # check_list bây giờ đã có thêm trường \"type\" để\
+          \ phân biệt\n        \"check_list\": json.dumps(unique_check_list, ensure_ascii=False)\n\
+          \    }"
+        code_language: python3
+        desc: ''
+        outputs:
+          check_list:
+            children: null
+            type: string
+          has_data:
+            children: null
+            type: string
+          search_query:
+            children: null
+            type: string
+        selected: false
+        title: Code column check DB
+        type: code
+        variables:
+        - value_selector:
+          - '1776161545578'
+          - sync_sql
+          value_type: string
+          variable: data1
+        - value_selector:
+          - '1776317061272'
+          - sync_sql
+          value_type: string
+          variable: data2
+      height: 54
+      id: '1776318200799'
+      position:
+        x: 4215.215124357285
+        y: 625.7214613197373
+      positionAbsolute:
+        x: 4215.215124357285
+        y: 625.7214613197373
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        cases:
+        - case_id: 'true'
+          conditions:
+          - comparison_operator: is
+            id: 3dc8d932-3569-48f6-a608-5d5b67ee52e5
+            value: New SQL
+            varType: object
+            variable_selector:
+            - '1775639010068'
+            - structured_output
+            - question_type
+          id: 'true'
+          logical_operator: and
+        desc: ''
+        selected: false
+        title: IF/ELSE new SQL/story
+        type: if-else
+      height: 126
+      id: '1776392355119'
+      position:
+        x: -250.89179920941373
+        y: 520.317850943079
+      positionAbsolute:
+        x: -250.89179920941373
+        y: 520.317850943079
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        context:
+          enabled: true
+          variable_selector:
+          - sys
+          - query
+        desc: ''
+        memory:
+          query_prompt_template: '{{#sys.query#}}
+
+
+            {{#sys.files#}}'
+          role_prefix:
+            assistant: ''
+            user: ''
+          window:
+            enabled: false
+            size: 50
+        model:
+          completion_params:
+            temperature: 0
+          mode: chat
+          name: gemini-2.5-flash
+          provider: langgenius/gemini/google
+        prompt_template:
+        - id: d6f742cd-651c-4b36-922d-4b618cdd9bd5
+          role: system
+          text: '{{#context#}}
+
+            🎯 VAI TRÒ Bạn là chuyên gia hiệu chỉnh SQL Dremio. Nhiệm vụ của bạn là
+            sửa đổi câu lệnh SQL hiện có dựa trên yêu cầu mới của người dùng.
+
+            📚 NGỮ CẢNH TỪ LƯỢT CHAT TRƯỚC
+
+            Câu SQL adjust theo nhu cầu: {{#conversation.last_adjustment_sql#}}
+
+            Câu SQL cũ: {{#conversation.last_generated_sql#}}
+
+            Câu SQL cũ (bran Draft): {{#conversation.draft_sql#}}
+
+            Dữ liệu thực tế & Lưu ý filter: {{#conversation.last_contextual_data#}}
+
+            📥 YÊU CẦU UPDATE CỦA USER {{#sys.query#}}
+
+            ⚠️ ĐIỀU KIỆN TIÊN QUYẾT (KNOWLEDGE BOUNDARY) Trước khi thực hiện bất kỳ
+            thay đổi nào, bạn phải đối soát yêu cầu của người dùng với cấu trúc của
+            Câu SQL cũ:
+
+            Trong phạm vi: Nếu yêu cầu chỉ thay đổi logic, thay đổi giá trị lọc, hoặc
+            thêm/bớt các cột đã xuất hiện trong Câu SQL cũ, hãy tiến hành bước NHIỆM
+            VỤ.
+
+            Ngoài phạm vi: Nếu người dùng yêu cầu một cột mới hoặc bảng mới KHÔNG
+            có mặt trong Câu SQL cũ:
+
+            Tuyệt đối KHÔNG tự ý đoán tên cột/bảng.
+
+            Phải trả lời chính xác: "⚠️ Các thông tin bạn yêu cầu (cột/bảng mới) không
+            nằm trong kiến thức của câu SQL trước đó. Vui lòng đưa ra yêu cầu viết
+            câu SQL mới để tôi quét lại toàn bộ cơ sở dữ liệu."'
+        selected: false
+        title: LLM answer question
+        type: llm
+        variables: []
+        vision:
+          enabled: false
+      height: 90
+      id: '1776392593494'
+      position:
+        x: 41.979029778896006
+        y: 946.4430176590824
+      positionAbsolute:
+        x: 41.979029778896006
+        y: 946.4430176590824
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1778648172125'
+          - organized_json
+          variable_selector:
+          - conversation
+          - last_contextual_data
+          write_mode: over-write
+        selected: false
+        title: Variable Lưu ý
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1776393896909'
+      position:
+        x: 5124.332138839495
+        y: 769.6481112857322
+      positionAbsolute:
+        x: 5124.332138839495
+        y: 769.6481112857322
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1775721641149'
+          - result
+          variable_selector:
+          - conversation
+          - last_metadata
+          write_mode: over-write
+        selected: false
+        title: Variable Metadata
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1776393925309'
+      position:
+        x: 3641.4790191616275
+        y: 822.126908663693
+      positionAbsolute:
+        x: 3641.4790191616275
+        y: 822.126908663693
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        answer: '{{#1776392593494.text#}}'
+        desc: ''
+        selected: false
+        title: Answer Update SQL
+        type: answer
+        variables: []
+      height: 104
+      id: '1776394678333'
+      position:
+        x: 325.8447745425268
+        y: 946.4430176590824
+      positionAbsolute:
+        x: 325.8447745425268
+        y: 946.4430176590824
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        dataset_ids:
+        - +nzp+wwSh9dB/+gAfYZIvYC9OmzlxhpRxQMOVpHekvkzd+hN47rqSXVVwjgQ+uSZ
+        desc: ''
+        multiple_retrieval_config:
+          reranking_enable: false
+          reranking_mode: weighted_score
+          reranking_model:
+            model: ''
+            provider: ''
+          score_threshold: 0
+          top_k: 10
+          weights:
+            keyword_setting:
+              keyword_weight: 0.4
+            vector_setting:
+              embedding_model_name: gemini-embedding-2-preview
+              embedding_provider_name: langgenius/gemini/google
+              vector_weight: 0.6
+        query_variable_selector:
+        - '1776318200799'
+        - check_list
+        retrieval_mode: multiple
+        selected: false
+        title: Knowledge actual value
+        type: knowledge-retrieval
+      height: 92
+      id: '1778647631556'
+      position:
+        x: 4508.880656342613
+        y: 625.7214613197373
+      positionAbsolute:
+        x: 4508.880656342613
+        y: 625.7214613197373
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        code: "import json\nimport re\n\ndef main(check_list, knowledge_raw, knowledge_definitions)\
+          \ -> dict:\n    try:\n        if isinstance(knowledge_definitions, str)\
+          \ and knowledge_definitions.strip():\n            definitions_dict = json.loads(knowledge_definitions)\n\
+          \        elif isinstance(knowledge_definitions, dict):\n            definitions_dict\
+          \ = knowledge_definitions\n        else:\n            definitions_dict =\
+          \ {}\n\n        if \"data\" in definitions_dict:\n            definitions_dict\
+          \ = definitions_dict[\"data\"]\n\n        if isinstance(check_list, str)\
+          \ and check_list.strip():\n            target_list = json.loads(check_list)\n\
+          \        else:\n            target_list = check_list if isinstance(check_list,\
+          \ list) else []\n\n    except Exception as e:\n        return {\"organized_json\"\
+          : f\"-- Lỗi Parse dữ liệu: {str(e)}\"}\n\n    # 2. Xây dựng col_map chỉ\
+          \ lấy phần Definition sau dấu |\n    col_map = {}\n    for table_name, table_info\
+          \ in definitions_dict.items():\n        if isinstance(table_info, dict)\
+          \ and \"columns\" in table_info:\n            col_map[table_name] = {}\n\
+          \            for col_entry in table_info[\"columns\"]:\n               \
+          \ if \":\" in col_entry:\n                    c_name, c_rest = col_entry.split(\"\
+          :\", 1)\n                    c_name = c_name.strip()\n                 \
+          \   \n                    # CHỈ LẤY PHẦN ĐỊNH NGHĨA PHÍA SAU DẤU \"|\"\n\
+          \                    if '|' in c_rest:\n                        definition\
+          \ = c_rest.split('|')[1].strip()\n                    else:\n          \
+          \              definition = c_rest.strip()\n                    \n     \
+          \               # XÓA BỎ GHI CHÚ TRONG NGOẶC ĐƠN CHÍNH XÁC HƠN\n       \
+          \             definition = re.sub(r'\\(.*?\\)', '', definition).strip()\n\
+          \                    definition = definition.replace('\\n', ' ').strip()\n\
+          \                    \n                    col_map[table_name][c_name] =\
+          \ definition\n\n    table_meta = {}\n    for table_name, table_info in definitions_dict.items():\n\
+          \        if isinstance(table_info, dict):\n            table_meta[table_name]\
+          \ = {\n                \"description\": table_info.get(\"description\",\
+          \ \"Dữ liệu metadata từ hệ thống\"),\n                \"type\": table_info.get(\"\
+          type\", \"FACT\").upper()\n            }\n\n    targets = {}\n    for item\
+          \ in target_list:\n        t_name = item.get('table')\n        c_name =\
+          \ item.get('column')\n        if t_name and c_name:\n            if t_name\
+          \ not in targets:\n                targets[t_name] = {}\n            targets[t_name][c_name]\
+          \ = item.get('type', 'Check giá trị User')\n\n    extracted_data = {}\n\
+          \    raw_list = knowledge_raw if isinstance(knowledge_raw, list) else []\n\
+          \    \n    for chunk in raw_list:\n        content = chunk.get('content',\
+          \ '')\n        matches = re.finditer(r'\"([^\"]+)\":\\s*\\{.*?\\\"values\\\
+          \":\\s*\\[(.*?)\\]', content, re.DOTALL)\n        for m in matches:\n  \
+          \          t_name = m.group(1)\n            if t_name in targets:\n    \
+          \            if t_name not in extracted_data: \n                    extracted_data[t_name]\
+          \ = []\n                \n                val_content = m.group(2)\n   \
+          \             v_lines = re.findall(r'\"([^\"]+?):\\s*(.*?)\"', val_content)\n\
+          \                \n                for c_name, vals in v_lines:\n      \
+          \              c_name = c_name.strip()\n                    if c_name in\
+          \ targets[t_name]:\n                        final_def = col_map.get(t_name,\
+          \ {}).get(c_name, \"N/A\")\n                        \n                 \
+          \       extracted_data[t_name].append({\n                            \"\
+          column\": c_name,\n                            \"definition\": final_def,\n\
+          \                            \"type\": targets[t_name][c_name],\n      \
+          \                      \"values\": vals.strip()\n                      \
+          \  })\n\n    output = [\"# METADATA HƯỚNG DẪN FILTER DỮ LIỆU\\n\"]\n   \
+          \ \n    strict_block = definitions_dict.get(\"strict_logic_block\")\n  \
+          \  if strict_block: \n        output.append(strict_block + \"\\n---\")\n\
+          \n    for t_name in targets.keys():\n        if t_name not in extracted_data\
+          \ and t_name not in col_map:\n            continue\n            \n     \
+          \   output.append(f\"## TABLE: {t_name}\")\n        meta = table_meta.get(t_name,\
+          \ {})\n        t_desc = meta.get(\"description\", \"Dữ liệu metadata từ\
+          \ hệ thống\")\n        t_type = meta.get(\"type\", \"FACT\")\n        output.append(f\"\
+          **Type**: {t_type} | **Description**: {t_desc}\\n\")\n        \n       \
+          \ has_content = False\n        columns = extracted_data.get(t_name, [])\n\
+          \        \n        for section_type, section_title, section_emoji in [\n\
+          \            ('Check giá trị User', 'CÁC CỘT CẦN CHECK VỚI GIÁ TRỊ USER',\
+          \ '\U0001F50D'),\n            ('Lưu ý từ định nghĩa', 'CÁC CỘT CẦN LƯU Ý',\
+          \ '\U0001F6A9')\n        ]:\n            cols = [c for c in columns if c['type']\
+          \ == section_type]\n            if cols:\n                has_content =\
+          \ True\n                output.append(f\"### {section_emoji} {section_title}\"\
+          )\n                for c in cols:\n                    label = \"Giá trị\
+          \ hiện có\" if any(x in t_name.lower() for x in [\"sale\", \"gt\", \"fact\"\
+          ]) else \"Dữ liệu mẫu\"\n                    output.append(f\"- **{c['column']}\
+          \ ({c['definition']})** | {label}: ({c['values']})\")\n                output.append(\"\
+          \")\n        \n        if not has_content:\n            output.append(\"\
+          *Không có cột yêu cầu check đặc biệt.*\\n\")\n            \n        output.append(\"\
+          ---\\n\")\n\n    return {\"organized_json\": \"\\n\".join(output)}"
+        code_language: python3
+        desc: ''
+        outputs:
+          organized_json:
+            children: null
+            type: string
+        selected: false
+        title: Code final actual value
+        type: code
+        variables:
+        - value_selector:
+          - '1776318200799'
+          - check_list
+          value_type: string
+          variable: check_list
+        - value_selector:
+          - '1778647631556'
+          - result
+          value_type: array[object]
+          variable: knowledge_raw
+        - value_selector:
+          - '1775878938933'
+          - final_metadata
+          value_type: object
+          variable: knowledge_definitions
+      height: 54
+      id: '1778648172125'
+      position:
+        x: 4808.496915849101
+        y: 625.7214613197373
+      positionAbsolute:
+        x: 4808.496915849101
+        y: 625.7214613197373
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1776392593494'
+          - text
+          variable_selector:
+          - conversation
+          - last_adjustment_sql
+          write_mode: over-write
+        selected: false
+        title: Variable update SQL
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1778750081046'
+      position:
+        x: 629.8447745425268
+        y: 946.4430176590824
+      positionAbsolute:
+        x: 629.8447745425268
+        y: 946.4430176590824
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1776315329376'
+          - text
+          variable_selector:
+          - conversation
+          - last_generated_sql
+          write_mode: over-write
+        selected: false
+        title: Variable New SQL
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1778758913768'
+      position:
+        x: 5412.997746635268
+        y: 769.6481112857322
+      positionAbsolute:
+        x: 5412.997746635268
+        y: 769.6481112857322
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    - data:
+        desc: ''
+        items:
+        - input_type: variable
+          operation: over-write
+          value:
+          - '1776314865129'
+          - text
+          variable_selector:
+          - conversation
+          - draft_sql
+          write_mode: over-write
+        selected: false
+        title: Variable Draft SQL
+        type: assigner
+        version: '2'
+      height: 86
+      id: '1778821350572'
+      position:
+        x: 5412.997746635268
+        y: 894.6481112857322
+      positionAbsolute:
+        x: 5412.997746635268
+        y: 894.6481112857322
+      selected: false
+      sourcePosition: right
+      targetPosition: left
+      type: custom
+      width: 244
+    viewport:
+      x: 893.1080723015244
+      y: -51.826263492476755
+      zoom: 0.7371346086455532
