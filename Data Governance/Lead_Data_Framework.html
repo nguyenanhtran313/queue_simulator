@@ -1,0 +1,473 @@
+<title>Lead Data — Framework 90 ngày: Governance, Data Quality, Remodel 2000 bảng</title>
+<style>
+:root{
+  --primary900:#174EA6; --primary500:#1A73E8; --primary100:#D2E3FC; --primary50:#E8F0FE;
+  --gray900:#202124; --gray700:#5F6368; --gray400:#BDC1C6; --gray200:#E8EAED; --gray50:#F3F4F6; --white:#FFFFFF;
+  --success:#1E8E3E; --warning:#F29900; --danger:#D93025; --pink:#D81B60;
+  --shadow:0 1px 3px rgba(0,0,0,.12), 0 1px 2px rgba(0,0,0,.24);
+}
+*{box-sizing:border-box;}
+body{margin:0;background:var(--gray50);color:var(--gray900);font-family:Roboto,"Segoe UI",system-ui,-apple-system,Arial,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased;}
+::selection{background:var(--primary100);color:var(--primary900);}
+a{color:var(--primary500);}
+.skip-link{position:absolute;left:-999px;top:0;background:var(--primary500);color:#fff;padding:.6rem 1rem;z-index:100;}
+.skip-link:focus{left:0;}
+
+.top-nav{position:sticky;top:0;z-index:50;background:var(--white);border-bottom:1px solid var(--gray200);}
+.top-nav-inner{display:flex;align-items:center;flex-wrap:wrap;gap:.6rem 2rem;padding:.8rem clamp(1.5rem,3vw,3rem);}
+.top-nav-brand{font-weight:500;white-space:nowrap;flex-shrink:0;color:var(--gray900);}
+.top-nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:.2rem 1.4rem;}
+.top-nav a{display:inline-block;padding:.4rem .1rem;color:var(--gray700);text-decoration:none;border-bottom:3px solid transparent;font-size:.88rem;}
+.top-nav a.active{color:var(--primary900);border-bottom-color:var(--primary500);font-weight:500;}
+
+.page-header{max-width:min(2400px,98vw);margin:0 auto;padding:2.5rem clamp(1.5rem,4vw,3rem) 0;display:flex;flex-direction:column;gap:.6rem;}
+.eyebrow{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--primary500);font-weight:700;}
+h1{font-weight:500;font-size:clamp(1.6rem,3vw,2.2rem);margin:0;text-wrap:balance;}
+.page-header .lede{max-width:80ch;color:var(--gray700);font-size:.98rem;}
+.page-header .lede b{color:var(--gray900);font-weight:600;}
+
+.content-wrap{max-width:min(2400px,98vw);margin:0 auto;padding:1.5rem clamp(1.5rem,4vw,3rem) 5rem;display:flex;flex-direction:column;gap:3rem;}
+section{display:flex;flex-direction:column;gap:1.25rem;scroll-margin-top:70px;}
+.section-head{display:flex;flex-direction:column;gap:.3rem;}
+.section-head .eyebrow{color:var(--gray700);}
+h2{font-weight:500;font-size:1.4rem;margin:0;}
+.section-lede{color:var(--gray700);max-width:80ch;font-size:.94rem;}
+
+/* KPI hero row */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1.25rem;}
+.kpi-card{background:var(--white);border-radius:8px;box-shadow:var(--shadow);padding:1.25rem 1.4rem;display:flex;flex-direction:column;gap:.3rem;border-left:4px solid var(--primary500);}
+.kpi-card .label{font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--gray700);}
+.kpi-card .hero{font-size:2.1rem;font-weight:300;color:var(--gray900);font-variant-numeric:tabular-nums;line-height:1;}
+.kpi-card .hero small{font-size:1rem;color:var(--gray400);font-weight:400;}
+.kpi-card .sub{font-size:.78rem;color:var(--gray700);}
+
+/* generic card grid */
+.grid{display:grid;gap:1.25rem;}
+.grid.cols-3{grid-template-columns:repeat(auto-fit,minmax(260px,1fr));}
+.grid.cols-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr));}
+.card{background:var(--white);border-radius:8px;box-shadow:var(--shadow);padding:1.4rem;display:flex;flex-direction:column;gap:.5rem;}
+.card.accent-blue{border-left:4px solid var(--primary500);}
+.card.accent-warn{border-left:4px solid var(--warning);}
+.card.accent-pink{border-left:4px solid var(--pink);}
+.card.accent-success{border-left:4px solid var(--success);}
+.card .tag{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--gray700);font-weight:700;}
+.card h3{margin:0;font-size:1.02rem;font-weight:600;}
+.card p{margin:0;color:var(--gray700);font-size:.88rem;}
+.card .metric{font-size:1.6rem;font-weight:300;color:var(--gray900);font-variant-numeric:tabular-nums;}
+
+/* pipeline flow */
+.pipeline{display:flex;flex-wrap:wrap;gap:0;align-items:stretch;}
+.pipe-node{background:var(--white);border-radius:8px;box-shadow:var(--shadow);padding:1rem 1.15rem;flex:1 1 150px;min-width:150px;display:flex;flex-direction:column;gap:.3rem;position:relative;}
+.pipe-node .tag{font-size:.62rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gray700);font-weight:700;}
+.pipe-node h4{margin:0;font-size:.92rem;font-weight:600;}
+.pipe-node p{margin:0;font-size:.78rem;color:var(--gray700);}
+.pipe-arrow{display:flex;align-items:center;justify-content:center;padding:0 .5rem;color:var(--gray400);font-size:1.1rem;flex:0 0 auto;}
+.pipe-node .gate{margin-top:.4rem;padding-top:.4rem;border-top:1px dashed var(--gray200);font-size:.74rem;color:var(--primary900);font-weight:600;}
+@media (max-width:900px){.pipeline{flex-direction:column;}.pipe-arrow{transform:rotate(90deg);padding:.2rem 0;}}
+
+/* tables */
+.tablewrap{overflow-x:auto;background:var(--white);border-radius:8px;box-shadow:var(--shadow);}
+table{width:100%;border-collapse:collapse;font-size:.86rem;min-width:560px;}
+th{text-align:left;font-size:.68rem;letter-spacing:.06em;text-transform:uppercase;color:var(--gray700);font-weight:700;padding:.85rem 1rem;border-bottom:1px solid var(--gray200);white-space:nowrap;}
+td{padding:.75rem 1rem;border-bottom:1px solid var(--gray200);color:var(--gray900);vertical-align:top;}
+tr:last-child td{border-bottom:none;}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums;}
+.pill{display:inline-block;padding:.15rem .55rem;border-radius:999px;font-size:.72rem;font-weight:600;}
+.pill.p0{background:#fce8e6;color:var(--danger);}
+.pill.p1{background:var(--primary50);color:var(--primary900);}
+.pill.p2{background:#fef7e0;color:#a15c00;}
+.pill.p3{background:var(--gray200);color:var(--gray700);}
+
+/* timeline */
+.timeline{display:flex;flex-direction:column;gap:0;}
+.tl-phase{display:grid;grid-template-columns:180px 1fr;gap:1.5rem;padding:1.1rem 0;border-bottom:1px solid var(--gray200);}
+.tl-phase:last-child{border-bottom:none;}
+.tl-when{display:flex;flex-direction:column;gap:.15rem;}
+.tl-when .range{font-weight:600;color:var(--gray900);font-size:.92rem;}
+.tl-when .dur{font-size:.74rem;color:var(--gray700);}
+.tl-body h4{margin:0 0 .3rem;font-size:1rem;font-weight:600;}
+.tl-body p{margin:0 0 .5rem;color:var(--gray700);font-size:.87rem;max-width:90ch;}
+.tl-goals{display:flex;flex-wrap:wrap;gap:.4rem;}
+.tl-goals span{background:var(--primary50);color:var(--primary900);font-size:.76rem;padding:.2rem .6rem;border-radius:6px;font-weight:500;}
+
+/* diagram: policy stack */
+.stack{display:flex;flex-direction:column;gap:.6rem;max-width:640px;}
+.stack .layer{background:var(--white);border-radius:8px;box-shadow:var(--shadow);padding:.9rem 1.2rem;display:flex;gap:1rem;align-items:baseline;}
+.stack .layer .name{font-weight:600;min-width:110px;color:var(--primary900);}
+.stack .layer p{margin:0;font-size:.85rem;color:var(--gray700);}
+
+.callout{background:var(--white);border-radius:8px;box-shadow:var(--shadow);padding:1.2rem 1.4rem;border-left:4px solid var(--warning);}
+.callout .tag{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:#a15c00;font-weight:700;}
+.callout p{margin:.3rem 0 0;font-size:.9rem;color:var(--gray900);}
+.callout b{font-weight:600;}
+
+footer{max-width:min(2400px,98vw);margin:0 auto;padding:0 clamp(1.5rem,4vw,3rem) 3rem;color:var(--gray400);font-size:.78rem;}
+
+@media (prefers-reduced-motion: reduce){*{transition:none !important;}}
+</style>
+
+<a class="skip-link" href="#main">Bỏ qua điều hướng</a>
+
+<header class="top-nav">
+  <div class="top-nav-inner">
+    <span class="top-nav-brand">Lead Data · Framework 90 ngày</span>
+    <nav aria-label="Mục lục">
+      <ul>
+        <li><a href="#tiepcan" data-toc>Tiếp cận</a></li>
+        <li><a href="#hientrang" data-toc>Hiện trạng &amp; gate</a></li>
+        <li><a href="#governance" data-toc>Governance</a></li>
+        <li><a href="#dq" data-toc>Data Quality</a></li>
+        <li><a href="#modeling" data-toc>2000 bảng</a></li>
+        <li><a href="#timeline" data-toc>Timeline</a></li>
+        <li><a href="#tochuc" data-toc>Tổ chức &amp; KPI</a></li>
+        <li><a href="#tuandau" data-toc>Tuần đầu</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<header class="page-header">
+  <span class="eyebrow">Nội bộ · dùng để trình bày với Head of Data</span>
+  <h1>Framework cho 3 mandate: Governance toàn luồng · Data Quality Scorecard · Remodel 2000 bảng Staging/Gold</h1>
+  <p class="lede">Ba việc này <b>không tách rời</b> — Governance là khung luật chơi, Data Quality là cách đo "luật chơi có được tuân thủ không", và remodel 2000 bảng là nơi cả hai được áp dụng vào thực tế. Nguyên tắc xuyên suốt: <b>không làm đều tay trên 2000 bảng</b> — inventory trước, ưu tiên theo mức dùng thực tế, quick-win trong 90 ngày đầu để có credibility, rồi mới scale.</p>
+</header>
+
+<div class="content-wrap">
+
+<section id="tiepcan">
+  <div class="section-head">
+    <span class="eyebrow">0 · Cách tiếp cận</span>
+    <h2>Bốn nguyên tắc chỉ đạo</h2>
+    <p class="section-lede">Rút từ DAMA DMBOK2 (đã có trong <i>Data Governance/</i> của repo) và thực tế kiến trúc hiện có (Kafka → Spark → GCS Bronze → Iceberg Silver/Gold → Dremio → Power BI/DS).</p>
+  </div>
+  <div class="grid cols-3">
+    <div class="card accent-blue">
+      <span class="tag">01 · Business-driven, không phải IT-driven</span>
+      <h3>Governance đi theo giá trị business, không theo số lượng bảng</h3>
+      <p>DG do IT dẫn dắt sẽ bị coi là "thêm việc". Mọi quyết định ưu tiên phải trả lời được: bảng/domain này ảnh hưởng quyết định kinh doanh nào, trị giá bao nhiêu.</p>
+    </div>
+    <div class="card accent-warn">
+      <span class="tag">02 · Không làm đều tay trên 2000 bảng</span>
+      <h3>Inventory + tiering trước khi động tay remodel</h3>
+      <p>2000 bảng không thể remodel thủ công trong thời gian hợp lý. Phải phân tầng theo mức dùng thực tế (Dremio query log, Power BI lineage) trước — xem mục 4.</p>
+    </div>
+    <div class="card accent-pink">
+      <span class="tag">03 · Quick win trong 90 ngày</span>
+      <h3>Một case study đo được impact bằng tiền, trong quý đầu</h3>
+      <p>Trước khi xin ngân sách/headcount cho chương trình 12-18 tháng, cần 1 bằng chứng cụ thể: dữ liệu lỗi ở đâu, tốn bao nhiêu, sửa xong tiết kiệm/tăng thu bao nhiêu.</p>
+    </div>
+    <div class="card accent-success">
+      <span class="tag">04 · Chặn lỗi ở nguồn, không vá ở Gold</span>
+      <h3>DQ gate càng gần đầu pipeline càng rẻ</h3>
+      <p>Vá dữ liệu sai sau khi Power BI đã dùng số sai tốn kém gấp nhiều lần so với chặn ở Bronze/Silver. Đây cũng là hướng đã được note sẵn trong kiến trúc OneMount (schema registry, Great Expectations/Soda).</p>
+    </div>
+  </div>
+</section>
+
+<section id="hientrang">
+  <div class="section-head">
+    <span class="eyebrow">1 · Hiện trạng &amp; điểm gắn Governance</span>
+    <h2>Luồng dữ liệu hiện tại và 5 "gate" cần gắn Governance/DQ vào</h2>
+    <p class="section-lede">Không tạo tầng mới — gắn checkpoint governance/DQ vào đúng luồng ELT đang chạy: Kafka → Spark Streaming → GCS Bronze → Spark ETL → Iceberg Silver/Gold → Dremio → Power BI / Data Scientist.</p>
+  </div>
+  <div class="pipeline">
+    <div class="pipe-node" style="border-top:3px solid var(--gray400)">
+      <span class="tag">Nguồn</span><h4>Kafka topics</h4>
+      <p>Sự kiện nghiệp vụ thô, nhiều hệ thống nguồn khác nhau.</p>
+      <div class="gate">Gate 1 · Schema registry + data contract</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node" style="border-top:3px solid var(--warning)">
+      <span class="tag">GCS · Bronze</span><h4>Raw Avro/Parquet</h4>
+      <p>Append-only, gần nguyên bản.</p>
+      <div class="gate">Gate 2 · Ownership + retention policy</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node" style="border-top:3px solid var(--primary500)">
+      <span class="tag">Spark ETL</span><h4>Dedup, join, validate</h4>
+      <p>Nơi tốn công remodel nhiều nhất.</p>
+      <div class="gate">Gate 3 · DQ test tự động (6 chiều)</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node" style="border-top:3px solid #f29900">
+      <span class="tag">Iceberg</span><h4>Silver / Gold</h4>
+      <p>2000 bảng nằm chủ yếu ở đây.</p>
+      <div class="gate">Gate 4 · Naming standard + Glossary tag</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node" style="border-top:3px solid var(--gray400)">
+      <span class="tag">Dremio</span><h4>Semantic layer</h4>
+      <p>Virtual dataset, reflection.</p>
+      <div class="gate">Gate 5 · Access control + lineage</div>
+    </div>
+    <div class="pipe-arrow">→</div>
+    <div class="pipe-node" style="border-top:3px solid var(--success)">
+      <span class="tag">Tiêu thụ</span><h4>Power BI / DS</h4>
+      <p>Nơi lỗi dữ liệu gây thiệt hại thấy được.</p>
+    </div>
+  </div>
+  <div class="callout">
+    <span class="tag">Vì sao đi theo gate, không đi theo "làm hết 2000 bảng cùng lúc"</span>
+    <p>Mỗi gate là một chỗ <b>rẻ để chặn lỗi</b>. Gate 1–2 (nguồn/Bronze) chặn được lỗi cho toàn bộ pipeline phía sau chỉ với một lần đầu tư — ưu tiên hơn nhiều so với sửa tay từng bảng Gold.</p>
+  </div>
+</section>
+
+<section id="governance">
+  <div class="section-head">
+    <span class="eyebrow">2 · Mandate 1 — Data Governance Framework</span>
+    <h2>Ai quyết định gì, và luật được viết ở đâu</h2>
+    <p class="section-lede">Mô hình vận hành: <b>Federated</b> — Lead Data giữ chuẩn chung, nhưng mỗi domain (Product/Order, Finance, Merchant, Marketing…) có Business Data Steward riêng chịu trách nhiệm định nghĩa. Trung tâm là DAMA Wheel: Governance không tự làm modeling/DQ, mà điều phối và ra chuẩn cho tất cả.</p>
+  </div>
+
+  <div class="grid cols-3">
+    <div class="card accent-blue">
+      <span class="tag">Data Governance Council</span>
+      <h3>Cấp phê duyệt cuối cùng</h3>
+      <p>Head of Data (sponsor) + Lead Data (điều phối) + đại diện business mỗi domain lớn. Họp định kỳ, xử lý escalation không giải quyết được ở cấp phòng ban (vd: 2 phòng định nghĩa "khách hàng active" khác nhau).</p>
+    </div>
+    <div class="card accent-warn">
+      <span class="tag">Data Stewards</span>
+      <h3>3 loại, không trộn vai trò</h3>
+      <p><b>Executive</b> (Head of Data — ngồi Council) · <b>Business/Enterprise Steward</b> (chuyên gia nghiệp vụ mỗi domain, định nghĩa business rule, chính là Data Owner) · <b>Technical Steward</b> (DE/Analytics Engineer, thực thi trong pipeline).</p>
+    </div>
+    <div class="card accent-pink">
+      <span class="tag">Business Glossary</span>
+      <h3>Một định nghĩa, một nguồn sự thật</h3>
+      <p>Mọi metric/entity lặp lại nhiều nơi (Active Customer, GMV, Order…) phải có đúng 1 định nghĩa, gắn vào bảng Gold tương ứng qua tag metadata. Không cho phép báo cáo tự định nghĩa lại.</p>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:.5rem;">
+    <h3 style="margin:0;font-size:1.05rem;font-weight:600;">Ba tầng luật — đừng lẫn Policy với Procedure</h3>
+  </div>
+  <div class="stack">
+    <div class="layer"><span class="name">Policy</span><p>Quy định "phải/không được làm gì" — vd: mọi bảng Gold phục vụ báo cáo tài chính phải có Business Steward ký duyệt định nghĩa trước khi publish.</p></div>
+    <div class="layer"><span class="name">Standard</span><p>Chuẩn cụ thể để tuân thủ Policy — vd: naming convention theo ISO 11179, ngưỡng DQ score tối thiểu 85/100 để một bảng được gắn nhãn "production-ready".</p></div>
+    <div class="layer"><span class="name">Procedure</span><p>Hướng dẫn từng bước — vd: quy trình xin thêm 1 bảng mới vào Gold, quy trình leo thang khi phát hiện lỗi định nghĩa xung đột.</p></div>
+  </div>
+
+  <div class="callout">
+    <span class="tag">Gắn vào SDLC, không phải một dự án riêng</span>
+    <p>Theo đúng use-case DMBOK2 Ch.4: cài một bước <b>Design Review</b> bắt buộc khi bất kỳ team nào (kể cả Agile squad) tạo bảng mới ở Silver/Gold — kiểm tra có tái dùng conformed dimension sẵn có không, có đúng naming standard không. Đây là cách duy nhất để 2000 bảng không tiếp tục phình ra ngoài tầm kiểm soát trong lúc đang remodel.</p>
+  </div>
+</section>
+
+<section id="dq">
+  <div class="section-head">
+    <span class="eyebrow">3 · Mandate 2 — Data Quality Scorecard</span>
+    <h2>Chấm điểm thế nào, và chứng minh impact bằng gì</h2>
+    <p class="section-lede">DQ score phải là một con số duy nhất, tính tự động, gắn được vào từng bảng — không phải một bảng Excel đánh giá thủ công.</p>
+  </div>
+
+  <div class="grid cols-3">
+    <div class="card">
+      <span class="tag">Completeness · trọng số 20%</span>
+      <h3>% giá trị không NULL ở cột bắt buộc</h3>
+      <p>Vd: <code>order_id</code>, <code>customer_id</code> không được rỗng.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Validity · 20%</span>
+      <h3>% giá trị đúng kiểu/miền giá trị</h3>
+      <p>Vd: <code>status</code> chỉ nằm trong enum cho phép, <code>amount</code> &gt; 0.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Uniqueness · 15%</span>
+      <h3>% bản ghi không trùng theo business key</h3>
+      <p>Phát hiện lỗi dedup còn sót ở Spark ETL.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Consistency · 15%</span>
+      <h3>Khớp giữa các bảng liên quan</h3>
+      <p>Vd: tổng doanh thu ở Gold.revenue_daily phải khớp Silver.orders cộng dồn.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Timeliness · 15%</span>
+      <h3>Độ trễ thực tế so với SLA công bố</h3>
+      <p>Bảng cam kết refresh 06:00 mà 09:00 mới có dữ liệu → trừ điểm.</p>
+    </div>
+    <div class="card">
+      <span class="tag">Accuracy · 15%</span>
+      <h3>Đối chiếu mẫu với nguồn/nghiệp vụ xác nhận</h3>
+      <p>Chiều khó tự động hoá nhất — cần Business Steward xác nhận định kỳ trên mẫu.</p>
+    </div>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Domain (ví dụ)</th><th>Tầng</th><th class="num">DQ Score</th><th>Vấn đề chính</th><th>Trạng thái</th></tr></thead>
+      <tbody>
+        <tr><td>Silver.orders</td><td>Silver</td><td class="num">92</td><td>—</td><td><span class="pill p3">Ổn định</span></td></tr>
+        <tr><td>Gold.revenue_daily</td><td>Gold</td><td class="num">78</td><td>Lệch 3% so Silver do double-count refund</td><td><span class="pill p2">Cần sửa</span></td></tr>
+        <tr><td>Gold.merchant_active</td><td>Gold</td><td class="num">54</td><td>2 định nghĩa "active" khác nhau giữa Finance/Marketing</td><td><span class="pill p0">Ưu tiên cao</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="callout">
+    <span class="tag">Chứng minh impact đến biz — công thức dùng để thuyết phục Head of Data</span>
+    <p><b>Chi phí dữ liệu lỗi = </b>Chi phí làm lại (giờ công DE/DA đi vá số + họp giải trình số sai) <b>+</b> Chi phí quyết định sai (vd: chạy campaign nhắm sai tập khách hàng do lỗi định dạng) <b>+</b> Chi phí uy tín (báo cáo bị nghi ngờ, business ngừng tin dùng dashboard, quay lại hỏi Excel thủ công). Chọn 1-2 domain có DQ score thấp nhất và ảnh hưởng tài chính rõ nhất (thường là Finance/Revenue) làm case study định lượng đầu tiên — đây chính là "quick win 90 ngày" ở mục Timeline.</p>
+  </div>
+
+  <div class="callout" style="border-left-color:var(--primary500);">
+    <span class="tag">Công cụ đề xuất</span>
+    <p>Great Expectations hoặc Soda chạy như một bước trong Spark ETL job (Gate 3) và một job riêng đo Gold — tự sinh DQ score, đẩy vào 1 bảng <code>meta.dq_scorecard</code> để dashboard hoá trên Power BI. Không xây công cụ riêng.</p>
+  </div>
+</section>
+
+<section id="modeling">
+  <div class="section-head">
+    <span class="eyebrow">4 · Mandate 3 — Remodel Staging/Gold cho 2000 bảng</span>
+    <h2>Không remodel 2000 bảng — phân tầng rồi remodel theo tầng</h2>
+    <p class="section-lede">Bước đầu tiên luôn là <b>inventory</b>: kéo log truy vấn Dremio (reflection hit) + lineage dataset Power BI để biết bảng nào thực sự đang được dùng, dùng bao nhiêu, ai dùng.</p>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Tầng</th><th>Tiêu chí</th><th class="num">Ước tính số bảng</th><th>Hành động</th><th>Ưu tiên</th></tr></thead>
+      <tbody>
+        <tr><td>Tier 0 — Core/Master</td><td>Conformed dimension dùng chung nhiều domain (Customer, Merchant, Calendar, Product)</td><td class="num">~20–30</td><td>Remodel thủ công, chuẩn hoá trước tiên — mọi bảng khác phụ thuộc vào đây</td><td><span class="pill p0">Bắt buộc</span></td></tr>
+        <tr><td>Tier 1 — High-usage Gold</td><td>Top bảng theo query count/reflection hit, nuôi dashboard điều hành</td><td class="num">~150–200</td><td>Remodel theo template, review Business Steward</td><td><span class="pill p1">Cao</span></td></tr>
+        <tr><td>Tier 2 — Departmental</td><td>Dùng đều đặn trong 1 phòng ban, tần suất truy vấn trung bình</td><td class="num">~500–700</td><td>Remodel bán tự động (codegen từ standard), rải theo quý</td><td><span class="pill p2">Trung bình</span></td></tr>
+        <tr><td>Tier 3 — Long-tail/mồ côi</td><td>Query = 0 trong 90 ngày, không owner xác nhận</td><td class="num">~1000+</td><td><b>Không remodel</b> — archive hoặc xin xoá sau thông báo 30 ngày</td><td><span class="pill p3">Deprecate</span></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="grid cols-2">
+    <div class="card accent-blue">
+      <span class="tag">Chuẩn modeling áp dụng</span>
+      <h3>Star schema + Conformed Dimensions cho Gold</h3>
+      <p>Fact table chứa số đo, Dimension dùng chung giữa các domain (bài học DMBOK2 Ch.5: 2 phòng ban tự tạo 2 bảng Calendar khác nhau → số không khớp khi gộp báo cáo). Silver giữ dạng chuẩn hoá (3NF-lite) cho reuse.</p>
+    </div>
+    <div class="card accent-warn">
+      <span class="tag">Tự động hoá thay vì làm tay</span>
+      <h3>dbt/SQLMesh cho tầng Silver → Gold</h3>
+      <p>Đã được note sẵn là hướng cải tiến trong kiến trúc OneMount hiện tại. Version control, test tự động, lineage tự sinh — điều kiện tiên quyết để remodel 700+ bảng Tier 2 khả thi trong thời gian hợp lý, thay vì Spark job viết tay từng bảng.</p>
+    </div>
+  </div>
+</section>
+
+<section id="timeline">
+  <div class="section-head">
+    <span class="eyebrow">5 · Timeline</span>
+    <h2>90 ngày quick-start, rồi 12–18 tháng theo tầng</h2>
+    <p class="section-lede">Chương trình đủ lớn (governance + DQ + 2000 bảng) thực tế chạy 12–18 tháng. 90 ngày đầu quyết định có xin được ngân sách/headcount cho phần còn lại hay không.</p>
+  </div>
+
+  <div class="timeline">
+    <div class="tl-phase">
+      <div class="tl-when"><span class="range">Tuần 1–4</span><span class="dur">Discovery</span></div>
+      <div class="tl-body">
+        <h4>Inventory &amp; baseline</h4>
+        <p>Kéo danh sách 2000 bảng + query log Dremio + lineage Power BI. Chấm DQ score sơ bộ toàn bộ Tier 0/1. Phỏng vấn nhanh chủ sở hữu từng domain lớn để lập Business Glossary khung.</p>
+        <div class="tl-goals"><span>Bảng inventory + tiering</span><span>DQ baseline Tier 0/1</span><span>Danh sách domain owner</span></div>
+      </div>
+    </div>
+    <div class="tl-phase">
+      <div class="tl-when"><span class="range">Tháng 2–3</span><span class="dur">90 ngày (Phase 1)</span></div>
+      <div class="tl-body">
+        <h4>Foundation + 1 quick win đo được bằng tiền</h4>
+        <p>Thành lập Data Governance Council, ban hành Policy/Standard v1. Remodel xong toàn bộ Tier 0. Chọn 1 domain (khuyến nghị: Finance/Revenue) làm case study DQ đầy đủ — từ score thấp → sửa → định lượng impact.</p>
+        <div class="tl-goals"><span>DG Council họp lần 1</span><span>Tier 0 remodel xong</span><span>1 case study impact bằng tiền</span></div>
+      </div>
+    </div>
+    <div class="tl-phase">
+      <div class="tl-when"><span class="range">Tháng 4–6</span><span class="dur">Phase 2</span></div>
+      <div class="tl-body">
+        <h4>Scale sang Tier 1 + gate DQ tự động</h4>
+        <p>DQ check chạy tự động trong pipeline (Gate 3), chặn deploy nếu score dưới ngưỡng. Remodel hết Tier 1. Stewardship model nhân rộng ra các domain còn lại.</p>
+        <div class="tl-goals"><span>DQ gate CI/CD</span><span>Tier 1 remodel xong</span><span>Steward phủ hết domain lớn</span></div>
+      </div>
+    </div>
+    <div class="tl-phase">
+      <div class="tl-when"><span class="range">Tháng 7–12</span><span class="dur">Phase 3</span></div>
+      <div class="tl-body">
+        <h4>Tier 2 + governance vào SDLC</h4>
+        <p>Codegen/dbt hoá để remodel Tier 2 theo lô hàng quý. Design Review trở thành bước bắt buộc khi tạo bảng mới. DQ dashboard toàn công ty trên Power BI.</p>
+        <div class="tl-goals"><span>Tier 2 remodel xong</span><span>Design Review bắt buộc</span><span>DQ dashboard công khai</span></div>
+      </div>
+    </div>
+    <div class="tl-phase">
+      <div class="tl-when"><span class="range">Tháng 12–18</span><span class="dur">Phase 4</span></div>
+      <div class="tl-body">
+        <h4>Dọn Tier 3 + đánh giá độ trưởng thành</h4>
+        <p>Archive/xoá bảng mồ côi sau thông báo. Đánh giá lại maturity toàn chương trình, điều chỉnh Policy dựa trên 1 năm vận hành thực tế.</p>
+        <div class="tl-goals"><span>Tier 3 dọn xong</span><span>Maturity assessment v2</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="tochuc">
+  <div class="section-head">
+    <span class="eyebrow">6 · Tổ chức, RACI &amp; KPI báo cáo Head of Data</span>
+    <h2>Ai làm gì, đo bằng gì</h2>
+  </div>
+
+  <div class="tablewrap">
+    <table>
+      <thead><tr><th>Hoạt động</th><th>Head of Data</th><th>Lead Data (bạn)</th><th>Business Steward</th><th>Technical Steward (DE)</th></tr></thead>
+      <tbody>
+        <tr><td>Duyệt Policy/Standard</td><td>A</td><td>R</td><td>C</td><td>C</td></tr>
+        <tr><td>Định nghĩa business term</td><td>I</td><td>C</td><td>R/A</td><td>I</td></tr>
+        <tr><td>Thực thi DQ check trong pipeline</td><td>I</td><td>A</td><td>C</td><td>R</td></tr>
+        <tr><td>Remodel bảng Silver/Gold</td><td>I</td><td>A</td><td>C</td><td>R</td></tr>
+        <tr><td>Escalation xung đột định nghĩa</td><td>A</td><td>R</td><td>R</td><td>I</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <p class="section-lede" style="margin:-.5rem 0 0;">R = Thực hiện, A = Chịu trách nhiệm cuối, C = Được tham vấn, I = Được thông báo.</p>
+
+  <div class="kpis">
+    <div class="kpi-card"><span class="label">DQ score trung bình Tier 0/1</span><span class="hero">— <small>/100</small></span><span class="sub">Báo cáo Council hàng tháng</span></div>
+    <div class="kpi-card"><span class="label">% bảng có Steward xác nhận</span><span class="hero">— <small>%</small></span><span class="sub">Mục tiêu 100% Tier 0/1 cuối Phase 2</span></div>
+    <div class="kpi-card"><span class="label">Bảng Tier 3 đã archive</span><span class="hero">— <small>/~1000</small></span><span class="sub">Giảm nợ kỹ thuật, giảm chi phí lưu trữ</span></div>
+    <div class="kpi-card"><span class="label">Impact case study đầu tiên</span><span class="hero">— <small>VND</small></span><span class="sub">Chi phí dữ liệu lỗi đã định lượng &amp; xử lý</span></div>
+  </div>
+</section>
+
+<section id="tuandau">
+  <div class="section-head">
+    <span class="eyebrow">7 · Việc cụ thể trong 2 tuần đầu</span>
+    <h2>Mang gì tới cuộc gặp tiếp theo với Head of Data</h2>
+  </div>
+  <div class="grid cols-2">
+    <div class="card accent-blue">
+      <span class="tag">Tuần 1</span>
+      <h3>Xin quyền truy cập + kéo dữ liệu inventory</h3>
+      <p>Truy vấn Dremio query log / Power BI dataset usage để biết trong 2000 bảng, bao nhiêu bảng thực sự có người dùng trong 90 ngày gần nhất. Đây là con số đầu tiên gây ấn tượng nhất khi trình bày — thường 40-60% sẽ là long-tail gần như không ai đụng tới.</p>
+    </div>
+    <div class="card accent-warn">
+      <span class="tag">Tuần 2</span>
+      <h3>Đề xuất framework này + chọn 1 domain quick-win</h3>
+      <p>Trình bày đúng 3 mandate được ghép lại thành 1 chương trình (không phải 3 việc rời rạc), xin phê duyệt thành lập Data Governance Council và chọn domain đầu tiên (khuyến nghị Finance/Revenue vì impact dễ quy ra tiền nhất) để chạy case study DQ trong 90 ngày.</p>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<footer>
+  Khung tham chiếu: DAMA DMBOK2 (Data Governance/DG DAMA DMBOK2.md) · kiến trúc dữ liệu hiện tại (Basic DE/onemount_architecture.html) · checklist vận hành DE/DA (Data Governance/DG_Checklist_DE_DA.html).
+</footer>
+
+<script>
+(function(){
+  var links = document.querySelectorAll('.top-nav a[data-toc]');
+  var sections = Array.prototype.map.call(links, function(a){ return document.querySelector(a.getAttribute('href')); }).filter(Boolean);
+  if(!sections.length) return;
+  var map = {};
+  sections.forEach(function(s,i){ map[s.id] = links[i]; });
+  var obs = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      var link = map[entry.target.id];
+      if(!link) return;
+      if(entry.isIntersecting){
+        links.forEach(function(l){ l.classList.remove('active'); });
+        link.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-10% 0px -70% 0px' });
+  sections.forEach(function(s){ obs.observe(s); });
+})();
+</script>
