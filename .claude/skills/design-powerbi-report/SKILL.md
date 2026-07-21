@@ -3,7 +3,7 @@ name: design-powerbi-report
 description: Build or redesign a Power BI report page (via powerbi-report-mcp, PBIR format) following the "Merchant Hub / OMD DATA" operational-dashboard design language reverse-engineered from a real sample. Use whenever the user asks to create a new Power BI report/dashboard page, or to restyle one "giống Merchant Hub" / "theo mẫu dashboard cũ".
 ---
 
-Khi dựng hoặc redesign 1 report page Power BI qua `powerbi-report-mcp` (PBIR), áp dụng ngôn ngữ thiết kế dưới đây — rút ra từ dashboard mẫu "Merchant Hub / OMD DATA | T-SHOP" (`.claude/skills/powerbi-modeling-mcp/Merchant Hub.pdf`). Đây là bản tóm tắt đầy đủ, không cần mở lại PDF gốc trừ khi cần soi chi tiết pixel.
+Khi dựng hoặc redesign 1 report page Power BI qua `powerbi-report-mcp` (PBIR), áp dụng ngôn ngữ thiết kế dưới đây — ban đầu rút ra từ dashboard mẫu "Merchant Hub / OMD DATA | T-SHOP" (file mẫu đã bị xoá khỏi repo). Skill này là bản tóm tắt đầy đủ và là nguồn tham khảo duy nhất còn lại — không phụ thuộc file PDF gốc.
 
 ## 1. Khi nào dùng
 Dashboard vận hành (operational BI) nhiều widget, mật độ thông tin dày, dùng để theo dõi số liệu hàng ngày — khác với slide trình bày (`design-html-page` dùng cho HTML report/trang trình bày, ít widget hơn, nhiều khoảng trắng hơn).
