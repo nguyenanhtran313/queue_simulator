@@ -1,122 +1,197 @@
 ---
 name: design-powerbi-report
-description: Build or redesign a Power BI report page (via powerbi-report-mcp, PBIR format) following the "Merchant Hub / OMD DATA" operational-dashboard design language reverse-engineered from a real sample. Use whenever the user asks to create a new Power BI report/dashboard page, or to restyle one "giống Merchant Hub" / "theo mẫu dashboard cũ".
+description: Build or redesign a Power BI report page (via powerbi-report-mcp, PBIR format) following an operational-dashboard design language reverse-engineered from a real sample report, colored with this repo's Analytics Design System tone (Google Analytics / Data Studio). Use whenever the user asks to create a new Power BI report/dashboard page, or to restyle one "theo mẫu dashboard cũ".
 ---
 
-Khi dựng hoặc redesign 1 report page Power BI qua `powerbi-report-mcp` (PBIR), áp dụng ngôn ngữ thiết kế dưới đây — ban đầu rút ra từ dashboard mẫu "Merchant Hub / OMD DATA | T-SHOP" (file mẫu đã bị xoá khỏi repo), sau đó **đối chiếu lại với report PBIR thật** (`Merchant Hub.pbip`) để lấy toạ độ và tên visual chính xác. Mọi mục dưới đây đều nêu rõ **toạ độ X,Y bắt đầu** và **tên/Id visual Power BI** dùng để dựng — không mô tả chung chung nữa.
+Khi dựng hoặc redesign 1 report page Power BI qua `powerbi-report-mcp` (PBIR), áp dụng ngôn ngữ thiết kế dưới đây. Đây là **quy tắc thiết kế/style** (property JSON quyết định hình dáng — màu, font, border, padding...), không phải bộ toạ độ cố định — **AI tự quyết định x/y/w/h của từng visual theo nội dung thực tế của trang**, chỉ tuân 2 ràng buộc vị trí duy nhất: **Header neo góc trái trên**, **Filter Calendar neo góc phải trên**. Màu sắc mặc định lấy theo Analytics Design System (ADS) của repo — tone Google Analytics/Data Studio, dùng chung token với skill `design-html-page`. Cấu trúc: **Theme mặc định** → **Trang & Layout** → **Header** → **Filter** → 3 visual chính (**KPI Card**, **Chart Line**, **Table**). Mọi bảng đều 3 cột: `Điều kiện JSON | Giá trị | Mô tả ngắn`.
 
-## 1. Khi nào dùng
+## Khi nào dùng
 Dashboard vận hành (operational BI) nhiều widget, mật độ thông tin dày, dùng để theo dõi số liệu hàng ngày — khác với slide trình bày (`design-html-page` dùng cho HTML report/trang trình bày, ít widget hơn, nhiều khoảng trắng hơn).
 
-## 2. Kích thước trang, Theme & bảng tra visual
+## Theme mặc định (tone Google Analytics / Data Studio)
 
-- **Khổ trang**: height tuỳ nội dung (trang càng nhiều "khối nghiệp vụ" xếp dọc thì càng cao — vd 720/1000/1848/2564), `displayOption: "FitToWidth"` (trang cuộn dọc, không ép vừa 1 màn hình) — chiều cao không cần hỏi user, cứ thêm khối/chart là tự giãn xuống. Width thì phải hỏi user trước khi dựng trang (xem mục 5) — 2 giá trị thật đã gặp: chuẩn `1280` (lề trái/phải 16px → vùng nội dung hữu ích `1248`), hoặc rộng hơn như `1500` (vd trang "OVERALL") khi cần nhồi nhiều measure/cột hơn trong 1 hàng.
-- **Theme bắt buộc có 1 file theme JSON custom**, đăng ký trong `report.json` → `resourcePackages` (loại `RegisteredResources`), đặt tại `StaticResources/RegisteredResources/<tên theme>.json`. Theme này quyết định toàn bộ màu (`dataColors[]`) + border + typography mặc định của mọi visual trong report — theme dùng màu gì thì visual ra màu đó, không cần suy luận thêm. Visual nào cần khoá cứng màu theo 1 measure cụ thể (accentBar của Card, dataPoint của chart, đầu màu có nghĩa của conditional formatting — mục 4, mục 5, mục 6) thì set qua `ThemeDataColor.ColorId` tham chiếu vào `dataColors[]`, không hard-code hex, để đổi Theme là đổi được toàn bộ report.
-- **Nguyên tắc phân biệt màu "cấu trúc/neutral" vs màu "dữ liệu/ngữ nghĩa"**: màu khung trang (nền trang, border, baseline của gradient) là màu trung tính cố định, được phép hard-code hex vì không mang ý nghĩa dữ liệu — xem 3 giá trị cố định ở dưới. Ngược lại, màu mang ý nghĩa dữ liệu (line/cột của chart, `accentBar` của Card, đầu màu có nghĩa của conditional formatting) **luôn luôn** set qua `ThemeDataColor.ColorId`, **không bao giờ** hard-code hex, và **không bao giờ** là `#FFFFFF` (trắng) — line/cột trắng sẽ biến mất trên nền canvas/card cũng màu sáng. Nền (background) của chart/card thì màu trắng vẫn bình thường, quy tắc "không trắng" chỉ áp dụng cho phần vẽ dữ liệu (mark), không áp dụng cho nền.
-- **3 giá trị màu cấu trúc cố định** (hard-code, không qua Theme):
-  - Nền trang (`page.json` → `objects.outspace`/`objects.background`): `#F5F6F8`.
-  - Border mọi visual (theme `visualStyles["*"]["*"].border`): bo góc `radius: 10`, line-weight `1px`, màu `#B3B3B3`.
-  - ⚠️ **Ngoại lệ nền trang**: rule `#F5F6F8` chỉ áp dụng khi trang CHƯA có background image nào được set sẵn (`page.json` → `objects.background[].properties.image`). Nếu trang đã có sẵn ảnh nền (vd ảnh brand/facade do user tự thêm) — **giữ nguyên ảnh đó khi redesign, không xoá/thay bằng màu phẳng**, kể cả khi các phần khác của trang đang được chỉnh lại theo design system này. Chỉ đổi sang `#F5F6F8` phẳng nếu trang vốn chưa có ảnh, hoặc user yêu cầu rõ ràng bỏ ảnh nền.
-- **Bảng tra Id visual dùng trong skill này** (tất cả là default visual của Microsoft, Source = "Default visual", trừ khi ghi chú khác):
-
-| Việc cần làm | `visualType` (Id) | Tên hiển thị trong Power BI Desktop |
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
 |---|---|---|
-| Breadcrumb, tiêu đề khối, footnote | `textbox` | Text box |
-| Metadata "Refresh At / Latest" (transpose 2 dòng) | `pivotTable` | **Matrix** |
-| Bộ lọc Calendar / dropdown khác | `slicer` | Slicer |
-| KPI card | `cardVisual` | **Card** (xem mục 4 — có đủ Publisher/Documentation) |
-| Chart xu hướng 1 measure/trục | `lineChart` | Line chart |
-| Chart xu hướng 2 measure/2 trục (nét đứt) | `lineStackedColumnComboChart` | Line and stacked column chart |
-| Bảng chi tiết / breakdown | `tableEx` | Table |
-| Donut | `donutChart` | Donut chart |
-| Bar ngang | `barChart` | Stacked bar chart |
-| Treemap | `treemap` | Treemap |
+| Theme `dataColors[0]` | `#1A73E8` (ADS `primary500`) | Segment 1 — accentBar/line/cột chính, mặc định `ColorId=0` |
+| Theme `dataColors[1]` | `#F29900` (ADS `warning`) | Segment 2 — khi so sánh song song 2 nhóm |
+| Theme `dataColors[2]` | `#1E8E3E` (ADS `success`) | Tăng trưởng dương / trạng thái tốt |
+| Theme `dataColors[3]` | `#D93025` (ADS `danger`) | Tăng trưởng âm / lỗi |
+| Theme `dataColors[4]` | `#D81B60` (ADS `pink`) | Điểm nhấn phụ / segment 3 |
+| Theme `dataColors[5]` | `#174EA6` (ADS `primary900`) | Biến thể đậm của primary — hover/nhấn mạnh |
+| `page.json → objects.outspace`/`background` | `#F3F4F6` (ADS `gray50`) | Nền trang — ⚠️ trừ khi trang đã có sẵn ảnh nền, giữ nguyên ảnh, không thay màu phẳng |
+| Theme `visualStyles["*"]["*"].border` | `#E8EAED` (ADS `gray200`), `radius 10`, `1px` | Border mọi visual (trừ Card) |
+| `grid.outlineColor` | `#E8EAED` (ADS `gray200`) | Gridline bảng/matrix |
+| Theme `textClasses.title` | fontSize `12`, Bold, `#202124` (ADS `gray900`) | Tiêu đề chart/table + số lớn trên Card |
+| Theme `textClasses.header` | fontSize `10`, `#5F6368` (ADS `gray700`) | Header gridline bảng/matrix |
+| Theme `textClasses.label` | fontSize `9`, `#BDC1C6` (ADS `gray400`) | Label nhỏ (vd label dưới KPI card) |
+| Theme `textClasses.callout` | fontSize `32` | Card thực tế dùng `28D` (xem KPI Card) |
+| Font family (mọi text class) | `Inter, 'Segoe UI', Roboto, sans-serif` | Không dùng font trang trí |
+| Background mọi visual (Card/Chart/Table) | `#FFFFFF` (ADS `white`) | Bề mặt Card/Chart/Table |
+| Breadcrumb — tên hệ thống | `#202124` (ADS `gray900`, hex hard-code) | Textbox không có theme-binding cho rich text |
+| Breadcrumb — tên module/subpage | `#1A73E8` (ADS `primary500`, hex hard-code) | Điểm nhấn brand |
+| Màu mark dữ liệu (line/cột/accentBar/conditional formatting) | luôn qua `ThemeDataColor.ColorId` trỏ `dataColors[]` ở trên, KHÔNG BAO GIỜ `#FFFFFF` | Không hard-code hex, trừ 3 giá trị cấu trúc + breadcrumb ở trên |
+| `objects.legend[].properties.labelColor` | hard-code `#202124` (ADS `gray900`) hoặc tối hơn, KHÔNG BAO GIỜ `#FFFFFF`/trắng | ⚠️ Theme không có `textClasses.legend` riêng — nếu không set tường minh, legend text có thể thừa hưởng màu trắng/rất nhạt từ base theme và biến mất trên nền sáng. Bắt buộc set tay ở MỌI chart có `legend` |
+| Mọi measure/series trong 1 chart | PHẢI có `dataPoint.fill` tường minh (qua `ColorId`), không để measure nào "trống" | Measure không set sẽ rơi vào auto-color-cycle của Power BI — không kiểm soát được, từng ra màu gần-trắng/không nhất quán trên sample thật |
 
-## 3. Header & breadcrumb (lặp lại y hệt trên mọi page)
+⚠️ **File theme thật KHÔNG phải lúc nào cũng đơn giản như bảng trên** — đã gặp theme có thêm: key ngữ nghĩa `good`/`neutral`/`bad`/`maximum`/`center`/`minimum` (dùng cho gauge/KPI good-bad-neutral, map tương ứng `good→success`, `bad→danger`, `neutral→gray700`, `maximum→success`, `center→warning`, `minimum→danger`); nhiều `textClasses` hơn 4 lớp cơ bản (`smallLightLabel`, `largeLightLabel`, `boldLabel`...); và `visualStyles` khai riêng theo TỪNG loại visual (`cardVisual`, `slicer`, `tableEx`, `textbox`, `shape`...) thay vì chỉ `"*": {"*": {...}}`. Khi gặp theme dạng này: đổi MỌI hex tối/đen (`#252423`, `#000000`...) → `#202124`; MỌI hex xám nhạt/label → `#BDC1C6`/`#5F6368` theo độ đậm gần nhất; giữ nguyên các key không phải màu (fontSize, fontFamily, layout...). Đặc biệt: nếu `visualStyles.cardVisual.*.title.show = true`, đổi thành `false` — Card không có title (mục KPI Card).
 
-Khối header nằm gọn trong hình chữ nhật **x=0, y=0, w=368, h=96**, gồm 2 visual chồng lớp lên nhau (không phải 1 visual):
+## Trang & Layout
 
-1. **Breadcrumb** — `textbox`, x=0 y=0, w≈216-400 (co giãn theo độ dài tên module) h=32-40, z-order cao hơn Matrix bên dưới. Nội dung: `<TÊN HỆ THỐNG>` (đen, bold) + `| <TÊN MODULE>` (đỏ, bold). Nếu là trang con: nối thêm `/ <TÊN SUBPAGE>` cũng tô đỏ. Padding trong textbox: `left=20, top=10`. Tắt `background.show` và `border.show` (transparent, nổi trên canvas).
-   - ⚠️ Màu chữ ở đây là **hex string thường** trong `textRuns[].textStyle.color` (vd `"#000000"`, `"#ed1d24"`) — Power BI **không có cơ chế theme-binding cho rich text của textbox**, nên đây là chỗ hex hard-code là bắt buộc, không phải lỗi thiết kế.
-2. **Metadata tươi dữ liệu** — visual **Matrix** (`pivotTable`), x=0 y=0, w=368 h=96, z-order thấp hơn textbox. Query: 2 measure `Refresh At` và `Latest Order Created` (hoặc mốc dữ liệu tương ứng của domain) đặt trong bucket **Values**. Bật `objects.values[0].properties.valuesOnRow = true` — đây chính là bước **transpose** biến 2 measure từ 2 cột thành 2 dòng. Font: `rowHeaders.fontSize = 9D`, `values.fontSize = 9D`. `grid.outlineStyle = 0` (ẩn gridline). `visualContainerObjects`: `stylePreset = 'None'`, `background.show = false`, `border.show = false`, `padding.top = 10D`, `padding.left = 15D`.
-   - ⚠️ Màu chữ của 2 measure `Refresh At`/`Latest...` (`objects.values[].properties.fontColorPrimary` hoặc tương đương) **không bao giờ** để `#FFFFFF`/trắng — dù nền header trong suốt, trắng vẫn có thể biến mất trên nền trang sáng màu hoặc khi trang có ảnh nền sáng. Dùng màu tối (vd đen hoặc `ThemeDataColor` tối) như mọi text khác trong report.
-- **Slicer Calendar**: `slicer`, x=1040 y=16 w=224 h=80 (neo theo mép phải trang 1280: `1280 - 224 - 16 = 1040`). Field: cột `month_filter` (hoặc tương đương) alias hiển thị thành "Calendar" qua `displayName`. `data.mode = 'Dropdown'`, `selection.singleSelect = false` (cho phép multi-select/"All"). Tắt border/background, `padding.top = 10D`.
-- **Slicer phụ** (nếu có) đặt liền bên trái slicer Calendar, cùng `y`/`h`, width tuỳ nội dung — ví dụ thật: `x=688 w=336` (dropdown Operating System), `x=800 w=224` (dropdown/segmented "source").
-- ⚠️ **Mọi slicer trên cùng 1 trang phải dùng chung đúng 1 style** — cùng `border.show`, cùng `radius`, cùng `background.show`, cùng `header`/`items.textSize` — dù field/nội dung mỗi slicer khác nhau. Không để slicer này có border màu, slicer kia tắt border, slicer khác lại đổi radius riêng; chọn 1 style chuẩn (khuyến nghị: tắt hẳn `border`/`background` như Slicer Calendar ở trên) rồi áp đồng nhất cho toàn bộ slicer trong report, kể cả slicer nằm trong filter drawer ẩn.
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| `page.json → displayOption` | `"FitToWidth"` | Trang cuộn dọc, không ép vừa 1 màn hình |
+| `page.json → height` | Tự giãn theo nội dung | AI tự quyết định — không cần hỏi user |
+| `page.json → width` | Hỏi user trước khi dựng trang | Không có mặc định cố định — tuỳ mật độ nội dung mong muốn |
+| `report.json → resourcePackages` (type `RegisteredResources`) | trỏ `StaticResources/RegisteredResources/<tên theme>.json` | File theme JSON custom — bắt buộc phải có |
+| Toạ độ (x/y/w/h) của mọi visual | **AI tự quyết định** theo nội dung trang | Không áp lại lưới toạ độ cố định từ 1 sample cụ thể |
+| ⚠️ Ràng buộc vị trí — Header | Neo góc **trái trên** trang | Xem mục Header |
+| ⚠️ Ràng buộc vị trí — Filter Calendar | Neo góc **phải trên** trang | Xem mục Filter |
+| Gap trong cùng 1 khối nghiệp vụ | `8px` | Header/Card → Chart → Table |
+| Gap giữa 2 cột cùng hàng | `16px` | Cũng là lề trái/phải trang mặc định |
+| Gap giữa 2 khối nghiệp vụ | `32px` | Tới tiêu đề khối sau |
+| `Title` (mọi visual trừ Card) | On — kế thừa Theme `title` | Không set font-size thủ công |
+| `Border` (mọi visual trừ Card) | On — kế thừa Theme | Không set tay từng visual |
+| `Effects > Shadow` | Chưa xác minh trong report mẫu thật | Mặc định Off, không tự thêm |
+| `Header Icons` | Chưa xác minh trong report mẫu thật | Nếu bật, đồng bộ toàn report |
 
-## 4. Hàng KPI card
+## Header
 
-**Định danh visual** (Power BI Desktop → pane Visualizations):
-```
-Name: Card
-Publisher: Microsoft
-Id: cardVisual
-Source: Default visual
-Documentation: https://go.microsoft.com/fwlink/?linkid=2100001
-```
+**Breadcrumb (`textbox`):**
 
-- ⚠️ **`accentBar` (thanh màu mỏng bên trái card) là property NATIVE của `cardVisual`** — set trong `visual.objects.accentBar` (`show`, `color`, `width`). **Không phải** dựng bằng 1 shape/rectangle đặt lớp dưới đè Card lên trên như từng ghi nhầm ở bản trước.
-- Grid chuẩn: **4 card/hàng**, mỗi card `w=300 h=96`, `x` lần lượt `16 / 332 / 648 / 964` (gap 16px giữa các card, lề trái/phải 16px trên trang rộng 1280 → `16+300*4+16*3+16=1280`). `y` tuỳ vị trí khối (xem mục 5).
-- Nội dung: **số lớn bold đen** (`objects.value.fontSize = 28D`) phía trên + **label xám nhỏ** (`objects.label.fontSize = 9-10D`) phía dưới.
-- Card **không đặt `title`** trong `visualContainerObjects` (đúng như đã lưu ý — Card không cần tiêu đề).
-- Card **tự tắt border/background mặc định của theme**: `visualContainerObjects.background.show = false`, `visualContainerObjects.border.show = false` — vì Card tự vẽ viền bo góc riêng qua `objects.shapeCustomRectangle` (`tileShape: 'rectangleRoundedByPixel'`, `rectangleRoundedCurve: 10L`) + `objects.outline.show = true`, không dùng border chung của theme.
-- `accentBar.width = 2D` (2px), `accentBar.color` → set bằng `color.solid.color.expr.ThemeDataColor: {"ColorId": N, "Percent": 0}`, **không hard-code hex Literal** — N là index bất kỳ trong `dataColors[]` của theme đang chọn, đổi Theme là đổi luôn màu này, không cần sửa từng visual.
-- **3 property bắt buộc phải set trên MỌI `cardVisual`** (Format pane trong Power BI Desktop, áp dụng dù dùng 1 Card/measure hay biến thể multi-card bên dưới):
-  - `Properties > Padding = 0` (mục "Properties" trong format pane của Card).
-  - `Multi-card layout > Uniform padding = 0`.
-  - `Multi-card layout > Background = Off`.
-  - Trong JSON, các property này nằm trong `visual.objects` của `cardVisual` (nhóm gần `layout`/`general` — xem thêm biến thể multi-card ngay dưới); nếu set trực tiếp qua JSON mà không chắc đúng tên field, mở Power BI Desktop, chỉnh 1 Card mẫu qua UI rồi đọc lại `visual.json` để lấy đúng tên property trước khi nhân bản ra các Card khác.
-- Biến thể ít dùng hơn: 1 Card visual duy nhất chứa nhiều measure cùng lúc qua "small multiples" (`objects.layout`: `style='Cards'`, `columnCount=N`, `rowCount=1`) — gặp ở trang tổng quan cần nhồi nhiều KPI trong 1 hàng hẹp; mỗi measure vẫn có `accentBar.color` riêng qua `selector.metadata`. Mặc định vẫn nên dùng N Card riêng biệt (dễ set accentBar/vị trí độc lập hơn). Đây chính là "Multi-card layout" ở trên — dù dùng biến thể này hay N Card riêng biệt, vẫn phải set `Uniform padding = 0` và `Background = Off`.
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Toạ độ | Neo **góc trái trên cùng** của trang (`x=0 y=0`) | Kích thước tự co giãn theo độ dài tên module, z-order cao hơn Metadata |
+| Nội dung | `<TÊN HỆ THỐNG>` + `\|` + `<TÊN MODULE>` | Trang con nối thêm `/ <TÊN SUBPAGE>` cùng màu module |
+| `textRuns[].textStyle.color` — tên hệ thống | `#202124` (bold, hex hard-code) | Xem Theme mặc định |
+| `textRuns[].textStyle.color` — tên module/subpage | `#1A73E8` (bold, hex hard-code) | Xem Theme mặc định |
+| Padding | `left=20D top=10D` | — |
+| `background.show` / `border.show` | `false` / `false` | Transparent, nổi trên canvas trang |
 
-## 5. Biểu đồ
+**Metadata "Refresh At / Latest" (`pivotTable`):**
 
-- **Trước khi dựng 1 trang mới (hoặc khối biểu đồ mới), PHẢI hỏi lại người dùng 2 việc** — không có mặc định cố định cho cả 2:
-  1. **Bề ngang trang bao nhiêu?** — chuẩn `1280`, hoặc rộng hơn (vd `1500`, như trang "OVERALL" thật) nếu cần nhồi nhiều measure/cột hơn trong 1 hàng. Chiều cao thì không cần hỏi — cứ thêm khối/chart là trang tự giãn dài xuống, AI tự tính toạ độ Y tiếp theo.
-  2. **Bố cục lưới cho từng khối**: các cột đều nhau hay bố cục bất đối xứng kiểu 1/3–2/3? Cả 2 kiểu đều là pattern thật đã dùng trong report:
-     - **(a) Lưới đều cột** (dùng khi mỗi khối có đúng 4 measure cùng "trọng số"): 4 KPI card + 4 line chart bên dưới, cùng lưới cột `x=16/332/648/964, w=300`. Ví dụ toạ độ thật (1 khối nghiệp vụ trọn vẹn):
-       ```
-       textbox tiêu đề khối   x=16  y=Y0        w=500 h=40
-       4x cardVisual          x=16/332/648/964  y=Y0+48   w=300 h=96
-       4x lineChart            x=16/332/648/964  y=Y0+152  w=300 h=160
-       2x tableEx (2 cột)      x=16 w=616 | x=648 w=616   y=Y0+320  h=240
-       ```
-       Khoảng cách card→chart→table **trong cùng 1 khối = 8px**; khoảng cách tới **khối kế tiếp (textbox tiêu đề mới) = 32px**.
-       ⚠️ **`h=40` cho textbox tiêu đề khối là bắt buộc** (không phải 24) — `h=24` quá thấp, chữ dễ bị cắt mất khi tiêu đề dài hoặc bị wrap 2 dòng ở màn hình nhỏ hơn. Font của tiêu đề khối luôn `fontSize=12pt`, bold, `#111827` (khớp Theme's text class `title` ở mục 8) dù textbox không tự inherit theme (phải set thủ công trong `textRuns[].textStyle`, xem lưu ý hex hard-code bắt buộc ở mục 3).
-     - **(b) Lưới bất đối xứng 1/3–2/3** (dùng khi 1 cột là danh sách KPI dọc/nhỏ, còn lại là chart/bảng lớn): ví dụ thật trang rộng 1280: `card x=16 w=224` (xếp dọc nhiều mini-card) | `comboChart x=256 w=528` | `pivotTable x=800 w=464`, cùng `y`, gap 16px giữa các cột, lề 16px. Hoặc trên trang rộng 1500: `chart x=16 w=352` | `chart x=384 w=544` | `chart x=944 w=544`.
-- **Border**: KHÔNG set border thủ công cho chart/table — để mặc định kế thừa từ Theme (`radius: 10`, line-weight `1px`, `color: #B3B3B3`, `show: true`) — border tự động đồng nhất trên toàn trang, không phải set tay từng visual.
-- **Title**: KHÔNG set font-size tiêu đề thủ công — để mặc định kế thừa Theme's text class `title` (fontSize 12, Bold, `#111827`, font Inter/Segoe UI/Roboto). Riêng **Card thì không có title** (mục 4).
-- ⚠️ **Không bao giờ vẽ mark (line/cột) màu trắng `#FFFFFF`** — line trắng hay cột trắng sẽ biến mất trên nền canvas/card cũng sáng màu. Quy tắc này chỉ áp dụng cho phần vẽ dữ liệu (`dataPoint.fill`), **không áp dụng cho background** của chart/card — nền trắng vẫn bình thường (mặc định Theme background = `#FFFFFF`).
-- Chart mặc định: `lineChart` với `objects.lineStyles.lineChartType = 'smooth'` + `areaShow = true` → area mượt 1 trục/measure. Ẩn trục: `categoryAxis.show = false`, `valueAxis.showAxisTitle = false` (vẫn hiện số, ẩn tiêu đề trục).
-- Combo 2 trục (measure phụ nét đứt): dùng `lineStackedColumnComboChart` thay vì `lineChart`.
-- Màu area/line nên khớp với màu accentBar của KPI card cùng khối (set cùng `ThemeDataColor.ColorId`) để nhìn rõ 2 visual thuộc cùng 1 khối nghiệp vụ.
-- Donut chart (`donutChart`): nhãn % đặt ngoài vòng kèm leader line. Không cần set `dataPoint` màu thủ công nếu chỉ phân loại theo 1 field tự nhiên — để Power BI tự cycle qua `dataColors[]` của theme theo thứ tự category.
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Toạ độ | Cùng vị trí Header (`x=0 y=0`), lớp dưới breadcrumb | Kích thước tự co giãn |
+| Query → Values | 2 measure: `Refresh At`, `Latest Order Created` (hoặc mốc dữ liệu tương ứng domain) | — |
+| `objects.values[0].properties.valuesOnRow` | `true` | **Transpose**: biến 2 measure từ 2 cột → 2 dòng |
+| `rowHeaders.fontSize` / `values.fontSize` | `9D` / `9D` | — |
+| `grid.outlineStyle` | `0` | Ẩn gridline |
+| `visualContainerObjects.stylePreset` | `'None'` | — |
+| `visualContainerObjects.background.show` / `border.show` | `false` / `false` | — |
+| `visualContainerObjects.padding.top` / `.left` | `10D` / `15D` | — |
+| `objects.rowHeaders[].properties.fontColor` | hard-code `#5F6368` (ADS `gray700`), KHÔNG BAO GIỜ `#FFFFFF` | ⚠️ Cả 2 sample thật đều gán `ThemeDataColor.ColorId` cho field này (label "Refresh At"/"Latest..." ăn theo màu dữ liệu, đổi Theme là đổi màu label luôn) — sai vì đây là text NHÃN, không phải mark dữ liệu; luôn sửa lại thành hard-code neutral khi gặp |
+| `objects.values[].properties.fontColorPrimary` | hard-code `#5F6368`, KHÔNG BAO GIỜ `#FFFFFF` | ⚠️ Property NÀY CÓ THẬT (đã thấy ở sample "MAG OneView", dù không thấy ở "Merchant Hub" — tuỳ layout `values` có transpose/valuesOnRow hay không). Cùng lỗi ColorId-ăn-theo-dữ-liệu như `rowHeaders`/`columnHeaders` — kiểm tra và hard-code lại |
+| `objects.columnHeaders[].properties.fontColor` (mọi `tableEx`/`pivotTable`) và `visualContainerObjects.title[].properties.fontColor` (mọi chart/table) | hard-code `#5F6368` (columnHeaders) / `#202124` (title), KHÔNG BAO GIỜ qua `ColorId` | ⚠️ Lỗi LẶP LẠI ở CẢ 2 sample thật: nhiều report gán `ThemeDataColor.ColorId` cho title/column-header thay vì hard-code — khi đổi Theme, chữ tiêu đề/header vô tình đổi màu theo dữ liệu (vd biến thành xanh lá/cam dù không có ý nghĩa gì). Luôn kiểm tra 2 property này trên MỌI visual khi áp skill, không chỉ Header/KPI Card |
 
-## 6. Bảng & matrix
-- Style mặc định Power BI: header có mũi tên sort, gridline mảnh xám (`grid.outlineColor = '#E5E7EB'`, hard-code — không phải màu nghiệp vụ nên không cần theme-binding), không zebra-stripe. `visualContainerObjects.stylePreset = 'Minimal'`.
-- Dòng **Total luôn bold + có đường kẻ trên** phân tách với data phía trên.
-- Matrix phân cấp: dùng icon +/- expand/collapse, dòng cha in đậm.
-- **Heatmap bằng conditional formatting** (không cần chart riêng): Matrix (`pivotTable`) áp background color scale lên chính bảng số (`objects.values[].properties.backColor` → `FillRule.linearGradient2`) — dùng cho ma trận 2 chiều dày đặc (vd giờ x ngày). Toạ độ thật: `x=16 y=1840 w=1248 h=340` (full-width, đặt sau khối nghiệp vụ cuối cùng, gap 32px).
-  - ⚠️ **Đầu màu có nghĩa của gradient (`max`) phải lấy theo Theme** — set `FillRule.linearGradient2.max.color` bằng `ThemeDataColor.ColorId` khớp màu khối nghiệp vụ (không hard-code hex như `'#2F80ED'`), để đổi Theme là đổi luôn màu heatmap. Đầu `min` vẫn có thể giữ trắng/nền trung tính (đại diện "không có dữ liệu", không phải màu ngữ nghĩa nên không bắt buộc theo Theme) — xem nguyên tắc phân biệt "cấu trúc vs dữ liệu" ở mục 2.
-  - Áp dụng tương tự cho data bar/background color scale trên **Cell elements** của Table/Matrix breakdown (không chỉ riêng khối heatmap full-width) — mọi đầu màu có nghĩa trong conditional formatting đều qua `ThemeDataColor.ColorId`, không hard-code hex.
-- Bảng raw detail (`tableEx`) luôn đặt cuối trang, scroll ngang, phục vụ audit nhanh ngay trên dashboard. Toạ độ thật: `x=16 w=1248` (full-width), gap ~24-32px so với heatmap phía trên.
+## Filter
 
-## 7. Footnote / ghi chú data quality
-Dưới card có dữ liệu cần giải thích: 1 dòng *italic, xám, size nhỏ*, bắt đầu bằng `*`, mô tả caveat (vd blank do thiếu tracking, trường free-text...). Bắt buộc ghi ngay tại chỗ, không giấu trong tooltip — đây là quy ước tạo niềm tin dữ liệu cho người xem. Visual: `textbox`, đặt ngay dưới bảng/card liên quan.
+**Slicer Calendar (`slicer`):**
 
-## 8. Typography & mật độ
-- Font theo Theme's `textClasses`: `title` (chart/table title) fontSize 12 Bold `#111827`; `header` (gridline header) fontSize 10 `#6B7280`; `label` fontSize 9 `#9CA3AF`; `callout` (số lớn trên Card) fontSize 32 — font family `Inter, 'Segoe UI', Roboto, sans-serif`. Không dùng font trang trí, không set fontSize thủ công trừ khi có lý do (Card value dùng 28D thay vì callout 32D mặc định — chấp nhận được, đã kiểm chứng trong report thật).
-- Nền canvas xám rất nhạt — set ở **cấp trang** (`page.json` → `objects.outspace`/`objects.background`, không phải ở theme) = `#F5F6F8`, **trừ khi trang đã có sẵn background ảnh thì giữ nguyên** (xem ngoại lệ ở mục 2). Card/chart/table nền trắng (`background = #FFFFFF`, kế thừa từ Theme).
-- Mật độ **dày đặc**, 2 mức khoảng cách đã đo được từ report thật — dùng đúng 2 số này, không áng chừng:
-  - **8px**: giữa các visual trong CÙNG 1 khối nghiệp vụ (tiêu đề khối → card → chart → table).
-  - **32px**: giữa 2 khối nghiệp vụ khác nhau (từ bảng cuối khối trước tới textbox tiêu đề khối sau).
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Toạ độ | Neo **góc phải trên cùng** của trang (`x = độ rộng trang − width slicer − lề phải`) | Cùng hàng ngang với Header, kích thước AI tự quyết định |
+| Field | cột filter tháng (vd `month_filter`), alias `displayName = "Calendar"` | — |
+| `data.mode` | `'Dropdown'` | — |
+| `selection.singleSelect` | `false` | Cho phép multi-select/"All" |
+| `border.show` / `background.show` | `false` / `false` | Đồng bộ style mọi slicer trong report |
+| `padding.top` | `10D` | — |
+| Toạ độ — Slicer phụ (nếu có) | Đặt liền bên trái Slicer Calendar, cùng `y`/`h` | Toạ độ chính xác do AI quyết định |
+| Style — mọi slicer trong report | Đồng nhất `border`/`background`/`radius`/`header`/`items.textSize` | ⚠️ Kể cả slicer trong filter drawer ẩn |
 
-## 9. Lưu ý khi dựng bằng cách sửa trực tiếp file PBIR (JSON) trên đĩa
-Có thể không cần qua `powerbi-report-mcp` — nếu project là `.pbip` (đã Save As từ Power BI Desktop dạng Power BI Project), report layer nằm ở `<Tên Report>.Report/definition/pages/<pageId>/page.json` + `visuals/<visualId>/visual.json`, sửa trực tiếp bằng Read/Write/Edit là đủ, không cần MCP. Chỉ áp dụng khi Power BI Desktop **đang đóng** file đó (tránh ghi đè/xung đột với phiên đang mở) — kiểm tra bằng `tasklist` xem có process `PBIDesktop.exe` đang chạy không trước khi sửa tay.
-- **KPI card `cardVisual` có sẵn property `accentBar`** (`objects.accentBar`: `show`, `color`, `width`) — accent border trái **native**, không cần dựng thủ công bằng shape+card đè lớp (xem mục 4).
-- **Màu set bằng `ThemeDataColor.ColorId` tường minh, không dùng `Literal` hex** — nếu để Power BI Desktop tự động chọn màu (không set gì, UI tự gán ColorId tăng dần theo thứ tự gặp measure) thì ColorId sẽ không đoán trước được; nhưng nếu tự tay ghi thẳng `"ThemeDataColor": {"ColorId": N}` vào JSON thì N là do mình chọn, hoàn toàn tường minh — và đổi Theme là đổi được màu đó, không cần sửa từng visual.
-- Theme màu khai báo thành 1 file theme JSON đăng ký trong `report.json` → `resourcePackages` (xem `StaticResources/RegisteredResources/*.json`) dùng chung cho report. `visualStyles["*"]["*"].border`/`background` trong theme áp mặc định cho MỌI visual (radius 10, line-weight 1px, `#B3B3B3`, show true / nền trắng) — Card là ngoại lệ duy nhất tự tắt border/background theme để dùng viền bo góc riêng (mục 4). Nền trang (`#F5F6F8`) set riêng ở từng `page.json`, không nằm trong file theme.
-- Area+line 1 measure/trục (mini chart theo ngày): visual `lineChart` với `objects.lineStyles.areaShow: true` + `lineChartType: 'smooth'` là đủ để ra area mượt — không cần combo 2 trục nếu mỗi chart chỉ có 1 measure. Combo 2 trục (measure phụ nét đứt) mới cần `lineStackedColumnComboChart`.
-- Category axis nên set `show: false` (ẩn hẳn trục ngày) cho mini chart trong dashboard dày đặc — chỉ giữ `valueAxis` với `showAxisTitle: false` (vẫn hiện số, ẩn tiêu đề).
-- Heatmap matrix (mục 6): bật conditional formatting kiểu "Background color" theo value trên field số trong Matrix visual (`pivotTable`), không phải Table visual (`tableEx`).
-- Measure trong query phải trỏ đúng **Entity = bảng gốc chứa measure đó** (`Expression.SourceRef.Entity`), tra trong TMDL (`SemanticModel/definition/tables/*.tmdl`) chứ không mặc định "Measure Collection" — nhiều measure thực ra sống ở bảng fact riêng (vd `f_firebase`, `f_txn_cks_hddt`).
-- Matrix metadata "Refresh At/Latest" (mục 3) dùng đúng property `objects.values[0].properties.valuesOnRow: true` để transpose — không phải xoay bằng cách kéo field qua vùng Rows/Columns thủ công.
+## Tên Visual: KPI Card
+
+Định danh: `Name: Card` · `Publisher: Microsoft` · `Id: cardVisual` · `Source: Default visual` · `Documentation: https://go.microsoft.com/fwlink/?linkid=2100001`
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Toạ độ | AI tự quyết định | Xếp hàng ngang, khoảng cách theo gap `16px` (Trang & Layout) |
+| Tiêu đề khối (Card+Chart+Table) | Tuỳ report — 2 pattern thật đều đã gặp | Sample "Merchant Hub": KHÔNG có textbox chung, mỗi Chart/Table tự `visualContainerObjects.title` riêng. Sample "MAG OneView": CÓ 1 textbox tiêu đề mở đầu mỗi khối (`x=16` ngay trên hàng Card/Chart, font 12pt bold, hard-code `#202124`). Cả 2 đều hợp lệ — theo đúng convention report đang sửa, đừng mặc định là "không tồn tại" |
+| `visualContainerObjects.title` | không đặt (Off) | Ngoại lệ duy nhất — mọi visual khác đều Title On |
+| `query.queryState` — tên role | **`"Data"`** cho MỌI `cardVisual` (đơn lẻ lẫn small-multiples) | ⚠️ **Đã đảo ngược kết luận cũ**: từng ghi nhầm là `"Values"` mới đúng cho Card đơn lẻ — SAI. Đã kiểm chứng trực tiếp: Power BI Desktop tự chuẩn hoá `"Values"` → `"Data"` mỗi khi mở/lưu file (kể cả Card đang chạy tốt, không ai đụng tay), và **Card chỉ thực sự hiện số khi role là `"Data"`** — dùng `"Values"` là nguyên nhân khiến Card trống dù query/measure đúng 100%. Khi tự dựng Card mới qua PBIR, LUÔN dùng `"Data"` ngay từ đầu, đừng dùng `"Values"`. (Nghi ngờ trước đó rằng bật `title` mới là nguyên nhân — CHƯA được xác nhận độc lập, có thể chỉ là trùng hợp lúc điều tra) |
+| `visual.objects.value[].properties.fontSize` | `28D` | Số lớn bold, màu `#202124` |
+| `visual.objects.label[].properties.fontSize` | `9D`-`10D` | Label nhỏ, màu `#BDC1C6` |
+| `visual.objects.accentBar[].properties.show` | `true` | ⚠️ NATIVE của `cardVisual` — KHÔNG dựng bằng shape/rectangle đè lớp |
+| `visual.objects.accentBar[].properties.color` → `color.solid.color.expr.ThemeDataColor` | `{"ColorId": N, "Percent": 0}` | N trỏ `dataColors[]` (Theme mặc định), không hard-code hex |
+| `visual.objects.accentBar[].properties.width` | `2D` | Độ dày thanh accent |
+| `visualContainerObjects.background.show` | `false` | Tắt nền mặc định theme |
+| `visualContainerObjects.border.show` | `false` | Tắt border mặc định theme |
+| `visual.objects.shapeCustomRectangle[].properties.tileShape` | `'rectangleRoundedByPixel'` | Viền bo góc riêng của Card |
+| `visual.objects.shapeCustomRectangle[].properties.rectangleRoundedCurve` | `10L` | Bo góc 10px |
+| `visual.objects.outline[].properties.show` | `true` | Bật viền riêng thay cho border theme |
+| `visualContainerObjects.padding` (`top`/`left`/`bottom`/`right`) | `0D` mọi phía | Đây là "Properties > Padding" thật — padding QUANH container Card = 0 |
+| `visual.objects.padding[].properties` (`paddingUniform`, `paddingIndividual`, `leftMargin`/`topMargin`/`bottomMargin`/`rightMargin`, `selector.id="default"`) | KHÔNG mặc định 0 — tuỳ nội dung (sample thật: `paddingUniform=5L`, `leftMargin=10L`, còn lại `5L`) | ⚠️ Đây là object RIÊNG, khác `visualContainerObjects.padding` lẫn `layout.paddingUniform` — padding nội dung (số + label) bên trong 1 ô card |
+| `visual.objects.layout[0].properties` (`backgroundShow`, `paddingUniform`, `selector.id="default"`) | `false` / `0L` | "Multi-card layout > Background/Uniform padding" — khoảng cách GIỮA các card trong lưới, KHÔNG phải padding nội dung 1 card (⚠️ khác mô tả bản trước) |
+| `visual.objects.layout[1].properties` (`style`, `columnCount`, `rowCount`, `alignment`, `cellPadding`, `orientation`) | vd `'Cards'` / `N` / `1` / `'top'` / `10L` / `0D` | ⚠️ Phần tử này KHÔNG có `selector` (áp dụng chung) — cấu hình lưới small-multiples, không phải `{selector.id="default", backgroundFillColor}` như mô tả sai ở bản trước |
+| `visual.objects.general` | ❌ Không tồn tại trong sample thật | Power BI tự lược bỏ object rỗng — KHÔNG cần set tay `{"properties": {}}` |
+| Biến thể — `accentBar.color` theo measure | qua `selector.metadata` | Mỗi measure vẫn có màu riêng (đã dùng ngay ở `layout[0]`/`[1]` phía trên — Card 1 visual + nhiều measure vốn LUÔN ở dạng small-multiples này, không phải "biến thể ít dùng") |
+
+## Tên Visual: Chart Line
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Toạ độ & bố cục (đều cột hay nhấn mạnh 1 chart lớn...) | AI tự quyết định theo nội dung | Giữ đúng gap `8px`/`16px`/`32px` (Trang & Layout) |
+| `objects.lineStyles.lineChartType` | `'smooth'` | Đường mượt |
+| `objects.lineStyles.areaShow` | `true` | Area tô mượt dưới line |
+| `categoryAxis.show` | `false` | Ẩn hẳn trục ngày/category |
+| `valueAxis.showAxisTitle` | `false` | Vẫn hiện số, ẩn tiêu đề trục |
+| `dataPoint.fill` → `ThemeDataColor.ColorId` (set cho TỪNG measure, không bỏ sót) | khớp `ColorId` accentBar Card cùng khối | KHÔNG BAO GIỜ `#FFFFFF`; measure nào thiếu dòng này sẽ rơi vào auto-color của Power BI |
+| `objects.legend[].properties.labelColor` (nếu chart có ≥2 measure/legend) | hard-code `#202124`, KHÔNG BAO GIỜ `#FFFFFF` | Theme không có `textClasses.legend` — phải set tay mỗi chart, không kế thừa được |
+
+**Biến thể khác — Combo 2 trục (`lineStackedColumnComboChart`):**
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Dùng thay `lineChart` | khi có measure phụ nét đứt (2 measure/2 trục) | — |
+
+**Biến thể khác — Donut (`donutChart`):**
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Nhãn % | đặt ngoài vòng kèm leader line | — |
+| `dataPoint` màu | không set thủ công nếu phân loại theo 1 field tự nhiên | Power BI tự cycle qua `dataColors[]` theo thứ tự category |
+
+**Biến thể khác — Bar ngang (`barChart`) / Treemap (`treemap`):**
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| `dataPoint.fill` → `ThemeDataColor.ColorId` | theo Theme mặc định | Không hard-code hex |
+
+## Tên Visual: Table
+
+**Bảng chi tiết (`tableEx`):**
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Vị trí | Cuối trang, full-width | Toạ độ chính xác do AI quyết định |
+| `visualContainerObjects.stylePreset` | `'Minimal'` | Header có mũi tên sort, gridline mảnh, không zebra-stripe |
+| `objects.grid[].properties.outlineColor` | hard-code `#E8EAED` (khuyến nghị) | ⚠️ Field này nhận `ColorValue` bình thường — sample thật có bảng gán `ThemeDataColor.ColorId` (không hard-code) cho field này, ra gridline ăn theo màu dữ liệu (có bảng lệch hẳn sang xanh dương/hồng). Đây là màu CẤU TRÚC nên **nên** hard-code neutral, không nên để lẫn theo `ColorId` — nếu thấy `ColorId` ở đây trong report cũ, nên đổi lại |
+| Dòng Total | Bold + đường kẻ trên | Phân tách data phía trên |
+
+**Matrix / Heatmap (`pivotTable`):**
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Vị trí — heatmap | Sau khối nghiệp vụ cuối cùng, full-width | Toạ độ chính xác do AI quyết định |
+| Matrix phân cấp | icon `+`/`-` expand/collapse, dòng cha in đậm | — |
+| `objects.values[].properties.backColor` → `expr.FillRule.FillRule.linearGradient2.max.color` | `{"ThemeDataColor": {"ColorId": N, "Percent": 0}}` | ⚠️ Bên trong `linearGradient2`, `color` là `ColorValue` PHẲNG — `ThemeDataColor`/`Literal` nằm TRỰC TIẾP dưới `color`, KHÔNG lồng qua `color.solid.color.expr` như mọi property màu khác trong file. Đầu `max` PHẢI theo Theme, không hard-code hex (sample thật từng hard-code `'#2F80ED'` — sai, đã sửa lại) |
+| `linearGradient2.min.color` | `{"Literal": {"Value": "'#FFFFFF'"}}` (được phép hard-code) | Cùng cấu trúc phẳng như trên — đại diện "không có dữ liệu" |
+| Cell elements (Table/Matrix breakdown) | data bar/background color scale cùng nguyên tắc `ColorId` | Không chỉ riêng khối heatmap full-width |
+| `objects.values[0].properties.valuesOnRow` | `true` | Transpose — dùng ở Header/Metadata (Refresh/Latest) |
+
+## Footnote / ghi chú data quality
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Visual | `textbox` | Đặt ngay dưới bảng/card liên quan |
+| Nội dung | bắt đầu bằng `*`, mô tả caveat (vd blank do thiếu tracking, trường free-text...) | — |
+| `textRuns[].textStyle` | `fontStyle: "italic"`, `color: "#5F6368"` (ADS `gray700`), `fontSize: "9pt"` | ⚠️ Sample thật dùng `color: "#000000"` (đen tuyền) không có `fontSize` riêng — xám nhỏ là điều chỉnh chủ động theo ADS khi áp dụng, không phải điều verify được từ sample gốc |
+| Vị trí hiển thị | Ngay tại chỗ, KHÔNG giấu trong tooltip | Quy ước tạo niềm tin dữ liệu cho người xem |
+
+## Sửa trực tiếp file PBIR (JSON) trên đĩa
+
+| Điều kiện JSON | Giá trị | Mô tả ngắn |
+|---|---|---|
+| Điều kiện áp dụng | Project dạng `.pbip`, Power BI Desktop **đang đóng** file đó | Check bằng `tasklist` xem có process `PBIDesktop.exe` không, trước khi sửa tay |
+| Đường dẫn report layer | `<Tên Report>.Report/definition/pages/<pageId>/page.json` + `visuals/<visualId>/visual.json` | Sửa trực tiếp bằng Read/Write/Edit, không cần `powerbi-report-mcp` |
+| Mọi property/JSON path cụ thể | accentBar, ColorId, layout, padding, valuesOnRow... | Đã liệt kê đầy đủ ở từng "Tên Visual" phía trên — không lặp lại ở đây |
+| Measure trong query | `Expression.SourceRef.Entity` = bảng gốc chứa measure đó | Tra trong TMDL (`SemanticModel/definition/tables/*.tmdl`), không mặc định "Measure Collection" — nhiều measure sống ở bảng fact riêng (vd `f_firebase`, `f_txn_cks_hddt`) |
