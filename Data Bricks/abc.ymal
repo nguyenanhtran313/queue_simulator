@@ -1,0 +1,184 @@
+# ============================================================================
+# MỤC LỤC / TÓM TẮT FILE
+# Databricks Asset Bundle (DAB) — khai báo resource "jobs" để deploy job
+# Databricks qua CI/CD (databricks bundle deploy). File này CHỈ khai báo
+# job/cluster/schedule; logic xử lý thật nằm ở notebook (notebook_path) và
+# dbt project (project_directory) được trỏ tới, không nằm trong file này.
+#
+# resources.jobs gồm 2 job độc lập, cùng phục vụ nguồn dữ liệu Autodesk ACC:
+#
+# 1) Job_Schedule_ACC — dòng 35-66
+#    Job phụ trợ, 1 task duy nhất: gọi notebook get_request_id để xin
+#    request_id từ Data Connector của Autodesk Construction Cloud (ACC),
+#    chế độ "insert". Chạy trên cluster riêng "init_cluster" (spot, 1
+#    worker, m5d.large) — dòng 49-64.
+#
+# 2) Job_00_Master_Pipeline_Autodesk — dòng 68-184
+#    Pipeline chính, chạy theo lịch cron (biến v_master_schedule_cron_autodesk,
+#    timezone Asia/Bangkok). Có email cảnh báo khi success/failure/chạy quá
+#    ngưỡng thời gian (health rule > 3600s), timeout tổng 7200s.
+#    Chuỗi 6 task tuần tự, mỗi task depends_on task ngay trước:
+#      a. Check_status_ingest        dòng 85   — kiểm tra trạng thái ingest trước khi chạy
+#      b. 01-Bronze_Autodesk         dòng 92   — ingest raw data vào lớp Bronze
+#      c. 02-Cleanning               dòng 102  — dbt build, select autodesk.transformation
+#      d. 03-aggregation             dòng 117  — dbt build, select autodesk.aggregation
+#      e. 04-snapshot                dòng 132  — dbt build, select autodesk.snapshot
+#      f. Insert_group_log_autodesk  dòng 147  — ghi log kết thúc pipeline
+#    Dùng cluster riêng "master_job_cluster_autodesk" (mix spot+on-demand,
+#    Photon runtime, USER_ISOLATION, theo cluster policy chung) — dòng 154-175.
+#    parameters (dòng 178-184): p_etl_date, p_job_name, p_source_name
+#    — được các task dbt dùng qua --vars.
+# ============================================================================
+resources:
+  jobs:
+# Job for schedule extract data from Data Connector of Autodesk Constructure Cloud
+    Job_Schedule_ACC:
+      name: Job_Schedule_ACC_${bundle.target}
+      tasks:
+        - task_key: schedule_ACC
+          notebook_task:
+            notebook_path: ${workspace.file_path}/src/notebook/config/get_request_id
+            base_parameters:
+              account_id: "0"
+              project_id: "0"
+              request_id: "0"
+              stragy_mode: "insert"
+            source: WORKSPACE
+          job_cluster_key: init_cluster
+
+      job_clusters:
+        - job_cluster_key: init_cluster
+          new_cluster:
+            spark_version: 17.3.x-scala2.13
+            aws_attributes:
+              availability: SPOT_WITH_FALLBACK
+            node_type_id: m5d.large
+            spark_env_vars:
+              PYSPARK_PYTHON: /databricks/python3/bin/python3
+              ENV: ${var.v_env}
+              UC_CONN: ${var.v_catalog}
+            data_security_mode: DATA_SECURITY_MODE_DEDICATED
+            runtime_engine: STANDARD
+            kind: CLASSIC_PREVIEW
+            is_single_node: false
+            num_workers: 1
+      queue:
+        enabled: true 
+ ### Job for transform data
+    Job_00_Master_Pipeline_Autodesk:
+      name: Job_00_Master_Pipeline_Autodesk_${bundle.target}
+      email_notifications:
+        on_success: ${var.v_pipeline_noti_email_list}
+        on_failure: ${var.v_pipeline_noti_email_list}
+        on_duration_warning_threshold_exceeded: ${var.v_pipeline_noti_email_list}
+      timeout_seconds: 7200
+      health:
+        rules:
+          - metric: RUN_DURATION_SECONDS
+            op: GREATER_THAN
+            value: 3600
+      schedule:
+        quartz_cron_expression: ${var.v_master_schedule_cron_autodesk} # 17 0 4 * * ?
+        timezone_id: Asia/Bangkok
+        pause_status: ${var.v_master_pause_status} # UNPAUSED
+      tasks:
+        - task_key: Check_status_ingest
+          notebook_task:
+            notebook_path: ${workspace.file_path}/src/notebook/pipelines/ingestion/check_status_ingestion
+            base_parameters:
+              p_source_name: autodesk
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk
+        - task_key: 01-Bronze_Autodesk
+          depends_on:
+            - task_key: Check_status_ingest
+          notebook_task:
+            notebook_path: ${workspace.file_path}/src/notebook/pipelines/ingestion/02-ingest-autodesk
+            base_parameters:
+              table: all
+              p_job_run_id: "{{job.run_id}}"
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk
+        - task_key: 02-Cleanning
+          depends_on:
+            - task_key: 01-Bronze_Autodesk
+          dbt_task:
+            project_directory: ${workspace.file_path}/src/dbt # /Workspace/Users/uy.do@onemount.com/.bundle/gb_project_repo/dev/files/src/dbt
+            commands:
+              - dbt deps --target=${bundle.target}
+              - dbt build --profiles-dir . --select autodesk.transformation --target=${bundle.target} --vars '{"batch_number":"{{job.run_id}}"}' --vars
+                '{"etl_date":"{{job.parameters.p_etl_date}}"}'
+            warehouse_id: ${var.v_warehouse_id}
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk
+          libraries:
+            - pypi:
+                package: dbt-databricks>=1.0.0,<2.0.0
+        - task_key: 03-aggregation
+          depends_on:
+            - task_key: 02-Cleanning
+          dbt_task:
+            project_directory: ${workspace.file_path}/src/dbt # /Workspace/Users/uy.do@onemount.com/.bundle/gb_project_repo/dev/files/src/dbt
+            commands:
+              - dbt deps --target=${bundle.target}
+              - dbt build --profiles-dir . --select autodesk.aggregation --target=${bundle.target} --vars '{"batch_number":"{{job.run_id}}"}' --vars
+                '{"etl_date":"{{job.parameters.p_etl_date}}"}'
+            warehouse_id: ${var.v_warehouse_id}
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk
+          libraries:
+            - pypi:
+                package: dbt-databricks>=1.0.0,<2.0.0
+        - task_key: 04-snapshot
+          depends_on:
+            - task_key: 03-aggregation
+          dbt_task:
+            project_directory: ${workspace.file_path}/src/dbt # /Workspace/Users/uy.do@onemount.com/.bundle/gb_project_repo/dev/files/src/dbt
+            commands:
+              - dbt deps --target=${bundle.target}
+              - dbt build --profiles-dir . --select autodesk.snapshot --target=${bundle.target} --vars '{"batch_number":"{{job.run_id}}"}' --vars
+                '{"etl_date":"{{job.parameters.p_etl_date}}"}'
+            warehouse_id: ${var.v_warehouse_id}
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk
+          libraries:
+            - pypi:
+                package: dbt-databricks>=1.0.0,<2.0.0
+        - task_key: Insert_group_log_autodesk
+          depends_on:
+            - task_key: 04-snapshot
+          notebook_task:
+            notebook_path: ${workspace.file_path}/src/notebook/config/insert-log-transformation 
+            source: WORKSPACE
+          job_cluster_key: master_job_cluster_autodesk        
+      job_clusters:
+        - job_cluster_key: master_job_cluster_autodesk
+          new_cluster:
+            cluster_name: ""
+            spark_version: ${var.v_cluster_spark_version}
+            aws_attributes:
+              first_on_demand: 1
+              availability: SPOT_WITH_FALLBACK
+              zone_id: auto
+              spot_bid_price_percent: 100
+            node_type_id: ${var.v_cluster_node_type_id}
+            spark_env_vars:
+              PYSPARK_PYTHON: /databricks/python3/bin/python3
+              ENV: ${var.v_env}
+              UC_CONN: ${var.v_catalog}
+            enable_elastic_disk: true
+            policy_id: ${var.v_cluster_policy}
+            data_security_mode: USER_ISOLATION
+            runtime_engine: PHOTON
+            kind: CLASSIC_PREVIEW
+            is_single_node: false
+            num_workers: 1
+      queue:
+        enabled: true
+      parameters:
+        - name: p_etl_date
+          default: current_date
+        - name: p_job_name 
+          default: "{{job.name}}" 
+        - name: p_source_name
+          default: autodesk
